@@ -3,66 +3,189 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin Panel</title>
+<title>Radz Admin Panel</title>
 
 <style>
-body{background:#000;color:#fff;font-family:Orbitron}
-.container{max-width:800px;margin:auto;padding:30px}
-.card{background:#111;padding:20px;border-radius:15px;margin-top:20px}
-input{width:100%;padding:12px;margin:10px 0;border-radius:10px;background:#222;color:#fff;border:none}
-button{width:100%;padding:12px;border:none;border-radius:10px;background:linear-gradient(90deg,#ff6b6b,#4ecdc4);color:#000;font-weight:bold}
+body{
+  margin:0;
+  font-family:Arial;
+  background:#000;
+  color:#fff;
+}
+.container{
+  max-width:800px;
+  margin:auto;
+  padding:30px;
+}
+.card{
+  background:#111;
+  padding:20px;
+  border-radius:15px;
+  margin-top:20px;
+}
+input,select{
+  width:100%;
+  padding:12px;
+  margin:10px 0;
+  border-radius:10px;
+  border:none;
+  background:#222;
+  color:#fff;
+}
+button{
+  width:100%;
+  padding:12px;
+  border:none;
+  border-radius:10px;
+  background:linear-gradient(90deg,#ff6b6b,#4ecdc4);
+  color:black;
+  font-weight:bold;
+  cursor:pointer;
+}
+.status{margin-top:10px}
+.hidden{display:none}
 </style>
 </head>
 
 <body>
+
 <div class="container">
 
 <h1>ADMIN PANEL</h1>
 
-<div class="card">
-  <input id="email" placeholder="Email User">
-  <input id="password" placeholder="Password">
-  <input id="days" placeholder="Durasi (hari)">
-  <select id="role">
-    <option value="USER">USER</option>
-    <option value="VIP">VIP</option>
-  </select>
-
-  <button onclick="createUser()">CREATE USER</button>
+<!-- LOGIN ADMIN -->
+<div id="loginBox" class="card">
+  <h2>Login Admin</h2>
+  <input id="adminEmail" placeholder="Email Admin">
+  <input id="adminPass" type="password" placeholder="Password">
+  <button onclick="loginAdmin()">LOGIN</button>
   <div id="status"></div>
 </div>
 
+<!-- DASHBOARD -->
+<div id="adminPanel" class="hidden">
+
+  <div class="card">
+    <h3 id="adminInfo"></h3>
+  </div>
+
+  <!-- CREATE USER -->
+  <div class="card">
+    <h2>Create User</h2>
+    <input id="newEmail" placeholder="Email User">
+    <input id="newPass" type="password" placeholder="Password">
+    <input id="days" placeholder="Durasi (hari)">
+    
+    <select id="role">
+      <option value="USER">USER</option>
+      <option value="VIP">VIP</option>
+    </select>
+
+    <button onclick="createUser()">CREATE USER</button>
+    <div id="createStatus" class="status"></div>
+  </div>
+
+  <div class="card">
+    <button onclick="logout()">LOGOUT</button>
+  </div>
+
 </div>
 
+</div>
+
+<!-- FIREBASE -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  signOut
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
 import {
   getFirestore,
   doc,
   setDoc
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
+// CONFIG
 const firebaseConfig = {
-  apiKey: "AIzaSy...",
+  apiKey: "AIzaSyAgGd8-u_E_JKKs0Zf7rXZ6O4ADw85CUAU",
   authDomain: "radzpanel-3a8a3.firebaseapp.com",
   projectId: "radzpanel-3a8a3",
+  storageBucket: "radzpanel-3a8a3.firebasestorage.app",
+  messagingSenderId: "20608954308",
+  appId: "1:20608954308:web:0e09ba796c9086813fbe91"
 };
 
 const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
 const db = getFirestore(app);
 
-window.createUser = async function(){
-  const exp = new Date();
-  exp.setDate(exp.getDate() + Number(days.value));
+// GANTI EMAIL ADMIN LU
+const ADMIN_EMAIL = "admin@gmail.com";
 
-  await setDoc(doc(db,"users",email.value),{
-    email: email.value,
-    password: password.value,
-    role: role.value,
-    expired: exp.toISOString()
+// LOGIN ADMIN
+window.loginAdmin = function(){
+  signInWithEmailAndPassword(auth, adminEmail.value, adminPass.value)
+  .then(res=>{
+    if(res.user.email !== ADMIN_EMAIL){
+      status.innerHTML="<p style='color:red'>Bukan Admin!</p>";
+      return;
+    }
+
+    loginBox.style.display="none";
+    adminPanel.classList.remove("hidden");
+    adminInfo.innerText="Login: " + res.user.email;
+
+  })
+  .catch(err=>{
+    status.innerHTML="<p style='color:red'>"+err.message+"</p>";
   });
+};
 
-  status.innerHTML="<p style='color:lime'>User dibuat!</p>";
+// CREATE USER (FIX NO ERROR)
+window.createUser = async function(){
+
+  if(!newEmail.value || !newPass.value){
+    createStatus.innerHTML="Isi semua data!";
+    return;
+  }
+
+  try{
+    const adminEmailLogin = adminEmail.value;
+    const adminPassLogin = adminPass.value;
+
+    // CREATE USER
+    const userCred = await createUserWithEmailAndPassword(auth,newEmail.value,newPass.value);
+
+    // HITUNG EXPIRED
+    const exp = new Date();
+    exp.setDate(exp.getDate() + Number(days.value || 30));
+
+    // SIMPAN KE FIRESTORE
+    await setDoc(doc(db,"users",userCred.user.uid),{
+      email:newEmail.value,
+      role:role.value,
+      expired:exp.toISOString()
+    });
+
+    // BALIK KE ADMIN
+    await signOut(auth);
+    await signInWithEmailAndPassword(auth,adminEmailLogin,adminPassLogin);
+
+    createStatus.innerHTML="<p style='color:lime'>User berhasil dibuat!</p>";
+
+  }catch(err){
+    createStatus.innerHTML="<p style='color:red'>"+err.message+"</p>";
+  }
+};
+
+// LOGOUT
+window.logout = function(){
+  signOut(auth).then(()=>location.reload());
 };
 </script>
 
