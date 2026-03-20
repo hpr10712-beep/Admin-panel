@@ -3,190 +3,150 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Radz Admin Panel</title>
+<title>ADMIN PANEL RADZ</title>
 
 <style>
 body{
-  margin:0;
-  font-family:Arial;
   background:#000;
   color:#fff;
+  font-family:sans-serif;
+  text-align:center;
+  padding:20px;
 }
-.container{
-  max-width:800px;
-  margin:auto;
-  padding:30px;
-}
+
 .card{
   background:#111;
   padding:20px;
-  border-radius:15px;
-  margin-top:20px;
+  border-radius:10px;
+  margin:15px 0;
 }
-input,select{
+
+input,button{
   width:100%;
   padding:12px;
-  margin:10px 0;
-  border-radius:10px;
+  margin:8px 0;
   border:none;
-  background:#222;
-  color:#fff;
+  border-radius:8px;
 }
+
 button{
-  width:100%;
-  padding:12px;
-  border:none;
-  border-radius:10px;
   background:linear-gradient(90deg,#ff6b6b,#4ecdc4);
-  color:black;
-  font-weight:bold;
   cursor:pointer;
 }
-.status{margin-top:10px}
-.hidden{display:none}
 </style>
 </head>
 
 <body>
 
-<div class="container">
+<h1>🔥 ADMIN PANEL</h1>
 
-<h1>ADMIN PANEL</h1>
-
-<!-- LOGIN ADMIN -->
-<div id="loginBox" class="card">
-  <h2>Login Admin</h2>
-  <input id="adminEmail" placeholder="Email Admin">
-  <input id="adminPass" type="password" placeholder="Password">
+<div class="card">
+  <h3>Login Admin</h3>
+  <input id="email" placeholder="Email admin">
+  <input id="password" type="password" placeholder="Password">
   <button onclick="loginAdmin()">LOGIN</button>
-  <div id="status"></div>
 </div>
 
-<!-- DASHBOARD -->
-<div id="adminPanel" class="hidden">
+<div id="panel" class="hidden">
 
   <div class="card">
-    <h3 id="adminInfo"></h3>
-  </div>
-
-  <!-- CREATE USER -->
-  <div class="card">
-    <h2>Create User</h2>
-    <input id="newEmail" placeholder="Email User">
-    <input id="newPass" type="password" placeholder="Password">
-    <input id="days" placeholder="Durasi (hari)">
-    
-    <select id="role">
-      <option value="USER">USER</option>
-      <option value="VIP">VIP</option>
-    </select>
-
+    <h3>Create User (Auto Save)</h3>
+    <input id="newEmail" placeholder="Email user">
+    <input id="newPass" placeholder="Password">
     <button onclick="createUser()">CREATE USER</button>
-    <div id="createStatus" class="status"></div>
   </div>
 
   <div class="card">
-    <button onclick="logout()">LOGOUT</button>
+    <h3>📡 User List (LIVE)</h3>
+    <div id="listUser"></div>
   </div>
 
-</div>
+  <button onclick="logoutAdmin()">LOGOUT</button>
 
 </div>
 
-<!-- FIREBASE -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-
 import {
   getAuth,
   signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
   signOut
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 import {
   getFirestore,
-  doc,
-  setDoc
+  collection,
+  addDoc,
+  onSnapshot
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-// CONFIG
 const firebaseConfig = {
   apiKey: "AIzaSyAgGd8-u_E_JKKs0Zf7rXZ6O4ADw85CUAU",
   authDomain: "radzpanel-3a8a3.firebaseapp.com",
-  projectId: "radzpanel-3a8a3",
-  storageBucket: "radzpanel-3a8a3.firebasestorage.app",
-  messagingSenderId: "20608954308",
-  appId: "1:20608954308:web:0e09ba796c9086813fbe91"
+  projectId: "radzpanel-3a8a3"
 };
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
-// GANTI EMAIL ADMIN LU
-const ADMIN_EMAIL = "admin@gmail.com";
 
-// LOGIN ADMIN
+// 🔐 LOGIN ADMIN
 window.loginAdmin = function(){
-  signInWithEmailAndPassword(auth, adminEmail.value, adminPass.value)
-  .then(res=>{
-    if(res.user.email !== ADMIN_EMAIL){
-      status.innerHTML="<p style='color:red'>Bukan Admin!</p>";
-      return;
-    }
-
-    loginBox.style.display="none";
-    adminPanel.classList.remove("hidden");
-    adminInfo.innerText="Login: " + res.user.email;
-
+  signInWithEmailAndPassword(auth,email.value,password.value)
+  .then(()=>{
+    alert("Login sukses 🔥");
+    document.getElementById("panel").classList.remove("hidden");
+    loadUsers();
   })
-  .catch(err=>{
-    status.innerHTML="<p style='color:red'>"+err.message+"</p>";
+  .catch(e=>{
+    alert(e.message);
   });
 };
 
-// CREATE USER (FIX NO ERROR)
-window.createUser = async function(){
 
+// ➕ CREATE USER (AUTO SAVE FIREBASE)
+window.createUser = async function(){
   if(!newEmail.value || !newPass.value){
-    createStatus.innerHTML="Isi semua data!";
+    alert("Isi dulu!");
     return;
   }
 
-  try{
-    const adminEmailLogin = adminEmail.value;
-    const adminPassLogin = adminPass.value;
+  await addDoc(collection(db,"users"),{
+    email:newEmail.value,
+    password:newPass.value,
+    created:new Date().toLocaleString()
+  });
 
-    // CREATE USER
-    const userCred = await createUserWithEmailAndPassword(auth,newEmail.value,newPass.value);
+  alert("User tersimpan ke Firebase 🔥");
 
-    // HITUNG EXPIRED
-    const exp = new Date();
-    exp.setDate(exp.getDate() + Number(days.value || 30));
+  newEmail.value="";
+  newPass.value="";
+};
 
-    // SIMPAN KE FIRESTORE
-    await setDoc(doc(db,"users",userCred.user.uid),{
-      email:newEmail.value,
-      role:role.value,
-      expired:exp.toISOString()
+
+// 📡 REALTIME AUTO UPDATE
+function loadUsers(){
+  onSnapshot(collection(db,"users"),(snap)=>{
+    let html="";
+    snap.forEach(doc=>{
+      let d=doc.data();
+      html+=`
+        <div style="background:#222;padding:10px;margin:5px;border-radius:8px">
+          📧 ${d.email}<br>
+          🔑 ${d.password}
+        </div>
+      `;
     });
 
-    // BALIK KE ADMIN
-    await signOut(auth);
-    await signInWithEmailAndPassword(auth,adminEmailLogin,adminPassLogin);
+    listUser.innerHTML=html;
+  });
+}
 
-    createStatus.innerHTML="<p style='color:lime'>User berhasil dibuat!</p>";
 
-  }catch(err){
-    createStatus.innerHTML="<p style='color:red'>"+err.message+"</p>";
-  }
-};
+// 🚪 LOGOUT
+window.logoutAdmin = ()=>signOut(auth).then(()=>location.reload());
 
-// LOGOUT
-window.logout = function(){
-  signOut(auth).then(()=>location.reload());
-};
 </script>
 
 </body>
