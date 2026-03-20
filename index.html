@@ -6,164 +6,63 @@
 <title>Admin Panel</title>
 
 <style>
-body{
-  margin:0;
-  font-family:Orbitron;
-  background:#000;
-  color:white;
-}
-
-.container{
-  max-width:800px;
-  margin:auto;
-  padding:30px;
-}
-
-h1{
-  text-align:center;
-  background:linear-gradient(90deg,#ff6b6b,#4ecdc4);
-  -webkit-background-clip:text;
-  -webkit-text-fill-color:transparent;
-}
-
-.card{
-  background:#111;
-  padding:20px;
-  border-radius:15px;
-  margin-top:20px;
-}
-
-input{
-  width:100%;
-  padding:12px;
-  margin:10px 0;
-  border-radius:10px;
-  border:none;
-  background:#222;
-  color:white;
-}
-
-button{
-  width:100%;
-  padding:12px;
-  border:none;
-  border-radius:10px;
-  background:linear-gradient(90deg,#ff6b6b,#4ecdc4);
-  color:black;
-  font-weight:bold;
-  cursor:pointer;
-}
-
-.status{
-  margin-top:10px;
-}
-
-.hidden{display:none;}
+body{background:#000;color:#fff;font-family:Orbitron}
+.container{max-width:800px;margin:auto;padding:30px}
+.card{background:#111;padding:20px;border-radius:15px;margin-top:20px}
+input{width:100%;padding:12px;margin:10px 0;border-radius:10px;background:#222;color:#fff;border:none}
+button{width:100%;padding:12px;border:none;border-radius:10px;background:linear-gradient(90deg,#ff6b6b,#4ecdc4);color:#000;font-weight:bold}
 </style>
 </head>
 
 <body>
-
 <div class="container">
 
 <h1>ADMIN PANEL</h1>
 
-<!-- LOGIN ADMIN -->
-<div id="loginBox" class="card">
-  <h2>Login Admin</h2>
-  <input id="adminEmail" placeholder="Email Admin">
-  <input id="adminPass" type="password" placeholder="Password">
-  <button onclick="loginAdmin()">LOGIN</button>
+<div class="card">
+  <input id="email" placeholder="Email User">
+  <input id="password" placeholder="Password">
+  <input id="days" placeholder="Durasi (hari)">
+  <select id="role">
+    <option value="USER">USER</option>
+    <option value="VIP">VIP</option>
+  </select>
+
+  <button onclick="createUser()">CREATE USER</button>
   <div id="status"></div>
 </div>
 
-<!-- DASHBOARD -->
-<div id="adminPanel" class="hidden">
-
-  <div class="card">
-    <h3 id="adminInfo"></h3>
-  </div>
-
-  <!-- CREATE USER -->
-  <div class="card">
-    <h2>Create User</h2>
-    <input id="newEmail" placeholder="User Email">
-    <input id="newPass" type="password" placeholder="Password">
-    <button onclick="createUser()">CREATE USER</button>
-    <div id="createStatus"></div>
-  </div>
-
-  <!-- DELETE USER (simulasi) -->
-  <div class="card">
-    <h2>Delete User (manual)</h2>
-    <p style="color:#aaa">Hapus user via Firebase Console</p>
-  </div>
-
-  <div class="card">
-    <button onclick="logout()">LOGOUT</button>
-  </div>
-
 </div>
 
-</div>
-
-<!-- FIREBASE -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 import {
-  getAuth,
-  signInWithEmailAndPassword,
-  createUserWithEmailAndPassword,
-  signOut
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+  getFirestore,
+  doc,
+  setDoc
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyAgGd8-u_E_JKKs0Zf7rXZ6O4ADw85CUAU",
+  apiKey: "AIzaSy...",
   authDomain: "radzpanel-3a8a3.firebaseapp.com",
   projectId: "radzpanel-3a8a3",
-  storageBucket: "radzpanel-3a8a3.firebasestorage.app",
-  messagingSenderId: "20608954308",
-  appId: "1:20608954308:web:0e09ba796c9086813fbe91"
 };
 
 const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
+const db = getFirestore(app);
 
-// ⚠️ GANTI DENGAN EMAIL ADMIN LU
-const ADMIN_EMAIL = "admin@gmail.com";
+window.createUser = async function(){
+  const exp = new Date();
+  exp.setDate(exp.getDate() + Number(days.value));
 
-// LOGIN ADMIN
-window.loginAdmin = function(){
-  signInWithEmailAndPassword(auth, adminEmail.value, adminPass.value)
-  .then(res=>{
-    if(res.user.email !== ADMIN_EMAIL){
-      status.innerHTML = "<p style='color:red'>Bukan Admin!</p>";
-      return;
-    }
-
-    loginBox.style.display="none";
-    adminPanel.classList.remove("hidden");
-    adminInfo.innerText = "Login sebagai: " + res.user.email;
-  })
-  .catch(err=>{
-    status.innerHTML = "<p style='color:red'>"+err.message+"</p>";
+  await setDoc(doc(db,"users",email.value),{
+    email: email.value,
+    password: password.value,
+    role: role.value,
+    expired: exp.toISOString()
   });
-};
 
-// CREATE USER
-window.createUser = function(){
-  createUserWithEmailAndPassword(auth,newEmail.value,newPass.value)
-  .then(()=>{
-    createStatus.innerHTML="<p style='color:lime'>User berhasil dibuat</p>";
-  })
-  .catch(err=>{
-    createStatus.innerHTML="<p style='color:red'>"+err.message+"</p>";
-  });
-};
-
-// LOGOUT
-window.logout = function(){
-  signOut(auth).then(()=>location.reload());
+  status.innerHTML="<p style='color:lime'>User dibuat!</p>";
 };
 </script>
 
