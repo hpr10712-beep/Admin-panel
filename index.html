@@ -313,7 +313,14 @@ createBtn.onclick = () => {
 
 createUserWithEmailAndPassword(auth,newEmail.value,newPass.value)
 
-.then(()=>{
+.then((cred)=>{
+
+const uid = cred.user.uid;
+
+update(ref(db,"users/"+uid),{
+username:newEmail.value,
+status:"active"
+});
 
 createStatus.innerHTML =
 `<div class="status success">User Created</div>`;
@@ -321,10 +328,8 @@ createStatus.innerHTML =
 })
 
 .catch(err=>{
-
 createStatus.innerHTML =
 `<div class="status error">${err.message}</div>`;
-
 });
 
 };
@@ -357,6 +362,11 @@ onValue(ref(db,"users"),(snapshot)=>{
 
 userList.innerHTML = "";
 
+if(!snapshot.exists()){
+userList.innerHTML = "<div class='card'>Belum ada user</div>";
+return;
+}
+
 snapshot.forEach(child=>{
 
 let data = child.val();
@@ -364,10 +374,16 @@ let uid = child.key;
 
 userList.innerHTML += `
 <div class="card">
-<b>${data.username || "user"}</b> - ${data.status || "active"}
+
+<b>${data.username}</b>
 <br>
+Status : ${data.status}
+
+<br><br>
+
 <button onclick="banUser('${uid}')">BAN</button>
 <button onclick="unbanUser('${uid}')">UNBAN</button>
+
 </div>
 `;
 
