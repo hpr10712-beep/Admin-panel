@@ -9,7 +9,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
 
 :root{
---accent-primary: linear-gradient(135deg,#ff6b6b,#4ecdc4);
+--accent:linear-gradient(135deg,#ff6b6b,#4ecdc4);
 }
 
 body{
@@ -17,7 +17,6 @@ margin:0;
 font-family:'Orbitron',monospace;
 background:#000;
 color:#fff;
-overflow-x:hidden;
 }
 
 /* GRID */
@@ -33,35 +32,52 @@ background-size:40px 40px;
 z-index:-1;
 }
 
+/* VIDEO BG */
+#anime-bg{
+position:fixed;
+width:100%;
+height:100%;
+z-index:-2;
+opacity:0.1;
+}
+
+#anime-bg video{
+width:100%;
+height:100%;
+object-fit:cover;
+}
+
 /* CONTAINER */
+
 .container{
-max-width:1000px;
+max-width:900px;
 margin:auto;
-padding:40px;
+padding:40px 20px;
 }
 
 .header{
 text-align:center;
-margin-bottom:30px;
+margin-bottom:40px;
 }
 
 .header h1{
-font-size:45px;
-background:var(--accent-primary);
+font-size:50px;
+background:var(--accent);
 -webkit-background-clip:text;
 -webkit-text-fill-color:transparent;
 }
 
 /* TAB */
+
 .tab-container{
 display:flex;
 gap:10px;
-margin-bottom:20px;
+margin-bottom:30px;
 }
 
 .tab-btn{
 flex:1;
-padding:12px;
+padding:15px;
 border:none;
 border-radius:10px;
 background:#111;
@@ -70,11 +86,12 @@ cursor:pointer;
 }
 
 .tab-btn.active{
-background:var(--accent-primary);
+background:var(--accent);
 color:black;
 }
 
 /* CARD */
+
 .card{
 background:rgba(255,255,255,0.05);
 padding:20px;
@@ -83,24 +100,36 @@ margin-bottom:20px;
 }
 
 /* INPUT */
+
 input{
 width:100%;
 padding:12px;
 margin:10px 0;
-border-radius:10px;
 border:none;
+border-radius:10px;
 background:#111;
 color:white;
 }
 
 /* BUTTON */
+
 button{
 width:100%;
 padding:12px;
 border:none;
 border-radius:10px;
-background:var(--accent-primary);
+background:var(--accent);
+color:black;
 cursor:pointer;
+margin-top:10px;
+}
+
+/* USER LIST */
+
+.userBox{
+background:#111;
+padding:15px;
+border-radius:10px;
 margin-top:10px;
 }
 
@@ -110,31 +139,20 @@ padding:10px;
 border-radius:10px;
 }
 
-.success{background:green;}
-.error{background:red;}
+.success{background:green}
+.error{background:red}
 
 .hidden{display:none}
-
-/* USER LIST */
-.userBox{
-background:#111;
-padding:10px;
-margin-top:10px;
-border-radius:10px;
-display:flex;
-justify-content:space-between;
-align-items:center;
-gap:10px;
-}
-
-.userBox button{
-width:auto;
-padding:6px 10px;
-}
 </style>
 </head>
 
 <body>
+
+<div id="anime-bg">
+<video autoplay muted loop>
+<source src="https://assets.mixkit.co/videos/preview/mixkit-abstract-neon-lines-in-motion-12166-large.mp4">
+</video>
+</div>
 
 <div class="container">
 
@@ -147,11 +165,13 @@ padding:6px 10px;
 <button class="tab-btn" id="btnAdmin">ADMIN</button>
 </div>
 
-<div id="userList"></div>
 
-<!-- USER -->
+<!-- USER TAB -->
+
 <div id="userTab">
+
 <div class="card">
+
 <h2>Login User</h2>
 
 <input id="userEmail" placeholder="Email">
@@ -160,15 +180,22 @@ padding:6px 10px;
 <button id="loginBtn">LOGIN</button>
 
 <div id="userStatus"></div>
+
 </div>
 
 <div id="userDashboard" class="hidden card">
+
 <h3 id="userInfo"></h3>
+
 <button id="logoutUser">LOGOUT</button>
-</div>
+
 </div>
 
-<!-- ADMIN -->
+</div>
+
+
+<!-- ADMIN TAB -->
+
 <div id="adminTab" class="hidden">
 
 <div class="card">
@@ -187,6 +214,10 @@ padding:6px 10px;
 <button id="logoutAdmin">LOGOUT</button>
 
 </div>
+
+<h3>LIST USER</h3>
+
+<div id="userList"></div>
 
 </div>
 
@@ -222,43 +253,46 @@ messagingSenderId: "20608954308",
 appId: "1:20608954308:web:0e09ba796c9086813fbe91"
 };
 
-
 const app = initializeApp(firebaseConfig);
+
 const auth = getAuth(app);
 const db = getDatabase(app);
 
 
 /* ELEMENT */
 
-const userTab = document.getElementById("userTab");
-const adminTab = document.getElementById("adminTab");
+const btnUser=document.getElementById("btnUser");
+const btnAdmin=document.getElementById("btnAdmin");
 
-const btnUser = document.getElementById("btnUser");
-const btnAdmin = document.getElementById("btnAdmin");
+const userTab=document.getElementById("userTab");
+const adminTab=document.getElementById("adminTab");
 
-const loginBtn = document.getElementById("loginBtn");
-const userEmail = document.getElementById("userEmail");
-const userPassword = document.getElementById("userPassword");
+const loginBtn=document.getElementById("loginBtn");
 
-const userStatus = document.getElementById("userStatus");
-const userDashboard = document.getElementById("userDashboard");
-const userInfo = document.getElementById("userInfo");
+const userEmail=document.getElementById("userEmail");
+const userPassword=document.getElementById("userPassword");
 
-const createBtn = document.getElementById("createBtn");
-const newEmail = document.getElementById("newEmail");
-const newPass = document.getElementById("newPass");
-const createStatus = document.getElementById("createStatus");
+const userStatus=document.getElementById("userStatus");
+const userDashboard=document.getElementById("userDashboard");
+const userInfo=document.getElementById("userInfo");
 
-const logoutUser = document.getElementById("logoutUser");
-const logoutAdmin = document.getElementById("logoutAdmin");
+const createBtn=document.getElementById("createBtn");
+const newEmail=document.getElementById("newEmail");
+const newPass=document.getElementById("newPass");
 
-const adminInfo = document.getElementById("adminInfo");
-const userList = document.getElementById("userList");
+const createStatus=document.getElementById("createStatus");
+
+const logoutUser=document.getElementById("logoutUser");
+const logoutAdmin=document.getElementById("logoutAdmin");
+
+const adminInfo=document.getElementById("adminInfo");
+
+const userList=document.getElementById("userList");
 
 
 /* TAB */
 
-btnUser.onclick = () => {
+btnUser.onclick=()=>{
 
 userTab.classList.remove("hidden");
 adminTab.classList.add("hidden");
@@ -266,10 +300,9 @@ adminTab.classList.add("hidden");
 btnUser.classList.add("active");
 btnAdmin.classList.remove("active");
 
-};
+}
 
-
-btnAdmin.onclick = () => {
+btnAdmin.onclick=()=>{
 
 adminTab.classList.remove("hidden");
 userTab.classList.add("hidden");
@@ -277,12 +310,12 @@ userTab.classList.add("hidden");
 btnAdmin.classList.add("active");
 btnUser.classList.remove("active");
 
-};
+}
 
 
 /* LOGIN USER */
 
-loginBtn.onclick = () => {
+loginBtn.onclick=()=>{
 
 signInWithEmailAndPassword(auth,userEmail.value,userPassword.value)
 
@@ -290,94 +323,68 @@ signInWithEmailAndPassword(auth,userEmail.value,userPassword.value)
 
 userDashboard.classList.remove("hidden");
 
-userInfo.innerText = "Welcome " + res.user.email;
+userInfo.innerText="Welcome "+res.user.email;
 
-userStatus.innerHTML =
-`<div class="status success">Login Success</div>`;
+userStatus.innerHTML=`<div class="status success">Login Success</div>`
 
 })
 
 .catch(err=>{
 
-userStatus.innerHTML =
-`<div class="status error">${err.message}</div>`;
+userStatus.innerHTML=`<div class="status error">${err.message}</div>`
 
-});
+})
 
-};
+}
 
 
 /* CREATE USER */
 
-createBtn.onclick = () => {
+createBtn.onclick=()=>{
 
 createUserWithEmailAndPassword(auth,newEmail.value,newPass.value)
 
-.then((cred)=>{
+.then(res=>{
 
-const uid = cred.user.uid;
+const uid=res.user.uid
 
 update(ref(db,"users/"+uid),{
+
 username:newEmail.value,
 status:"active"
-});
 
-createStatus.innerHTML =
-`<div class="status success">User Created</div>`;
+})
+
+createStatus.innerHTML=`<div class="status success">User Created</div>`
 
 })
 
 .catch(err=>{
-createStatus.innerHTML =
-`<div class="status error">${err.message}</div>`;
-});
 
-};
+createStatus.innerHTML=`<div class="status error">${err.message}</div>`
 
-
-/* LOGOUT */
-
-logoutUser.onclick = ()=> signOut(auth).then(()=>location.reload());
-
-logoutAdmin.onclick = ()=> signOut(auth).then(()=>location.reload());
-
-
-/* AUTO LOGIN */
-
-onAuthStateChanged(auth,user=>{
-
-if(user){
-
-adminInfo.innerHTML =
-`<div class="status success">Login: ${user.email}</div>`;
+})
 
 }
-
-});
 
 
 /* USER LIST */
 
-onValue(ref(db,"users"),(snapshot)=>{
+onValue(ref(db,"users"),snapshot=>{
 
-userList.innerHTML = "";
-
-if(!snapshot.exists()){
-userList.innerHTML = "<div class='card'>Belum ada user</div>";
-return;
-}
+userList.innerHTML=""
 
 snapshot.forEach(child=>{
 
-let data = child.val();
-let uid = child.key;
+let data=child.val()
+let uid=child.key
 
-userList.innerHTML += `
-<div class="card">
+userList.innerHTML+=`
+
+<div class="userBox">
 
 <b>${data.username}</b>
-<br>
-Status : ${data.status}
+<br>Status : ${data.status}
 
 <br><br>
 
@@ -385,51 +392,60 @@ Status : ${data.status}
 <button onclick="unbanUser('${uid}')">UNBAN</button>
 
 </div>
-`;
 
-});
+`
 
-});
+})
+
+})
 
 
-/* BAN USER */
+/* BAN */
 
-window.banUser = function(uid){
-
-if(confirm("Yakin ingin BAN user ini?")){
+window.banUser=function(uid){
 
 update(ref(db,"users/"+uid),{
 
 status:"banned"
 
-});
+})
 
-alert("User berhasil di BAN");
-
-}
+alert("User di BAN")
 
 }
 
 
-/* UNBAN USER */
+/* UNBAN */
 
-window.unbanUser = function(uid){
-
-if(confirm("Aktifkan kembali user ini?")){
+window.unbanUser=function(uid){
 
 update(ref(db,"users/"+uid),{
 
 status:"active"
 
-});
+})
 
-alert("User berhasil diaktifkan");
-
-}
+alert("User diaktifkan")
 
 }
 
-</script>
+
+/* LOGOUT */
+
+logoutUser.onclick=()=>signOut(auth).then(()=>location.reload())
+logoutAdmin.onclick=()=>signOut(auth).then(()=>location.reload())
+
+
+onAuthStateChanged(auth,user=>{
+
+if(user){
+
+adminInfo.innerHTML=`<div class="status success">Login : ${user.email}</div>`
+
+}
+
+})
+
 </script>
 
 </body>
