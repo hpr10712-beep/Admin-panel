@@ -185,6 +185,7 @@ button:active{ transform:scale(0.96); }
 </div>
 
 <!-- USER -->
+  <div id="userList"></div>
 <div id="userTab">
   <div class="card">
     <h2>Login User</h2>
@@ -212,6 +213,9 @@ button:active{ transform:scale(0.96); }
     <div id="createStatus"></div>
 
     <button id="logoutAdmin">LOGOUT</button>
+  <button onclick="banUser('UID_USER')">BAN</button>
+<button onclick="unbanUser('UID_USER')">UNBAN</button>
+  
   </div>
 </div>
 
@@ -228,6 +232,32 @@ import {
   signOut
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
+import { getDatabase, ref, onValue } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
+
+const db = getDatabase();
+const userList = document.getElementById("userList");
+
+onValue(ref(db, "users"), (snapshot) => {
+
+userList.innerHTML = "";
+
+snapshot.forEach((child) => {
+
+let data = child.val();
+let uid = child.key;
+
+userList.innerHTML += `
+<div class="userBox">
+<b>${data.username}</b> - ${data.status}
+<button onclick="banUser('${uid}')">BAN</button>
+<button onclick="unbanUser('${uid}')">UNBAN</button>
+</div>
+`;
+
+});
+
+});
+  
 const firebaseConfig = {
   apiKey: "AIzaSyAgGd8-u_E_JKKs0Zf7rXZ6O4ADw85CUAU",
   authDomain: "radzpanel-3a8a3.firebaseapp.com",
@@ -235,6 +265,7 @@ const firebaseConfig = {
   storageBucket: "radzpanel-3a8a3.firebasestorage.app",
   messagingSenderId: "20608954308",
   appId: "1:20608954308:web:0e09ba796c9086813fbe91"
+
 };
 
 const app = initializeApp(firebaseConfig);
@@ -295,6 +326,41 @@ onAuthStateChanged(auth,user=>{
     adminInfo.innerHTML=`<div class="status success">Login: ${user.email}</div>`;
   }
 });
+
+  import { getDatabase, ref, update } from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
+
+function banUser(uid){
+
+if(confirm("Yakin ingin BAN user ini?")){
+
+const db = getDatabase();
+
+update(ref(db, "users/" + uid), {
+status: "banned"
+});
+
+alert("User berhasil di BAN");
+
+}
+
+}
+
+  function unbanUser(uid){
+
+if(confirm("Aktifkan kembali user ini?")){
+
+const db = getDatabase();
+
+update(ref(db, "users/" + uid), {
+status: "active"
+});
+
+alert("User berhasil diaktifkan");
+
+}
+
+  }
+  
 </script>
 
 </body>
