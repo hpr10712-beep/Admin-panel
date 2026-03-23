@@ -192,6 +192,7 @@ padding:6px 10px;
 
 </div>
 
+
 <script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
@@ -207,143 +208,134 @@ signOut
 import {
 getDatabase,
 ref,
-set,
 onValue,
 update
-} from "https://www.gstatic.com/firebasejs/10.7.0/firebase-database.js";
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+
 
 const firebaseConfig = {
 apiKey: "AIzaSyAgGd8-u_E_JKKs0Zf7rXZ6O4ADw85CUAU",
 authDomain: "radzpanel-3a8a3.firebaseapp.com",
 projectId: "radzpanel-3a8a3",
-storageBucket: "radzpanel-3a8a3.appspot.com",
+storageBucket: "radzpanel-3a8a3.firebasestorage.app",
 messagingSenderId: "20608954308",
 appId: "1:20608954308:web:0e09ba796c9086813fbe91"
 };
+
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getDatabase(app);
 
-/* ELEMENT */
-const loginBtn = document.getElementById("loginBtn");
-const createBtn = document.getElementById("createBtn");
 
+/* ELEMENT */
+
+const userTab = document.getElementById("userTab");
+const adminTab = document.getElementById("adminTab");
+
+const btnUser = document.getElementById("btnUser");
+const btnAdmin = document.getElementById("btnAdmin");
+
+const loginBtn = document.getElementById("loginBtn");
 const userEmail = document.getElementById("userEmail");
 const userPassword = document.getElementById("userPassword");
 
+const userStatus = document.getElementById("userStatus");
+const userDashboard = document.getElementById("userDashboard");
+const userInfo = document.getElementById("userInfo");
+
+const createBtn = document.getElementById("createBtn");
 const newEmail = document.getElementById("newEmail");
 const newPass = document.getElementById("newPass");
+const createStatus = document.getElementById("createStatus");
 
+const logoutUser = document.getElementById("logoutUser");
+const logoutAdmin = document.getElementById("logoutAdmin");
+
+const adminInfo = document.getElementById("adminInfo");
 const userList = document.getElementById("userList");
 
-/* LOGIN */
-loginBtn.onclick = ()=>{
+
+/* TAB */
+
+btnUser.onclick = () => {
+
+userTab.classList.remove("hidden");
+adminTab.classList.add("hidden");
+
+btnUser.classList.add("active");
+btnAdmin.classList.remove("active");
+
+};
+
+
+btnAdmin.onclick = () => {
+
+adminTab.classList.remove("hidden");
+userTab.classList.add("hidden");
+
+btnAdmin.classList.add("active");
+btnUser.classList.remove("active");
+
+};
+
+
+/* LOGIN USER */
+
+loginBtn.onclick = () => {
 
 signInWithEmailAndPassword(auth,userEmail.value,userPassword.value)
 
 .then(res=>{
 
 userDashboard.classList.remove("hidden");
-userInfo.innerText="Welcome "+res.user.email;
 
-userStatus.innerHTML=`<div class="status success">Login Success</div>`;
+userInfo.innerText = "Welcome " + res.user.email;
+
+userStatus.innerHTML =
+`<div class="status success">Login Success</div>`;
 
 })
 
 .catch(err=>{
 
-userStatus.innerHTML=`<div class="status error">${err.message}</div>`;
+userStatus.innerHTML =
+`<div class="status error">${err.message}</div>`;
 
 });
 
 };
 
+
 /* CREATE USER */
-createBtn.onclick = ()=>{
+
+createBtn.onclick = () => {
 
 createUserWithEmailAndPassword(auth,newEmail.value,newPass.value)
 
-.then(res=>{
+.then(()=>{
 
-set(ref(db,"users/"+res.user.uid),{
-username:newEmail.value,
-status:"active"
-});
-
-createStatus.innerHTML=`<div class="status success">User Created</div>`;
+createStatus.innerHTML =
+`<div class="status success">User Created</div>`;
 
 })
 
 .catch(err=>{
 
-createStatus.innerHTML=`<div class="status error">${err.message}</div>`;
+createStatus.innerHTML =
+`<div class="status error">${err.message}</div>`;
 
 });
 
 };
 
-/* USER LIST REALTIME */
-
-onValue(ref(db,"users"),snapshot=>{
-
-userList.innerHTML="";
-
-snapshot.forEach(child=>{
-
-let data=child.val();
-let uid=child.key;
-
-userList.innerHTML+=`
-
-<div class="userBox">
-
-<b>${data.username}</b>
-
-<span>${data.status}</span>
-
-<div>
-
-<button onclick="banUser('${uid}')">BAN</button>
-
-<button onclick="unbanUser('${uid}')">UNBAN</button>
-
-</div>
-
-</div>
-
-`;
-
-});
-
-});
-
-/* BAN */
-window.banUser=(uid)=>{
-
-update(ref(db,"users/"+uid),{
-status:"banned"
-});
-
-alert("User di BAN");
-
-};
-
-/* UNBAN */
-window.unbanUser=(uid)=>{
-
-update(ref(db,"users/"+uid),{
-status:"active"
-});
-
-alert("User diaktifkan");
-
-};
 
 /* LOGOUT */
 
-logoutUser.onclick=()=>signOut(auth).then(()=>location.reload());
-logoutAdmin.onclick=()=>signOut(auth).then(()=>location.reload());
+logoutUser.onclick = ()=> signOut(auth).then(()=>location.reload());
+
+logoutAdmin.onclick = ()=> signOut(auth).then(()=>location.reload());
+
 
 /* AUTO LOGIN */
 
@@ -351,12 +343,77 @@ onAuthStateChanged(auth,user=>{
 
 if(user){
 
-adminInfo.innerHTML=`<div class="status success">Login : ${user.email}</div>`;
+adminInfo.innerHTML =
+`<div class="status success">Login: ${user.email}</div>`;
 
 }
 
 });
 
+
+/* USER LIST */
+
+onValue(ref(db,"users"),(snapshot)=>{
+
+userList.innerHTML = "";
+
+snapshot.forEach(child=>{
+
+let data = child.val();
+let uid = child.key;
+
+userList.innerHTML += `
+<div class="card">
+<b>${data.username || "user"}</b> - ${data.status || "active"}
+<br>
+<button onclick="banUser('${uid}')">BAN</button>
+<button onclick="unbanUser('${uid}')">UNBAN</button>
+</div>
+`;
+
+});
+
+});
+
+
+/* BAN USER */
+
+window.banUser = function(uid){
+
+if(confirm("Yakin ingin BAN user ini?")){
+
+update(ref(db,"users/"+uid),{
+
+status:"banned"
+
+});
+
+alert("User berhasil di BAN");
+
+}
+
+}
+
+
+/* UNBAN USER */
+
+window.unbanUser = function(uid){
+
+if(confirm("Aktifkan kembali user ini?")){
+
+update(ref(db,"users/"+uid),{
+
+status:"active"
+
+});
+
+alert("User berhasil diaktifkan");
+
+}
+
+}
+
+</script>
 </script>
 
 </body>
