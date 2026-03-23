@@ -225,10 +225,11 @@ border-radius:10px;
 
 
 <script type="module">
+<script type="module">
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 
-import {
+import { 
 getAuth,
 signInWithEmailAndPassword,
 createUserWithEmailAndPassword,
@@ -239,8 +240,9 @@ signOut
 import {
 getDatabase,
 ref,
-onValue,
-update
+set,
+update,
+onValue
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
 
 
@@ -254,11 +256,11 @@ const firebaseConfig = {
   measurementId: "G-VR4YG2S5L1"
 };
 
+
 const app = initializeApp(firebaseConfig);
 
 const auth = getAuth(app);
 const db = getDatabase(app);
-
 
 /* ELEMENT */
 
