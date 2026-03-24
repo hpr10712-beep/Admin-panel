@@ -252,52 +252,165 @@ window.openMenu = ()=>{
 
 /* ================= SLIDER ================= */
 let index = 0;
-const slider = document.getElementById("slider");
-const slides = slider.querySelectorAll("img");
-const dots = document.getElementById("dots");
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
 
-// dots
-slides.forEach((_,i)=>{
-  let d = document.createElement("span");
-  d.onclick = ()=>{index=i;update()};
-  dots.appendChild(d);
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  onAuthStateChanged,
+  signOut
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
+
+import {
+  getFirestore,
+  doc,
+  getDoc,
+  setDoc,
+  updateDoc
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
+
+/* ================= CONFIG ================= */
+const firebaseConfig = {
+  apiKey: "AIzaSyAgGd8-u_E_JKKs0Zf7rXZ6O4ADw85CUAU",
+  authDomain: "radzpanel-3a8a3.firebaseapp.com",
+  projectId: "radzpanel-3a8a3",
+  storageBucket: "radzpanel-3a8a3.firebasestorage.app",
+  messagingSenderId: "20608954308",
+  appId: "1:20608954308:web:0e09ba796c9086813fbe91",
+  measurementId: "G-VR4YG2S5L1"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+
+/* ================= REGISTER ================= */
+window.register = function(){
+  const mail = emailReg.value;
+  const pass = passReg.value;
+
+  if(!mail || !pass){
+    alert("Isi email & password!");
+    return;
+  }
+
+  createUserWithEmailAndPassword(auth, mail, pass)
+  .then(async res=>{
+    await setDoc(doc(db,"users",res.user.uid), {
+      email: mail,
+      status: "FREE",
+      expired: 0,
+      createdAt: Date.now()
+    });
+
+    alert("Akun berhasil dibuat!");
+  })
+  .catch(e=>alert(e.message));
+};
+
+/* ================= LOGIN ================= */
+window.login = function(){
+  signInWithEmailAndPassword(auth,email.value,password.value)
+  .catch(()=>alert("Login gagal"));
+};
+
+/* ================= AUTO LOGIN ================= */
+onAuthStateChanged(auth, async user=>{
+  if(user){
+    loginBox.classList.add("hidden");
+    dashboard.classList.remove("hidden");
+    userEmail.innerText = user.email;
+
+    const ref = doc(db,"users",user.uid);
+    const snap = await getDoc(ref);
+
+    let status = "FREE";
+    let expired = 0;
+
+    if(snap.exists()){
+      const data = snap.data();
+      status = data.status || "FREE";
+      expired = data.expired || 0;
+    }
+
+    if(expired && Date.now() > expired){
+      status = "FREE";
+    }
+
+    statusUser.innerText = status;
+  }
 });
 
-function update(){
-  slider.style.transform = `translateX(-${index*100}%)`;
+/* ================= LOGOUT ================= */
+window.logout = ()=>signOut(auth).then(()=>location.reload());
 
-  dots.querySelectorAll("span").forEach((d,i)=>{
-    d.classList.toggle("active",i===index);
+/* ================= AUTO UPGRADE ================= */
+window.beli = async function(paket){
+  const user = auth.currentUser;
+
+  if(!user){
+    alert("Login dulu!");
+    return;
+  }
+
+  let status = "FREE";
+  let expired = 0;
+
+  if(paket.toLowerCase().includes("vip")){
+    status = "VIP";
+    expired = Date.now() + (30*24*60*60*1000);
+  }
+
+  if(paket.toLowerCase().includes("premium")){
+    status = "PREMIUM";
+    expired = Date.now() + (30*24*60*60*1000);
+  }
+
+  await updateDoc(doc(db,"users",user.uid), {
+    status: status,
+    expired: expired
   });
-}
 
-// auto slide
-setInterval(()=>{
-  index = (index+1)%slides.length;
-  update();
-},4000);
+  statusUser.innerText = status;
 
-update();
+  const kode = "TRX" + Math.floor(Math.random()*999999);
 
-/* ================= SWIPE ================= */
-let startX=0, endX=0;
+  window.open("https://wa.me/6289603266259?text=" +
+    encodeURIComponent("Saya membeli "+paket+" | "+kode)
+  );
 
-slider.addEventListener("touchstart",e=>{
-  startX = e.touches[0].clientX;
-});
+  alert("Berhasil upgrade ke " + status);
+};
 
-slider.addEventListener("touchend",e=>{
-  endX = e.changedTouches[0].clientX;
+/* ================= CEK AKSES ================= */
+window.cekAkses = function(level){
+  const status = statusUser.innerText;
 
-  if(startX - endX > 50) index++;
-  if(endX - startX > 50) index--;
+  if(level === "VIP" && status === "FREE"){
+    alert("Harus VIP!");
+    return false;
+  }
 
-  if(index < 0) index = slides.length-1;
-  if(index >= slides.length) index = 0;
+  if(level === "PREMIUM" && status !== "PREMIUM"){
+    alert("Harus PREMIUM!");
+    return false;
+  }
 
-  update();
-});
-           
+  return true;
+};
+
+/* ================= MENU ================= */
+window.openPaket = ()=>{
+  paketMenu.classList.toggle("hidden");
+  bugMenu.classList.add("hidden");
+};
+
+window.openMenu = ()=>{
+  bugMenu.classList.toggle("hidden");
+  paketMenu.classList.add("hidden");
+};
 </script>
 
 </body>
