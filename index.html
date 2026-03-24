@@ -3,247 +3,136 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Radz Store Elite Panel</title>
+<title>Radz Store Elite</title>
 
 <style>
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
-
-:root{
---accent:linear-gradient(135deg,#ff6b6b,#4ecdc4);
-}
-
 body{
-margin:0;
-font-family:'Orbitron',monospace;
-background:#000;
-color:#fff;
+  margin:0;
+  font-family:sans-serif;
+  background:#000;
+  color:#fff;
 }
-
-/* GRID */
-body::before{
-content:"";
-position:fixed;
-width:100%;
-height:100%;
-background-image:
-linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
-linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
-background-size:40px 40px;
-z-index:-1;
-}
-
-/* VIDEO BG */
-#anime-bg{
-position:fixed;
-width:100%;
-height:100%;
-z-index:-2;
-opacity:0.1;
-}
-
-#anime-bg video{
-width:100%;
-height:100%;
-object-fit:cover;
-}
-
-/* CONTAINER */
 
 .container{
-max-width:900px;
-margin:auto;
-padding:40px 20px;
+  max-width:500px;
+  margin:auto;
+  padding:20px;
 }
-
-.header{
-text-align:center;
-margin-bottom:40px;
-}
-
-.header h1{
-font-size:50px;
-background:var(--accent);
--webkit-background-clip:text;
--webkit-text-fill-color:transparent;
-}
-
-/* TAB */
-
-.tab-container{
-display:flex;
-gap:10px;
-margin-bottom:30px;
-}
-
-.tab-btn{
-flex:1;
-padding:15px;
-border:none;
-border-radius:10px;
-background:#111;
-color:#aaa;
-cursor:pointer;
-}
-
-.tab-btn.active{
-background:var(--accent);
-color:black;
-}
-
-/* CARD */
 
 .card{
-background:rgba(255,255,255,0.05);
-padding:20px;
-border-radius:15px;
-margin-bottom:20px;
+  background:#111;
+  padding:15px;
+  border-radius:10px;
+  margin-top:10px;
 }
-
-/* INPUT */
-
-input{
-width:100%;
-padding:12px;
-margin:10px 0;
-border:none;
-border-radius:10px;
-background:#111;
-color:white;
-}
-
-/* BUTTON */
 
 button{
-width:100%;
-padding:12px;
-border:none;
-border-radius:10px;
-background:var(--accent);
-color:black;
-cursor:pointer;
-margin-top:10px;
+  width:100%;
+  padding:12px;
+  border:none;
+  border-radius:10px;
+  background:red;
+  color:#fff;
+  cursor:pointer;
 }
 
-/* USER LIST */
-
-.userBox{
-background:#111;
-padding:15px;
-border-radius:10px;
-margin-top:10px;
+/* SLIDER */
+.slider-container{
+  aspect-ratio:16/9;
+  overflow:hidden;
+  border-radius:10px;
 }
 
-.status{
-margin-top:10px;
-padding:10px;
-border-radius:10px;
+.slider{
+  display:flex;
+  transition:0.4s;
 }
 
-.success{background:green}
-.error{background:red}
+.slider img{
+  width:100%;
+  flex-shrink:0;
+  object-fit:cover;
+}
 
-.hidden{display:none}
+.dots{
+  text-align:center;
+  margin-top:5px;
+}
+.dots span{
+  display:inline-block;
+  width:8px;
+  height:8px;
+  background:#555;
+  border-radius:50%;
+  margin:3px;
+}
+.dots .active{background:red}
+
+.hidden{display:none;}
 </style>
 </head>
 
 <body>
 
-<div id="anime-bg">
-<video autoplay muted loop>
-<source src="https://assets.mixkit.co/videos/preview/mixkit-abstract-neon-lines-in-motion-12166-large.mp4">
-</video>
+<div class="container" id="loginBox">
+<h2>Login</h2>
+<input id="email" placeholder="Email"><br><br>
+<input id="password" type="password" placeholder="Password"><br><br>
+<button onclick="login()">LOGIN</button>
 </div>
 
-<div class="container">
-
-<div class="header">
-<h1>RADZ STORE</h1>
-</div>
-
-<div class="tab-container">
-<button class="tab-btn active" id="btnUser">USER</button>
-<button class="tab-btn" id="btnAdmin">ADMIN</button>
-</div>
-
-
-<!-- USER TAB -->
-
-<div id="userTab">
+<div class="container hidden" id="dashboard">
 
 <div class="card">
-
-<h2>Login User</h2>
-
-<input id="userEmail" placeholder="Email">
-<input id="userPassword" type="password" placeholder="Password">
-
-<button id="loginBtn">LOGIN</button>
-
-<div id="userStatus"></div>
-
+<b id="userEmail"></b><br>
+Status: <span id="statusUser">FREE</span>
 </div>
-
-<div id="userDashboard" class="hidden card">
-
-<h3 id="userInfo"></h3>
-
-<button id="logoutUser">LOGOUT</button>
-
-</div>
-
-</div>
-
-
-<!-- ADMIN TAB -->
-
-<div id="adminTab" class="hidden">
 
 <div class="card">
-
-<h2>Admin Panel</h2>
-
-<div id="adminInfo"></div>
-
-<input id="newEmail" placeholder="Email user">
-<input id="newPass" type="password" placeholder="Password">
-
-<button id="createBtn">CREATE USER</button>
-
-<div id="createStatus"></div>
-
-<button id="logoutAdmin">LOGOUT</button>
-
+<div class="slider-container">
+<div class="slider" id="slider">
+<img src="https://picsum.photos/400/200?1">
+<img src="https://picsum.photos/400/200?2">
+<img src="https://picsum.photos/400/200?3">
+</div>
+</div>
+<div class="dots" id="dots"></div>
 </div>
 
-<h3>LIST USER</h3>
+<div class="card">
+<button onclick="openPaket()">BELI PAKET</button>
+<button onclick="openMenu()">MENU</button>
+<button onclick="logout()">LOGOUT</button>
+</div>
 
-<div id="userList"></div>
+<div id="paketMenu" class="hidden card">
+<button onclick="beli('VIP')">VIP</button>
+<button onclick="beli('PREMIUM')">PREMIUM</button>
+</div>
 
+<div id="bugMenu" class="hidden card">
+<button onclick="akses('VIP')">FITUR VIP</button>
+<button onclick="akses('PREMIUM')">FITUR PREMIUM</button>
 </div>
 
 </div>
 
 <script type="module">
-
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-
-import { 
-getAuth,
-signInWithEmailAndPassword,
-createUserWithEmailAndPassword,
-onAuthStateChanged,
-signOut
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  onAuthStateChanged,
+  signOut
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
 
 import {
-getDatabase,
-ref,
-set,
-update,
-onValue
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
+  getFirestore,
+  doc,
+  getDoc
+} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
-
+/* CONFIG KAMU */
 const firebaseConfig = {
   apiKey: "AIzaSyAgGd8-u_E_JKKs0Zf7rXZ6O4ADw85CUAU",
   authDomain: "radzpanel-3a8a3.firebaseapp.com",
@@ -254,200 +143,87 @@ const firebaseConfig = {
   measurementId: "G-VR4YG2S5L1"
 };
 
-
 const app = initializeApp(firebaseConfig);
-
 const auth = getAuth(app);
-const db = getDatabase(app);
-
-/* ELEMENT */
-
-const btnUser=document.getElementById("btnUser");
-const btnAdmin=document.getElementById("btnAdmin");
-
-const userTab=document.getElementById("userTab");
-const adminTab=document.getElementById("adminTab");
-
-const loginBtn=document.getElementById("loginBtn");
-
-const userEmail=document.getElementById("userEmail");
-const userPassword=document.getElementById("userPassword");
-
-const userStatus=document.getElementById("userStatus");
-const userDashboard=document.getElementById("userDashboard");
-const userInfo=document.getElementById("userInfo");
-
-const createBtn=document.getElementById("createBtn");
-const newEmail=document.getElementById("newEmail");
-const newPass=document.getElementById("newPass");
-
-const createStatus=document.getElementById("createStatus");
-
-const logoutUser=document.getElementById("logoutUser");
-const logoutAdmin=document.getElementById("logoutAdmin");
-
-const adminInfo=document.getElementById("adminInfo");
-
-const userList=document.getElementById("userList");
-
-
-/* TAB */
-
-btnUser.onclick=()=>{
-
-userTab.classList.remove("hidden");
-adminTab.classList.add("hidden");
-
-btnUser.classList.add("active");
-btnAdmin.classList.remove("active");
-
-}
-
-btnAdmin.onclick=()=>{
-
-adminTab.classList.remove("hidden");
-userTab.classList.add("hidden");
-
-btnAdmin.classList.add("active");
-btnUser.classList.remove("active");
-
-}
-
-
-/* LOGIN USER */
-
-loginBtn.onclick=()=>{
-
-signInWithEmailAndPassword(auth,userEmail.value,userPassword.value)
-
-.then(res=>{
-
-userDashboard.classList.remove("hidden");
-
-userInfo.innerText="Welcome "+res.user.email;
-
-userStatus.innerHTML=`<div class="status success">Login Success</div>`
-
-})
-
-.catch(err=>{
-
-userStatus.innerHTML=`<div class="status error">${err.message}</div>`
-
-})
-
-}
-
-
-/* CREATE USER */
-
-createBtn.onclick=()=>{
-
-createUserWithEmailAndPassword(auth,newEmail.value,newPass.value)
-
-.then(res=>{
-
-const uid=res.user.uid
-
-update(ref(db,"users/"+uid),{
-
-username:newEmail.value,
-status:"active"
-
-})
-
-createStatus.innerHTML=`<div class="status success">User Created</div>`
-
-})
-
-.catch(err=>{
-
-createStatus.innerHTML=`<div class="status error">${err.message}</div>`
-
-})
-
-}
-
-
-/* USER LIST */
-
-onValue(ref(db,"users"),snapshot=>{
-
-userList.innerHTML=""
-
-snapshot.forEach(child=>{
-
-let data=child.val()
-let uid=child.key
-
-userList.innerHTML+=`
-
-<div class="userBox">
-
-<b>${data.username}</b>
-<br>Status : ${data.status}
-
-<br><br>
-
-<button onclick="banUser('${uid}')">BAN</button>
-<button onclick="unbanUser('${uid}')">UNBAN</button>
-
-</div>
-
-`
-
-})
-
-})
-
-
-/* BAN */
-
-window.banUser=function(uid){
-
-update(ref(db,"users/"+uid),{
-
-status:"banned"
-
-})
-
-alert("User di BAN")
-
-}
-
-
-/* UNBAN */
-
-window.unbanUser=function(uid){
-
-update(ref(db,"users/"+uid),{
-
-status:"active"
-
-})
-
-alert("User diaktifkan")
-
-}
-
-
-/* LOGOUT */
-
-logoutUser.onclick=()=>signOut(auth).then(()=>location.reload())
-logoutAdmin.onclick=()=>signOut(auth).then(()=>location.reload())
-
-
-onAuthStateChanged(auth,user=>{
-
-if(user){
-
-adminInfo.innerHTML=`<div class="status success">Login : ${user.email}</div>`
-
-}
-
-})
-
-</script>
+const db = getFirestore(app);
+
+/* ================= LOGIN ================= */
+window.login = function(){
+  signInWithEmailAndPassword(auth,email.value,password.value)
+  .catch(()=>{
+    showPopup("Login Gagal","error");
+  });
+};
+
+/* ================= AUTO LOGIN ================= */
+onAuthStateChanged(auth, async user=>{
+  if(user){
+    loginBox.classList.add("hidden");
+    dashboard.classList.remove("hidden");
+    userEmail.innerText = user.email;
+
+    const ref = doc(db, "users", user.uid);
+    const snap = await getDoc(ref);
+
+    let status = "FREE";
+    let expired = 0;
+
+    if(snap.exists()){
+      const data = snap.data();
+      status = data.status || "FREE";
+      expired = data.expired || 0;
+    }
+
+    // CEK EXPIRED
+    const now = Date.now();
+    if(expired && now > expired){
+      status = "FREE";
+    }
+
+    document.getElementById("statusUser").innerText = status;
+  }
+});
+
+/* ================= LOGOUT ================= */
+window.logout = ()=>signOut(auth).then(()=>location.reload());
+
+/* ================= CEK AKSES ================= */
+window.cekAkses = function(level){
+  const status = document.getElementById("statusUser").innerText;
+
+  if(level === "VIP" && status === "FREE"){
+    showPopup("Butuh VIP!","error");
+    return false;
+  }
+
+  if(level === "PREMIUM" && status !== "PREMIUM"){
+    showPopup("Butuh PREMIUM!","error");
+    return false;
+  }
+
+  return true;
+};
+
+/* ================= BELI (AUTO WA) ================= */
+window.beli = function(paket){
+  let text = "";
+
+  if(paket === "VIP"){
+    text = "Halo admin saya ingin membeli VIP";
+  }
+
+  if(paket === "PREMIUM"){
+    text = "Halo admin saya ingin membeli PREMIUM";
+  }
+
+  if(paket.includes("Seumur")){
+    text = "Halo admin saya ingin membeli Paket Lifetime";
+  }
+
+  window.open("https://wa.me/6289603266259?text=" + encodeURIComponent(text));
+};
+
+  </script>
 
 </body>
 </html>
