@@ -119,9 +119,11 @@ Status: <span id="statusUser">FREE</span>
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
+
 import {
   getAuth,
   signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
   onAuthStateChanged,
   signOut
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
@@ -129,7 +131,8 @@ import {
 import {
   getFirestore,
   doc,
-  getDoc
+  getDoc,
+  setDoc
 } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js";
 
 /* CONFIG KAMU */
@@ -147,12 +150,35 @@ const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
 
+/* ================= REGISTER ================= */
+window.register = function(){
+  const mail = document.getElementById("emailReg").value;
+  const pass = document.getElementById("passReg").value;
+
+  if(!mail || !pass){
+    alert("Isi email & password!");
+    return;
+  }
+
+  createUserWithEmailAndPassword(auth, mail, pass)
+  .then(async res=>{
+
+    await setDoc(doc(db,"users",res.user.uid), {
+      email: mail,
+      status: "FREE",
+      expired: 0,
+      createdAt: Date.now()
+    });
+
+    alert("Akun berhasil dibuat!");
+  })
+  .catch(e=>alert(e.message));
+};
+
 /* ================= LOGIN ================= */
 window.login = function(){
   signInWithEmailAndPassword(auth,email.value,password.value)
-  .catch(()=>{
-    showPopup("Login Gagal","error");
-  });
+  .catch(()=>alert("Login gagal"));
 };
 
 /* ================= AUTO LOGIN ================= */
@@ -162,7 +188,7 @@ onAuthStateChanged(auth, async user=>{
     dashboard.classList.remove("hidden");
     userEmail.innerText = user.email;
 
-    const ref = doc(db, "users", user.uid);
+    const ref = doc(db,"users",user.uid);
     const snap = await getDoc(ref);
 
     let status = "FREE";
@@ -174,13 +200,12 @@ onAuthStateChanged(auth, async user=>{
       expired = data.expired || 0;
     }
 
-    // CEK EXPIRED
-    const now = Date.now();
-    if(expired && now > expired){
+    // AUTO EXPIRED
+    if(expired && Date.now() > expired){
       status = "FREE";
     }
 
-    document.getElementById("statusUser").innerText = status;
+    statusUser.innerText = status;
   }
 });
 
@@ -189,41 +214,91 @@ window.logout = ()=>signOut(auth).then(()=>location.reload());
 
 /* ================= CEK AKSES ================= */
 window.cekAkses = function(level){
-  const status = document.getElementById("statusUser").innerText;
+  const status = statusUser.innerText;
 
   if(level === "VIP" && status === "FREE"){
-    showPopup("Butuh VIP!","error");
+    alert("Harus VIP!");
     return false;
   }
 
   if(level === "PREMIUM" && status !== "PREMIUM"){
-    showPopup("Butuh PREMIUM!","error");
+    alert("Harus PREMIUM!");
     return false;
   }
 
   return true;
 };
 
-/* ================= BELI (AUTO WA) ================= */
+/* ================= BELI ================= */
 window.beli = function(paket){
-  let text = "";
+  const kode = "TRX" + Math.floor(Math.random()*999999);
 
-  if(paket === "VIP"){
-    text = "Halo admin saya ingin membeli VIP";
-  }
+  const text = `Halo admin saya ingin membeli ${paket}
+Kode: ${kode}`;
 
-  if(paket === "PREMIUM"){
-    text = "Halo admin saya ingin membeli PREMIUM";
-  }
-
-  if(paket.includes("Seumur")){
-    text = "Halo admin saya ingin membeli Paket Lifetime";
-  }
-
-  window.open("https://wa.me/6289603266259?text=" + encodeURIComponent(text));
+  window.open("https://wa.me/6289603266259?text="+encodeURIComponent(text));
 };
 
-  </script>
+/* ================= MENU ================= */
+window.openPaket = ()=>{
+  paketMenu.classList.toggle("hidden");
+  bugMenu.classList.add("hidden");
+};
+
+window.openMenu = ()=>{
+  bugMenu.classList.toggle("hidden");
+  paketMenu.classList.add("hidden");
+};
+
+/* ================= SLIDER ================= */
+let index = 0;
+const slider = document.getElementById("slider");
+const slides = slider.querySelectorAll("img");
+const dots = document.getElementById("dots");
+
+// dots
+slides.forEach((_,i)=>{
+  let d = document.createElement("span");
+  d.onclick = ()=>{index=i;update()};
+  dots.appendChild(d);
+});
+
+function update(){
+  slider.style.transform = `translateX(-${index*100}%)`;
+
+  dots.querySelectorAll("span").forEach((d,i)=>{
+    d.classList.toggle("active",i===index);
+  });
+}
+
+// auto slide
+setInterval(()=>{
+  index = (index+1)%slides.length;
+  update();
+},4000);
+
+update();
+
+/* ================= SWIPE ================= */
+let startX=0, endX=0;
+
+slider.addEventListener("touchstart",e=>{
+  startX = e.touches[0].clientX;
+});
+
+slider.addEventListener("touchend",e=>{
+  endX = e.changedTouches[0].clientX;
+
+  if(startX - endX > 50) index++;
+  if(endX - startX > 50) index--;
+
+  if(index < 0) index = slides.length-1;
+  if(index >= slides.length) index = 0;
+
+  update();
+});
+           
+</script>
 
 </body>
 </html>
