@@ -7,25 +7,22 @@
     <style>
         body { font-family: sans-serif; background: #121212; color: white; margin: 0; padding: 15px; }
     .header {
+    .header {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    background: linear-gradient(135deg, #1e1e1e, #2a2a2a);
-    padding: 12px;
-    border-radius: 10px;
-    margin-bottom: 15px;
-    border: 1px solid #333;
-    gap: 10px;
-}
-
+    gap: 8px; /* kecilin jarak */
+    }
 .balance-box, .price-box {
     flex: 1;
 }
 
 .divider {
     width: 1px;
-    height: 35px;
+    height: 30px;
     background: #333;
+    flex-shrink: 0; /* 🔥 biar tidak melebar */
+}
 }
 
 .label {
@@ -83,6 +80,24 @@
 
         .history { margin-top: 20px; font-size: 0.9em; }
         .history-item { border-bottom: 1px solid #333; padding: 8px 0; display: flex; justify-content: space-between; }
+
+.balance-box, .price-box {
+    flex: 1;
+    min-width: 0; /* 🔥 penting biar tidak overflow */
+}
+        .value {
+    font-size: 14px;
+    font-weight: 600;
+    white-space: nowrap;      /* 🔥 tidak turun baris */
+    overflow: hidden;         
+    text-overflow: ellipsis;  /* kalau kepanjangan jadi ... */
+        }
+        
+.price-box {
+    text-align: right;
+}
+
+        
     </style>
 </head>
 <body>
