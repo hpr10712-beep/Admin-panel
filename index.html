@@ -1,551 +1,320 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Radz Store Elite Panel</title>
-
-<style>
-@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap');
-
-:root{
---accent:linear-gradient(135deg,#ff6b6b,#4ecdc4);
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Simulasi Trading Pro</title>
+    <style>
+        body { font-family: sans-serif; background: #121212; color: white; margin: 0; padding: 15px; }
+    .header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: linear-gradient(135deg, #1e1e1e, #2a2a2a);
+    padding: 12px;
+    border-radius: 10px;
+    margin-bottom: 15px;
+    border: 1px solid #333;
+    gap: 10px;
 }
 
-body{
-margin:0;
-font-family:'Orbitron',monospace;
-background:#000;
-color:#fff;
+.balance-box, .price-box {
+    flex: 1;
 }
 
-/* GRID */
-body::before{
-content:"";
-position:fixed;
-width:100%;
-height:100%;
-background-image:
-linear-gradient(rgba(255,255,255,0.05) 1px, transparent 1px),
-linear-gradient(90deg, rgba(255,255,255,0.05) 1px, transparent 1px);
-background-size:40px 40px;
-z-index:-1;
+.divider {
+    width: 1px;
+    height: 35px;
+    background: #333;
 }
 
-/* VIDEO BG */
-#anime-bg{
-position:fixed;
-width:100%;
-height:100%;
-z-index:-2;
-opacity:0.1;
+.label {
+    font-size: 10px;
+    color: #777;
+    margin-bottom: 3px;
+    letter-spacing: 0.5px;
 }
 
-#anime-bg video{
-width:100%;
-height:100%;
-object-fit:cover;
+/* ANGKA */
+.value {
+    font-size: 15px;
+    font-weight: 600;
 }
 
-/* CONTAINER */
-
-.container{
-max-width:900px;
-margin:auto;
-padding:40px 20px;
+/* SALDO ABU */
+.balance {
+    color: #9e9e9e;
 }
 
-.header{
-text-align:center;
-margin-bottom:40px;
+/* HARGA HIJAU TUA */
+.price-up {
+    color: #00a86b;
 }
 
-.header h1{
-font-size:50px;
-background:var(--accent);
--webkit-background-clip:text;
--webkit-text-fill-color:transparent;
+.price-down {
+    color: #ff4444;
 }
+        .balance-box { text-align: left; }
+        .balance-box span { font-size: 0.8em; color: #aaa; }
+        .balance-box div { font-size: 1.4em; font-weight: bold; color: #00ff88; }
+        
+        #chart-container { background: #1e1e1e; height: 250px; border-radius: 10px; position: relative; border: 1px solid #333; margin-bottom: 15px; }
+        canvas { width: 100%; height: 100%; }
 
-/* TAB */
+        .trade-info { background: #1e1e1e; padding: 15px; border-radius: 10px; margin-bottom: 15px; border-left: 5px solid #555; }
+        .profit { color: #00ff88; }
+        .loss { color: #ff4444; }
 
-.tab-container{
-display:flex;
-gap:10px;
-margin-bottom:30px;
-}
+        .actions { display: flex; gap: 10px; }
+        button { flex: 1; padding: 15px; border: none; border-radius: 8px; font-weight: bold; cursor: pointer; color: white; }
+        .btn-buy { background: #00c853; }
+        .btn-sell { background: #ff3d00; }
+        .btn-close { background: #555; margin-top: 10px; width: 100%; }
 
-.tab-btn{
-flex:1;
-padding:15px;
-border:none;
-border-radius:10px;
-background:#111;
-color:#aaa;
-cursor:pointer;
-}
-
-.tab-btn.active{
-background:var(--accent);
-color:black;
-}
-
-/* CARD */
-
-.card{
-background:rgba(255,255,255,0.05);
-padding:20px;
-border-radius:15px;
-margin-bottom:20px;
-}
-
-/* INPUT */
-
-input{
-width:100%;
-padding:12px;
-margin:10px 0;
-border:none;
-border-radius:10px;
-background:#111;
-color:white;
-}
-
-/* BUTTON */
-
-button{
-width:100%;
-padding:12px;
-border:none;
-border-radius:10px;
-background:var(--accent);
-color:black;
-cursor:pointer;
-margin-top:10px;
-}
-
-/* USER LIST */
-
-.userBox{
-background:#111;
-padding:15px;
-border-radius:10px;
-margin-top:10px;
-}
-
-.status{
-margin-top:10px;
-padding:10px;
-border-radius:10px;
-}
-
-.success{background:green}
-.error{background:red}
-
-.hidden{display:none}
-</style>
+        .history { margin-top: 20px; font-size: 0.9em; }
+        .history-item { border-bottom: 1px solid #333; padding: 8px 0; display: flex; justify-content: space-between; }
+    </style>
 </head>
-
 <body>
-
-<div id="anime-bg">
-<video autoplay muted loop>
-<source src="https://assets.mixkit.co/videos/preview/mixkit-abstract-neon-lines-in-motion-12166-large.mp4">
-</video>
-</div>
-
-<div class="container">
-
 <div class="header">
-<h1>RADZ STORE</h1>
+    <div class="balance-box">
+        <div class="label">SALDO AKUN</div>
+        <div id="balanceDisplay" class="value balance">Rp 10.000.000</div>
+    </div>
+
+    <div class="divider"></div>
+
+    <div class="price-box" style="text-align:right;">
+        <div class="label">HARGA SAAT INI</div>
+        <div id="livePrice" class="value price-up">0</div>
+    </div>
 </div>
 
-<div class="tab-container">
-<button class="tab-btn active" id="btnUser">USER</button>
-<button class="tab-btn" id="btnAdmin">ADMIN</button>
-</div>
-
-
-<!-- USER TAB -->
-
-<div id="userTab">
-
-<div class="card">
-
-<h2>Login User</h2>
-
-<input id="userEmail" placeholder="Email">
-<input id="userPassword" type="password" placeholder="Password">
-
-<button id="loginBtn">LOGIN</button>
-
-<div id="userStatus"></div>
-
-</div>
-
-<div id="userDashboard" class="hidden card">
-
-<button onclick="upgradeVIP()">UPGRADE VIP</button>
-<button onclick="upgradePremium()">UPGRADE PREMIUM</button>
-
-  <h3 id="userInfo"></h3>
-
-<button id="logoutUser">LOGOUT</button>
-
-</div>
-
-</div>
-
-
-<!-- ADMIN TAB -->
-
-<div id="adminTab" class="hidden">
-
-<div class="card">
-
-<h2>Admin Panel</h2>
-
-<div id="adminInfo"></div>
-
-<input id="newEmail" placeholder="Email user">
-<input id="newPass" type="password" placeholder="Password">
-
-<button id="createBtn">CREATE USER</button>
-
-<div id="createStatus"></div>
-
-<button id="logoutAdmin">LOGOUT</button>
-
-</div>
-
-<h3>LIST USER</h3>
-
-<div id="userList"></div>
-
-</div>
-  
-</div>
-
-<script type="module">
-
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js";
-
-import { 
-getAuth,
-signInWithEmailAndPassword,
-createUserWithEmailAndPassword,
-onAuthStateChanged,
-signOut
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-auth.js";
-
-import {
-getDatabase,
-ref,
-set,
-update,
-onValue
-} from "https://www.gstatic.com/firebasejs/10.12.2/firebase-database.js";
-
-
-const firebaseConfig = {
-  apiKey: "AIzaSyAgGd8-u_E_JKKs0Zf7rXZ6O4ADw85CUAU",
-  authDomain: "radzpanel-3a8a3.firebaseapp.com",
-  projectId: "radzpanel-3a8a3",
-  storageBucket: "radzpanel-3a8a3.firebasestorage.app",
-  messagingSenderId: "20608954308",
-  appId: "1:20608954308:web:0e09ba796c9086813fbe91",
-  measurementId: "G-VR4YG2S5L1"
-};
-
-
-const app = initializeApp(firebaseConfig);
-
-const auth = getAuth(app);
-const db = getDatabase(app);
-
-/* ELEMENT */
-
-const btnUser=document.getElementById("btnUser");
-const btnAdmin=document.getElementById("btnAdmin");
-
-const userTab=document.getElementById("userTab");
-const adminTab=document.getElementById("adminTab");
-
-const loginBtn=document.getElementById("loginBtn");
-
-const userEmail=document.getElementById("userEmail");
-const userPassword=document.getElementById("userPassword");
-
-const userStatus=document.getElementById("userStatus");
-const userDashboard=document.getElementById("userDashboard");
-const userInfo=document.getElementById("userInfo");
-
-const createBtn=document.getElementById("createBtn");
-const newEmail=document.getElementById("newEmail");
-const newPass=document.getElementById("newPass");
-
-const createStatus=document.getElementById("createStatus");
-
-const logoutUser=document.getElementById("logoutUser");
-const logoutAdmin=document.getElementById("logoutAdmin");
-
-const adminInfo=document.getElementById("adminInfo");
-
-const userList=document.getElementById("userList");
-
-
-/* TAB */
-
-btnUser.onclick=()=>{
-
-userTab.classList.remove("hidden");
-adminTab.classList.add("hidden");
-
-btnUser.classList.add("active");
-btnAdmin.classList.remove("active");
-
-}
-
-btnAdmin.onclick=()=>{
-
-adminTab.classList.remove("hidden");
-userTab.classList.add("hidden");
-
-btnAdmin.classList.add("active");
-btnUser.classList.remove("active");
-
-}
-
-
-/* LOGIN USER */
-
-loginBtn.onclick=()=>{
-
-signInWithEmailAndPassword(auth,userEmail.value,userPassword.value)
-
-.then(res=>{
-
-const uid = res.user.uid;
-const userRef = ref(db, "users/" + uid);
-
-// ambil data dari database
-onValue(userRef, snap=>{
-
-const data = snap.val();
-
-if(data){
-
-// tampilkan dashboard
-userDashboard.classList.remove("hidden");
-
-// tampilkan info lengkap
-userInfo.innerHTML = `
-Welcome ${res.user.email}<br>
-Status: <b>${data.status}</b>
-`;
-
-userStatus.innerHTML = `<div class="status success">Login Success</div>`;
-
-}else{
-userStatus.innerHTML = `<div class="status error">Data user tidak ditemukan</div>`;
-}
-
-});
-
-})
-
-.catch(err=>{
-userStatus.innerHTML=`<div class="status error">${err.message}</div>`
-})
-
-}
-
-.catch(err=>{
-
-userStatus.innerHTML=`<div class="status error">${err.message}</div>`
-
-})
-
-}
-
-
-/* CREATE USER */
-
-createBtn.onclick=()=>{
-
-createUserWithEmailAndPassword(auth,newEmail.value,newPass.value)
-
-.then(res=>{
-
-const uid=res.user.uid
-
-update(ref(db,"users/"+uid),{
-
-username:newEmail.value,
-status:"active"
-
-})
-
-createStatus.innerHTML=`<div class="status success">User Created</div>`
-
-})
-
-.catch(err=>{
-
-createStatus.innerHTML=`<div class="status error">${err.message}</div>`
-
-})
-
-}
-
-
-/* USER LIST */
-
-onValue(ref(db,"users"),snapshot=>{
-
-userList.innerHTML=""
-
-snapshot.forEach(child=>{
-
-let data=child.val()
-let uid=child.key
-
-userList.innerHTML+=`
-
-<div class="userBox">
-
-<b>${data.username}</b>
-<br>Status : ${data.status}
-
-<br><br>
-
-<button onclick="banUser('${uid}')">BAN</button>
-<button onclick="unbanUser('${uid}')">UNBAN</button>
-
-</div>
-
-`
-
-})
-
-})
-
-
-/* BAN */
-
-window.banUser=function(uid){
-
-update(ref(db,"users/"+uid),{
-
-status:"banned"
-
-})
-
-alert("User di BAN")
-
-}
-
-
-/* UNBAN */
-
-window.unbanUser=function(uid){
-
-update(ref(db,"users/"+uid),{
-
-status:"active"
-
-})
-
-alert("User diaktifkan")
-
-}
-
-
-/* LOGOUT */
-
-logoutUser.onclick=()=>signOut(auth).then(()=>location.reload())
-logoutAdmin.onclick=()=>signOut(auth).then(()=>location.reload())
-
-
-onAuthStateChanged(auth,user=>{
-
-if(user){
-
-adminInfo.innerHTML=`<div class="status success">Login : ${user.email}</div>`
-
-}
-
-})
-// ================= STATUS USER =================
-
-// tampilkan status saat login
-onAuthStateChanged(auth, user=>{
-  if(user){
-
-    const userRef = ref(db, "users/" + user.uid);
-
-    onValue(userRef, snap=>{
-      const data = snap.val();
-
-      if(data){
-
-        let status = data.status || "FREE";
-        let expired = data.expired || 0;
-
-        // cek expired
-        if(expired && Date.now() > expired){
-          status = "FREE";
-
-          update(userRef,{
-            status:"FREE"
-          });
-        }
-
-        userInfo.innerHTML = `
-        Welcome ${user.email}<br>
-        Status: <b>${status}</b>
-        `;
-      }
-    });
-  }
-});
-  window.upgradeVIP = function(){
-
-  const user = auth.currentUser;
-
-  if(!user){
-    alert("Login dulu!");
-    return;
-  }
-
-  const userRef = ref(db, "users/" + user.uid);
-
-  update(userRef,{
-    status:"VIP",
-    expired: Date.now() + (30*24*60*60*1000)
-  });
-
-  alert("Berhasil upgrade ke VIP");
-}
-
-window.upgradePremium = function(){
-
-  const user = auth.currentUser;
-
-  if(!user){
-    alert("Login dulu!");
-    return;
-  }
-
-  const userRef = ref(db, "users/" + user.uid);
-
-  update(userRef,{
-    status:"PREMIUM",
-    expired: Date.now() + (30*24*60*60*1000)
-  });
-
-  alert("Berhasil upgrade ke PREMIUM");
+    <div id="chart-container">
+        <canvas id="tradingChart"></canvas>
+    </div>
+
+    <div id="positionCard" class="trade-info" style="display: none;">
+        <strong>Posisi Terbuka: <span id="posType"></span></strong><br>
+        Harga Beli: <span id="entryPrice">0</span><br>
+        P/L: <span id="plDisplay" class="profit">Rp 0</span>
+        <button class="btn-close" onclick="closePosition()">TUTUP POSISI (TAKE PROFIT/CUT LOSS)</button>
+    </div>
+
+    <div class="actions" id="mainActions">
+        <button class="btn-buy" onclick="openPosition('BUY')">BELI (LONG)</button>
+        <button class="btn-sell" onclick="openPosition('SELL')">JUAL (SHORT)</button>
+    </div>
+
+    <div class="history">
+        <strong>Riwayat Transaksi:</strong>
+        <div id="historyList"></div>
+    </div>
+
+<script>
+// === INISIALISASI WAJIB (INI YANG KAMU KURANG) ===
+let currentPrice = 50000;
+const canvas = document.getElementById('tradingChart');
+const ctx = canvas.getContext('2d');
+
+// === DATA CANDLE ===
+let candles = [];
+let tick = 0;
+
+// === UPDATE MARKET ===
+function updateMarket() {
+    const change = (Math.random() - 0.5) * 2000000000000;
+    currentPrice += change;
+    if(currentPrice < 1000) currentPrice = 1000;
+
+    document.getElementById('livePrice').innerText =
+        Math.round(currentPrice).toLocaleString('id-ID');
+
+    // buat candle pertama
+    if (candles.length === 0) {
+        candles.push({
+            open: currentPrice,
+            high: currentPrice,
+            low: currentPrice,
+            close: currentPrice
+        });
     }
+
+    let last = candles[candles.length - 1];
+
+    // update candle terakhir (biar gerak)
+    last.close = currentPrice;
+    if (currentPrice > last.high) last.high = currentPrice;
+    if (currentPrice < last.low) last.low = currentPrice;
+
+    tick++;
+
+    // bikin candle baru tiap beberapa tick
+    if (tick > 10) {
+        candles.push({
+            open: currentPrice,
+            high: currentPrice,
+            low: currentPrice,
+            close: currentPrice
+        });
+        tick = 0;
+    }
+
+    if (candles.length > 40) candles.shift();
+
+    drawChart();
+    calculatePL();
+}
+
+// === DRAW CHART ===
+function drawChart() {
+    canvas.width = canvas.offsetWidth;
+    canvas.height = canvas.offsetHeight;
+
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+    // GRID
+    ctx.strokeStyle = '#222';
+    ctx.lineWidth = 1;
+
+    for (let i = 0; i < canvas.height; i += 40) {
+        ctx.beginPath();
+        ctx.moveTo(0, i);
+        ctx.lineTo(canvas.width, i);
+        ctx.stroke();
+    }
+
+    const allPrices = candles.flatMap(c => [c.high, c.low]);
+    const min = Math.min(...allPrices);
+    const max = Math.max(...allPrices);
+    const range = max - min || 1;
+
+    const candleWidth = canvas.width / candles.length;
+
+    candles.forEach((c, i) => {
+        const x = i * candleWidth + candleWidth * 0.2;
+
+        const openY = canvas.height - ((c.open - min) / range * canvas.height);
+        const closeY = canvas.height - ((c.close - min) / range * canvas.height);
+        const highY = canvas.height - ((c.high - min) / range * canvas.height);
+        const lowY = canvas.height - ((c.low - min) / range * canvas.height);
+
+        const isUp = c.close > c.open;
+
+        // WICK
+        ctx.strokeStyle = isUp ? '#00ff88' : '#ff4444';
+        ctx.beginPath();
+        ctx.moveTo(x + candleWidth * 0.3, highY);
+        ctx.lineTo(x + candleWidth * 0.3, lowY);
+        ctx.stroke();
+
+        // BODY
+        ctx.fillStyle = isUp ? '#00c853' : '#ff3d00';
+
+        const bodyHeight = Math.abs(openY - closeY);
+        ctx.fillRect(
+            x,
+            Math.min(openY, closeY),
+            candleWidth * 0.6,
+            bodyHeight < 2 ? 2 : bodyHeight
+        );
+    });
+}
+
+// === START LOOP ===
+setInterval(updateMarket, 200);
+
+// === DATA TRADING ===
+let balance = 10000000;
+let position = null;
+
+// === BUKA POSISI ===
+function openPosition(type) {
+    if (position) {
+        alert("Selesaikan posisi dulu!");
+        return;
+    }
+
+    const tradeAmount = 1000000;
+
+    if (balance < tradeAmount) {
+        alert("Saldo tidak cukup!");
+        return;
+    }
+
+    balance -= tradeAmount;
+
+    position = {
+        type: type,
+        entry: currentPrice,
+        amount: tradeAmount
+    };
+
+    document.getElementById('balanceDisplay').innerText =
+        "Rp " + balance.toLocaleString('id-ID');
+
+    document.getElementById('positionCard').style.display = 'block';
+    document.getElementById('mainActions').style.display = 'none';
+
+    document.getElementById('posType').innerText = type;
+    document.getElementById('entryPrice').innerText =
+        Math.round(currentPrice).toLocaleString('id-ID');
+}
+
+// === HITUNG PROFIT LOSS ===
+function calculatePL() {
+    if (!position) return;
+
+    let diff = (currentPrice - position.entry) / position.entry;
+
+    if (position.type === 'SELL') diff = -diff;
+
+    const pl = position.amount * diff;
+
+    const el = document.getElementById('plDisplay');
+
+    el.innerText =
+        (pl >= 0 ? "+" : "") +
+        "Rp " + Math.round(pl).toLocaleString('id-ID');
+
+    el.className = pl >= 0 ? "profit" : "loss";
+}
+
+// === TUTUP POSISI ===
+function closePosition() {
+    if (!position) return;
+
+    let diff = (currentPrice - position.entry) / position.entry;
+
+    if (position.type === 'SELL') diff = -diff;
+
+    const pl = position.amount * diff;
+    const total = position.amount + pl;
+
+    balance += total;
+
+    // history
+    const log = document.createElement('div');
+    log.className = "history-item";
+    log.innerHTML = `
+        <span>${position.type}</span>
+        <span class="${pl >= 0 ? 'profit' : 'loss'}">
+            ${Math.round(pl).toLocaleString('id-ID')}
+        </span>
+    `;
+
+    document.getElementById('historyList').prepend(log);
+
+    // reset
+    position = null;
+
+    document.getElementById('balanceDisplay').innerText =
+        "Rp " + balance.toLocaleString('id-ID');
+
+    document.getElementById('positionCard').style.display = 'none';
+    document.getElementById('mainActions').style.display = 'flex';
+}
+
 </script>
 
 </body>
