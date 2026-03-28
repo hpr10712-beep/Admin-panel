@@ -325,13 +325,40 @@ signInWithEmailAndPassword(auth,userEmail.value,userPassword.value)
 
 .then(res=>{
 
+const uid = res.user.uid;
+const userRef = ref(db, "users/" + uid);
+
+// ambil data dari database
+onValue(userRef, snap=>{
+
+const data = snap.val();
+
+if(data){
+
+// tampilkan dashboard
 userDashboard.classList.remove("hidden");
 
-userInfo.innerText="Welcome "+res.user.email;
+// tampilkan info lengkap
+userInfo.innerHTML = `
+Welcome ${res.user.email}<br>
+Status: <b>${data.status}</b>
+`;
 
-userStatus.innerHTML=`<div class="status success">Login Success</div>`
+userStatus.innerHTML = `<div class="status success">Login Success</div>`;
+
+}else{
+userStatus.innerHTML = `<div class="status error">Data user tidak ditemukan</div>`;
+}
+
+});
 
 })
+
+.catch(err=>{
+userStatus.innerHTML=`<div class="status error">${err.message}</div>`
+})
+
+}
 
 .catch(err=>{
 
