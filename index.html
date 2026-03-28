@@ -125,6 +125,16 @@ let tick = 0;
 function updateMarket() {
     const change = (Math.random() - 0.5) * 2000000000000;
     currentPrice += change;
+
+if (candles.length === 0) {
+    candles.push({
+        open: currentPrice,
+        high: currentPrice,
+        low: currentPrice,
+        close: currentPrice
+    });
+}
+    
     if(currentPrice < 1000) currentPrice = 1000;
 
     document.getElementById('livePrice').innerText =
@@ -249,15 +259,24 @@ function drawChart() {
         document.getElementById('entryPrice').innerText =
             Math.round(position.entry).toLocaleString('id-ID');
     }
-        }
-    loadData();
+
+    // 🔥 TAMBAHKAN DI SINI
+    if (candles.length > 0) {
+        drawChart();
+    }
+    }
+    
+
+// === START LOOP ===
+// === DATA TRADING (PINDAH KE ATAS) ===
+let balance = 10000000;
+let position = null;
+
+// === LOAD DATA ===
+loadData();
 
 // === START LOOP ===
 setInterval(updateMarket, 200);
-
-// === DATA TRADING ===
-let balance = 10000000;
-let position = null;
 
 // === BUKA POSISI ===
 function openPosition(type) {
