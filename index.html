@@ -416,8 +416,7 @@ function closePosition() {
     // reset
     position = null;
 
-    document.getElementById('balanceDisplay').innerText =
-        "Rp " + balance.toLocaleString('id-ID');
+    animateBalance(balance);
 
     document.getElementById('positionCard').style.display = 'none';
     document.getElementById('mainActions').style.display = 'flex';
@@ -434,6 +433,31 @@ saveData(); //
 
     localStorage.setItem('tradingData', JSON.stringify(data));
 }
+
+    function animateBalance(target) {
+    const el = document.getElementById('balanceDisplay');
+
+    let start = parseInt(el.innerText.replace(/\D/g, '')) || 0;
+    let duration = 500; // durasi animasi (ms)
+    let startTime = null;
+
+    function animate(time) {
+        if (!startTime) startTime = time;
+        let progress = time - startTime;
+
+        let value = Math.floor(start + (target - start) * (progress / duration));
+
+        el.innerText = "Rp " + value.toLocaleString('id-ID');
+
+        if (progress < duration) {
+            requestAnimationFrame(animate);
+        } else {
+            el.innerText = "Rp " + target.toLocaleString('id-ID');
+        }
+    }
+
+    requestAnimationFrame(animate);
+    }
 
 </script>
 
