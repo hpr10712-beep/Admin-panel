@@ -164,6 +164,7 @@ function updateMarket() {
 
     drawChart();
     calculatePL();
+    saveData(); //
 }
 
 // === DRAW CHART ===
@@ -221,6 +222,36 @@ function drawChart() {
     });
 }
 
+    function loadData() {
+    const saved = localStorage.getItem('tradingData');
+
+    if (!saved) return;
+
+    const data = JSON.parse(saved);
+
+    balance = data.balance ?? 10000000;
+    position = data.position ?? null;
+    candles = data.candles ?? [];
+    currentPrice = data.currentPrice ?? 50000;
+
+    // update tampilan
+    document.getElementById('balanceDisplay').innerText =
+        "Rp " + balance.toLocaleString('id-ID');
+
+    document.getElementById('livePrice').innerText =
+        Math.round(currentPrice).toLocaleString('id-ID');
+
+    if (position) {
+        document.getElementById('positionCard').style.display = 'block';
+        document.getElementById('mainActions').style.display = 'none';
+
+        document.getElementById('posType').innerText = position.type;
+        document.getElementById('entryPrice').innerText =
+            Math.round(position.entry).toLocaleString('id-ID');
+    }
+        }
+    loadData();
+
 // === START LOOP ===
 setInterval(updateMarket, 200);
 
@@ -259,6 +290,7 @@ function openPosition(type) {
     document.getElementById('posType').innerText = type;
     document.getElementById('entryPrice').innerText =
         Math.round(currentPrice).toLocaleString('id-ID');
+saveData(); //
 }
 
 // === HITUNG PROFIT LOSS ===
@@ -313,6 +345,18 @@ function closePosition() {
 
     document.getElementById('positionCard').style.display = 'none';
     document.getElementById('mainActions').style.display = 'flex';
+saveData(); //
+}
+
+    function saveData() {
+    const data = {
+        balance: balance,
+        position: position,
+        candles: candles,
+        currentPrice: currentPrice
+    };
+
+    localStorage.setItem('tradingData', JSON.stringify(data));
 }
 
 </script>
