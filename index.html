@@ -2,14 +2,17 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>ADMIN | CONTROL CENTER</title>
+    <meta name="viewport" content="width=1200">
+    <title>ADMIN | GOD MODE CONTROL</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=Inter:wght@400;700&display=swap" rel="stylesheet">
     <style>
         body { background: #020617; color: white; width: 1200px; margin: 0 auto; padding: 40px; font-family: 'Inter', sans-serif; }
         .glass { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.05); }
         .font-orbitron { font-family: 'Orbitron', sans-serif; }
+        .neon-border-blue { border-bottom: 4px solid #3b82f6; box-shadow: 0 10px 30px -10px rgba(59, 130, 246, 0.5); }
+        .neon-border-red { border-bottom: 4px solid #ef4444; box-shadow: 0 10px 30px -10px rgba(239, 68, 68, 0.5); }
         ::-webkit-scrollbar { width: 5px; }
         ::-webkit-scrollbar-thumb { background: #eab308; border-radius: 10px; }
     </style>
@@ -17,33 +20,50 @@
 <body>
 
     <nav class="flex justify-between items-center mb-10 glass p-8 rounded-[2.5rem] border-t-4 border-yellow-500 shadow-2xl">
-        <h1 class="font-orbitron text-3xl font-black text-yellow-500 italic">ADMIN COMMAND</h1>
-        <div class="glass px-8 py-3 rounded-2xl text-right">
-            <p class="text-[9px] text-slate-500 font-bold uppercase">Total Users</p>
-            <p id="totalU" class="text-xl font-orbitron font-bold">0</p>
+        <div class="flex items-center gap-4">
+            <div class="h-12 w-12 bg-yellow-500 rounded-xl flex items-center justify-center font-black text-black text-xl font-orbitron">A</div>
+            <h1 class="font-orbitron text-3xl font-black text-white italic tracking-tighter">CONTROL CENTER</h1>
+        </div>
+        <div class="flex gap-6">
+            <div class="glass px-8 py-3 rounded-2xl text-right border-r-4 border-blue-500">
+                <p class="text-[9px] text-slate-500 font-bold uppercase tracking-widest">Total Users</p>
+                <p id="totalU" class="text-xl font-orbitron font-bold">0</p>
+            </div>
+            <div class="glass px-8 py-3 rounded-2xl text-right border-r-4 border-yellow-500">
+                <p class="text-[9px] text-slate-500 font-bold uppercase tracking-widest">Global Balance</p>
+                <p id="globalBal" class="text-xl font-orbitron font-bold text-yellow-500">Rp 0</p>
+            </div>
         </div>
     </nav>
 
     <div class="grid grid-cols-2 gap-8 mb-10">
-        <button onclick="setWin('A')" class="bg-blue-600 hover:bg-blue-500 p-10 rounded-[3rem] font-orbitron font-black text-3xl transition-all active:scale-95 shadow-xl shadow-blue-900/30">WIN BLUE (A)</button>
-        <button onclick="setWin('B')" class="bg-red-600 hover:bg-red-500 p-10 rounded-[3rem] font-orbitron font-black text-3xl transition-all active:scale-95 shadow-xl shadow-red-900/30">WIN RED (B)</button>
+        <button onclick="setWinner('A')" class="bg-blue-600 hover:bg-blue-500 p-10 rounded-[3rem] font-orbitron font-black text-3xl transition-all active:scale-95 shadow-xl shadow-blue-900/30 border-b-8 border-blue-800">SET WINNER A</button>
+        <button onclick="setWinner('B')" class="bg-red-600 hover:bg-red-500 p-10 rounded-[3rem] font-orbitron font-black text-3xl transition-all active:scale-95 shadow-xl shadow-red-900/30 border-b-8 border-red-800">SET WINNER B</button>
     </div>
 
     <div class="grid grid-cols-3 gap-8">
         <div class="col-span-1 glass p-8 rounded-[3rem] h-[600px] flex flex-col">
-            <h3 class="font-orbitron font-bold text-yellow-500 mb-6 uppercase tracking-widest text-sm">User Management</h3>
+            <h3 class="font-orbitron font-bold text-yellow-500 mb-6 uppercase tracking-widest text-sm flex items-center gap-2">
+                <span class="h-2 w-2 bg-yellow-500 rounded-full animate-ping"></span> Active Players
+            </h3>
             <div id="uList" class="space-y-4 overflow-y-auto pr-2">
                 </div>
         </div>
 
         <div class="col-span-2 glass p-8 rounded-[3rem] h-[600px] flex flex-col">
-            <h3 class="font-orbitron font-bold text-slate-400 mb-6 uppercase tracking-widest text-sm">Global Transaction Logs</h3>
-            <div class="overflow-y-auto pr-2 h-full rounded-2xl border border-white/5">
-                <table class="w-full text-left text-sm font-mono">
-                    <thead class="sticky top-0 bg-slate-900 text-slate-500 text-[11px] uppercase">
-                        <tr><th class="p-4">Time</th><th class="p-4">User</th><th class="p-4">Action</th><th class="p-4">Amount</th></tr>
+            <h3 class="font-orbitron font-bold text-slate-400 mb-6 uppercase tracking-widest text-sm italic">Global Live Activity</h3>
+            <div class="overflow-y-auto pr-2 h-full rounded-3xl border border-white/5 bg-slate-950/40">
+                <table class="w-full text-left text-xs font-mono">
+                    <thead class="sticky top-0 bg-slate-900 text-slate-500 uppercase tracking-tighter">
+                        <tr>
+                            <th class="p-4">Time</th>
+                            <th class="p-4">Player ID</th>
+                            <th class="p-4">Action</th>
+                            <th class="p-4">Amount</th>
+                        </tr>
                     </thead>
-                    <tbody id="logs" class="divide-y divide-white/5 bg-slate-950/40"></tbody>
+                    <tbody id="globalLogs" class="divide-y divide-white/5">
+                        </tbody>
                 </table>
             </div>
         </div>
@@ -53,116 +73,115 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
         import { getDatabase, ref, onValue, set, update, push } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-        // SAMAKAN CONFIG FIREBASE INI DENGAN YANG DI USER
-        const firebaseConfig = {
-  apiKey: "AIzaSyCHr0eemIkfHNFDUkSaFDklp_c1OgmSnl8",
-  authDomain: "mybro-9ba5f.firebaseapp.com",
-  databaseURL: "https://mybro-9ba5f-default-rtdb.firebaseio.com/",
-  projectId: "mybro-9ba5f",
-  storageBucket: "mybro-9ba5f.appspot.com",
-  messagingSenderId: "820948893264",
-  appId: "1:820948893264:web:e58e1a175bc90053335b55"
-};
-        // Sync Data Users & Tombol Top Up
-        onValue(ref(db,
-                    
-        'users'), (snap) => {
+        // CONFIG FIREBASE (WAJIB SAMA DENGAN USER)
+        const firebaseConfig = { 
+            apiKey: "MASUKKAN_API_KEY_ANDA", 
+            databaseURL: "https://PROJECT_ID-default-rtdb.firebaseio.com",
+            projectId: "PROJECT_ID"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // SYNC DATA USERS & TOPUP
+        onValue(ref(db, 'users'), (snap) => {
             const users = snap.val();
             const container = document.getElementById('uList');
-            container.innerHTML = "";
+            let totalB = 0;
             let count = 0;
-            for(let id in users) {
-                count++;
-                container.innerHTML += `
-                    <div class="bg-slate-900/80 p-5 rounded-2xl border border-white/5 flex justify-between items-center">
-                        <div>
-                            <p class="font-bold text-white uppercase text-[11px] mb-1 tracking-wider">${id}</p>
-                            <p class="text-yellow-500 font-bold font-orbitron text-sm">Rp ${users[id].balance.toLocaleString('id-ID')}</p>
+            container.innerHTML = "";
+
+            if(users) {
+                for(let id in users) {
+                    count++;
+                    totalB += (users[id].balance || 0);
+                    container.innerHTML += `
+                        <div class="bg-slate-900/80 p-5 rounded-[1.5rem] border border-white/5 flex justify-between items-center hover:bg-slate-800 transition">
+                            <div>
+                                <p class="font-bold text-white uppercase text-[10px] tracking-widest mb-1">${id}</p>
+                                <p class="text-yellow-500 font-bold font-orbitron text-sm">Rp ${users[id].balance.toLocaleString('id-ID')}</p>
+                            </div>
+                            <button onclick="topup('${id}', ${users[id].balance})" class="bg-gradient-to-r from-green-600 to-green-500 text-white px-4 py-2 rounded-xl font-bold text-[10px] uppercase tracking-widest hover:brightness-125 transition active:scale-95 shadow-lg shadow-green-900/20">TOP UP</button>
                         </div>
-                        <button onclick="topup('${id}', ${users[id].balance})" class="bg-gradient-to-r from-green-600 to-green-500 text-white px-4 py-2 rounded-xl font-bold text-[10px] uppercase tracking-wider hover:opacity-80 transition active:scale-95 shadow-lg shadow-green-900/30">TOP UP</button>
-                    </div>
-                `;
+                    `;
+                }
             }
             document.getElementById('totalU').innerText = count;
+            document.getElementById('globalBal').innerText = "Rp " + totalB.toLocaleString('id-ID');
         });
 
-        // Sync Global Logs
+        // SYNC GLOBAL LOGS (RIWAYAT TRANSAKSI)
         onValue(ref(db, 'globalLogs'), (snap) => {
             const logs = snap.val();
-            const container = document.getElementById('logs');
+            const container = document.getElementById('globalLogs');
             container.innerHTML = "";
             if(logs) {
                 Object.values(logs).reverse().forEach(l => {
-                    const color = l.type === 'win' ? 'text-green-400' : l.type === 'lose' ? 'text-red-400' : 'text-blue-400';
+                    const typeColor = l.type === 'win' ? 'text-green-400' : l.type === 'lose' ? 'text-red-400' : 'text-blue-400';
                     container.innerHTML += `
                         <tr class="hover:bg-white/5 transition">
-                            <td class="p-4 text-slate-500">${l.time}</td>
-                            <td class="p-4 font-bold text-white uppercase">${l.user}</td>
-                            <td class="p-4 italic ${color}">${l.desc}</td>
-                            <td class="p-4 text-yellow-500 font-bold">Rp ${l.amount.toLocaleString('id-ID')}</td>
+                            <td class="p-4 text-slate-500 text-[10px]">${l.time}</td>
+                            <td class="p-4 font-bold text-blue-400 uppercase tracking-tighter">${l.user}</td>
+                            <td class="p-4 italic ${typeColor}">${l.desc}</td>
+                            <td class="p-4 text-yellow-500 font-bold italic">Rp ${l.amount.toLocaleString('id-ID')}</td>
                         </tr>
                     `;
                 });
             }
         });
 
-        // Fitur Top Up Admin
-        window.topup = (uid, currentBal) => {
+        // FUNGSI TOP UP
+        window.topup = (id, current) => {
             Swal.fire({
-                title: 'Top Up: ' + uid.toUpperCase(),
+                title: 'TOP UP ID: ' + id,
                 input: 'number',
-                inputPlaceholder: 'Masukkan Nominal...',
+                inputPlaceholder: 'Nominal Saldo...',
                 background: '#0f172a', color: '#fff',
-                confirmButtonText: 'TAMBAH SALDO',
+                confirmButtonText: 'ISI SALDO',
                 confirmButtonColor: '#16a34a',
                 showCancelButton: true
-            }).then(r => {<div class="glass p-8 rounded-[3rem] h-[500px] overflow-y-auto">
-    <h3 class="font-orbitron font-bold text-yellow-500 mb-6">MANAJEMEN SALDO USER</h3>
-    <div id="userList" class="space-y-4">
-        </div>
-</div>
+            }).then(r => {
+                if(r.isConfirmed && r.value) {
+                    const add = parseInt(r.value);
+                    const newBal = current + add;
+                    const time = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+                    
+                    // Update Saldo
+                    update(ref(db, 'users/' + id), { balance: newBal });
+                    
+                    // Catat Log Global
+                    push(ref(db, 'globalLogs'), {
+                        time: time,
+                        user: id,
+                        desc: 'Top Up dari Admin',
+                        amount: add,
+                        type: 'win'
+                    });
 
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getDatabase, ref, onValue, update } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+                    Swal.fire('BERHASIL', `Saldo ${id} telah ditambah!`, 'success');
+                }
+            });
+        };
 
-    const firebaseConfig = { /* SAMA DENGAN DI ATAS */ };
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
-
-    onValue(ref(db, 'users'), (snap) => {
-        const users = snap.val();
-        const container = document.getElementById('userList');
-        container.innerHTML = "";
-        
-        for (let id in users) {
-            container.innerHTML += `
-                <div class="bg-slate-900 p-5 rounded-2xl flex justify-between items-center border border-white/5">
-                    <div>
-                        <p class="font-bold text-blue-400 text-sm">${id}</p>
-                        <p class="text-yellow-500 font-bold font-orbitron">Rp ${users[id].balance.toLocaleString()}</p>
-                    </div>
-                    <button onclick="prosesTopUp('${id}', ${users[id].balance})" class="bg-yellow-600 text-black px-5 py-2 rounded-xl font-bold hover:bg-yellow-400 transition">TOP UP</button>
-                </div>
-            `;
-        }
-    });
-
-    window.prosesTopUp = (id, current) => {
-        Swal.fire({
-            title: 'Top Up: ' + id,
-            input: 'number',
-            inputPlaceholder: 'Nominal Saldo...',
-            showCancelButton: true,
-            confirmButtonText: 'Tambah'
-        }).then((res) => {
-            if (res.isConfirmed && res.value) {
-                update(ref(db, 'users/' + id), { balance: current + parseInt(res.value) });
-                Swal.fire('Sukses', 'Saldo ID ' + id + ' berhasil ditambah!', 'success');
-            }
-        });
-    };
-</script>
-
+        // FUNGSI TENTUKAN PEMENANG
+        window.setWinner = (side) => {
+            Swal.fire({
+                title: 'KONFIRMASI WINNER ' + side,
+                text: "Semua taruhan di pihak " + side + " akan dikalikan 2!",
+                icon: 'warning',
+                background: '#0f172a', color: '#fff',
+                showCancelButton: true,
+                confirmButtonText: 'PROSES HASIL',
+                confirmButtonColor: side === 'A' ? '#2563eb' : '#dc2626'
+            }).then(r => {
+                if(r.isConfirmed) {
+                    // Reset dulu resultnya supaya trigger onValue di User aktif kembali
+                    set(ref(db, 'match/result'), null).then(() => {
+                        set(ref(db, 'match/result'), side);
+                    });
+                }
+            });
+        };
+    </script>
 </body>
 </html>
