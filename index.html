@@ -1,128 +1,166 @@
-<!DOCTYPE html>
+<!<!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=1200">
-    <title>MASTER CONTROL | LAGA PRO</title>
+    <meta name="viewport" content="width=1280">
+    <title>LAGA PRO | ADMIN SUPER CONTROLLER</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    
     <style>
-        body { background: #020617; font-family: 'Inter', sans-serif; color: white; width: 1200px; margin: 0 auto; padding: 40px; }
+        body { background: #020617; font-family: 'Inter', sans-serif; color: #f8fafc; width: 1200px; margin: 0 auto; padding: 40px; }
         .font-orbitron { font-family: 'Orbitron', sans-serif; }
-        .glass-admin { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(20px); border: 1px solid rgba(255,255,255,0.05); border-radius: 2.5rem; }
-        .log-table { width: 100%; border-collapse: separate; border-spacing: 0 8px; }
-        .log-table tr { background: rgba(255,255,255,0.02); }
-        .log-table td { padding: 15px; border-top: 1px solid rgba(255,255,255,0.05); }
+        .glass { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.05); }
+        .card-admin { border-top: 4px solid #eab308; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-thumb { background: #eab308; border-radius: 10px; }
     </style>
 </head>
 <body>
 
-    <div class="flex justify-between items-center mb-10">
-        <div>
-            <h1 class="text-4xl font-orbitron font-black text-yellow-500 italic uppercase tracking-tighter">Master Control</h1>
-            <p class="text-slate-500 font-bold text-xs uppercase tracking-[0.3em] mt-1">Live Transaction Monitoring</p>
+    <nav class="flex justify-between items-center mb-10 glass p-8 rounded-[2.5rem] card-admin">
+        <div class="flex items-center gap-6">
+            <div class="h-14 w-14 bg-yellow-500 rounded-2xl flex items-center justify-center shadow-lg shadow-yellow-500/20">
+                <span class="text-black font-black text-2xl font-orbitron">A</span>
+            </div>
+            <div>
+                <h1 class="font-orbitron text-2xl font-black tracking-widest text-yellow-500">COMMAND CENTER</h1>
+                <p class="text-[10px] text-slate-500 font-bold uppercase tracking-[0.3em]">Otoritas Payout & User Monitoring</p>
+            </div>
         </div>
-        <div id="status" class="bg-green-500/10 text-green-500 px-6 py-2 rounded-full border border-green-500/20 text-xs font-black animate-pulse">SYSTEM ONLINE</div>
+        <div class="flex gap-4">
+            <div class="glass px-8 py-3 rounded-2xl text-right">
+                <p class="text-[9px] text-slate-500 font-bold uppercase">Total Users</p>
+                <p id="totalUsers" class="text-xl font-orbitron font-bold text-white">0</p>
+            </div>
+        </div>
+    </nav>
+
+    <div class="grid grid-cols-2 gap-8 mb-10">
+        <button onclick="setWinner('A')" class="group relative overflow-hidden bg-blue-600 hover:bg-blue-500 p-10 rounded-[2.5rem] transition-all active:scale-95 shadow-xl shadow-blue-900/20">
+            <span class="relative z-10 font-orbitron font-black text-3xl italic tracking-tighter">WIN SATRIA BIRU (A)</span>
+            <div class="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+        </button>
+        <button onclick="setWinner('B')" class="group relative overflow-hidden bg-red-600 hover:bg-red-500 p-10 rounded-[2.5rem] transition-all active:scale-95 shadow-xl shadow-red-900/20">
+            <span class="relative z-10 font-orbitron font-black text-3xl italic tracking-tighter">WIN NAGA MERAH (B)</span>
+            <div class="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+        </button>
     </div>
 
-    <div class="grid grid-cols-3 gap-10">
-        <div class="col-span-1 space-y-6">
-            <div class="glass-admin p-8 border-l-8 border-blue-600">
-                <h3 class="font-orbitron font-bold mb-4 text-blue-400 uppercase">Set Blue Victory</h3>
-                <button onclick="setWinner('A')" class="w-full bg-blue-600 hover:bg-blue-500 py-6 rounded-2xl font-black font-orbitron text-lg transition-all active:scale-95 shadow-lg shadow-blue-900/40 uppercase">Declare A Win</button>
-            </div>
-
-            <div class="glass-admin p-8 border-l-8 border-red-600">
-                <h3 class="font-orbitron font-bold mb-4 text-red-400 uppercase">Set Red Victory</h3>
-                <button onclick="setWinner('B')" class="w-full bg-red-600 hover:bg-red-500 py-6 rounded-2xl font-black font-orbitron text-lg transition-all active:scale-95 shadow-lg shadow-red-900/40 uppercase">Declare B Win</button>
-            </div>
-            
-            <button onclick="clearLogs()" class="w-full text-slate-600 hover:text-white text-[10px] font-bold uppercase tracking-widest underline mt-4">Clear Admin Logs</button>
+    <div class="grid grid-cols-3 gap-8">
+        <div class="col-span-1 glass rounded-[2.5rem] p-8 h-[600px] flex flex-col">
+            <h3 class="font-orbitron font-bold text-slate-400 mb-6 flex items-center gap-2">
+                <span class="h-2 w-2 bg-green-500 rounded-full animate-pulse"></span> LIVE USERS
+            </h3>
+            <div id="userList" class="space-y-4 overflow-y-auto pr-2">
+                </div>
         </div>
 
-        <div class="col-span-2 glass-admin p-10 min-h-[600px] flex flex-col">
-            <div class="flex justify-between items-center mb-6">
-                <h2 class="text-xl font-orbitron font-black tracking-widest italic">Live Transaction Log</h2>
-                <span class="text-[10px] text-slate-500 font-bold uppercase">Showing last 10 activities</span>
-            </div>
-
-            <div class="flex-grow overflow-hidden">
-                <table class="log-table font-mono text-sm">
-                    <thead class="text-slate-500 uppercase text-[10px] tracking-widest">
+        <div class="col-span-2 glass rounded-[2.5rem] p-8 h-[600px] flex flex-col">
+            <h3 class="font-orbitron font-bold text-slate-400 mb-6 italic tracking-widest">GLOBAL TRANSACTION LOGS</h3>
+            <div class="overflow-hidden rounded-2xl border border-white/5 h-full">
+                <table class="w-full text-left font-mono text-xs">
+                    <thead class="bg-slate-900 text-slate-500 uppercase">
                         <tr>
-                            <td class="pb-4">Waktu</td>
-                            <td class="pb-4">Aksi</td>
-                            <td class="pb-4">Nominal</td>
-                            <td class="pb-4">Status Saldo</td>
+                            <th class="p-4">Waktu</th>
+                            <th class="p-4">User ID</th>
+                            <th class="p-4">Aksi</th>
+                            <th class="p-4">Nominal</th>
                         </tr>
                     </thead>
-                    <tbody id="adminLogs">
+                    <tbody id="globalLogs" class="divide-y divide-white/5">
                         </tbody>
                 </table>
-                <div id="emptyMsg" class="h-full flex items-center justify-center text-slate-700 italic py-20 font-orbitron">Waiting for user bets...</div>
             </div>
         </div>
     </div>
 
-    <script>
-        const bc = new BroadcastChannel('laga_premium');
-        let logs = JSON.parse(localStorage.getItem('admin_monitor_logs')) || [];
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, onValue, set, update, push } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-        function renderLogs() {
-            const container = document.getElementById('adminLogs');
-            const empty = document.getElementById('emptyMsg');
-            
-            if(logs.length > 0) {
-                empty.style.display = 'none';
-                container.innerHTML = logs.map(log => `
-                    <tr class="animate__animated animate__fadeInLeft">
-                        <td class="text-slate-500">${log.time}</td>
-                        <td class="font-bold uppercase ${log.type === 'win' ? 'text-green-500' : log.type === 'lose' ? 'text-red-500' : 'text-blue-400'}">${log.desc}</td>
-                        <td class="font-bold italic">Rp ${log.amount.toLocaleString()}</td>
-                        <td class="text-yellow-500 font-bold">Rp ${log.balance.toLocaleString()}</td>
-                    </tr>
-                `).join('');
-            }
-        }
-
-        // MENERIMA UPDATE DARI USER SECARA REAL-TIME
-        bc.onmessage = (e) => {
-            if(e.data.type === 'USER_ACTIVITY') {
-                const now = new Date();
-                const timeStr = now.toLocaleTimeString('id-ID');
-                
-                logs.unshift({
-                    time: timeStr,
-                    desc: e.data.desc,
-                    amount: e.data.amount,
-                    balance: e.data.balance,
-                    type: e.data.status
-                });
-
-                if(logs.length > 15) logs.pop();
-                localStorage.setItem('admin_monitor_logs', JSON.stringify(logs));
-                renderLogs();
-            }
+        // CONFIG FIREBASE (WAJIB ISI DENGAN PUNYA ANDA)
+        const firebaseConfig = {
+            apiKey: "AIzaSyD-CONTOH-API-KEY",
+            authDomain: "project-anda.firebaseapp.com",
+            databaseURL: "https://project-anda-default-rtdb.firebaseio.com",
+            projectId: "project-anda",
+            storageBucket: "project-anda.appspot.com",
+            messagingSenderId: "123456789",
+            appId: "1:123456789:web:abcdef"
         };
 
-        function setWinner(p) {
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // Monitoring Users
+        onValue(ref(db, 'users'), (snapshot) => {
+            const users = snapshot.val();
+            const listContainer = document.getElementById('userList');
+            listContainer.innerHTML = "";
+            let count = 0;
+
+            if (users) {
+                for (let id in users) {
+                    count++;
+                    const user = users[id];
+                    listContainer.innerHTML += `
+                        <div class="bg-slate-900/50 p-4 rounded-2xl border border-white/5 flex justify-between items-center">
+                            <div>
+                                <p class="text-[10px] text-slate-500 font-bold uppercase">${id}</p>
+                                <p class="font-orbitron text-yellow-500 font-bold">Rp ${user.balance.toLocaleString()}</p>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-[10px] bg-white/5 px-2 py-1 rounded text-slate-400 uppercase">Active</span>
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+            document.getElementById('totalUsers').innerText = count;
+        });
+
+        // Monitoring Global Logs
+        onValue(ref(db, 'logs'), (snapshot) => {
+            const logs = snapshot.val();
+            const logContainer = document.getElementById('globalLogs');
+            logContainer.innerHTML = "";
+            if (logs) {
+                const sortedLogs = Object.values(logs).reverse();
+                sortedLogs.forEach(log => {
+                    logContainer.innerHTML += `
+                        <tr class="hover:bg-white/5">
+                            <td class="p-4 text-slate-500">${log.time}</td>
+                            <td class="p-4 text-blue-400 font-bold">${log.userId}</td>
+                            <td class="p-4 italic text-slate-300">${log.desc}</td>
+                            <td class="p-4 font-bold ${log.type === 'win' ? 'text-green-500' : 'text-red-500'}">Rp ${log.amount.toLocaleString()}</td>
+                        </tr>
+                    `;
+                });
+            }
+        });
+
+        // Payout Function
+        window.setWinner = (winner) => {
             Swal.fire({
-                title: 'Confirm Result',
-                text: `Kirim kemenangan untuk ${p === 'A' ? 'SATRIA BIRU' : 'NAGA MERAH'}?`,
+                title: 'KONFIRMASI PAYOUT',
+                text: `Kirim kemenangan untuk Player ${winner}? Semua user akan terupdate!`,
                 icon: 'warning',
                 showCancelButton: true,
-                confirmButtonColor: p === 'A' ? '#2563eb' : '#dc2626',
+                confirmButtonColor: winner === 'A' ? '#2563eb' : '#dc2626',
                 background: '#0f172a', color: '#fff'
-            }).then((res) => {
-                if(res.isConfirmed) {
-                    bc.postMessage({ type: 'RESULT', winner: p });
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    // 1. Reset result dulu (untuk trigger onValue di user)
+                    set(ref(db, 'match/result'), null).then(() => {
+                        // 2. Set pemenang asli
+                        set(ref(db, 'match/result'), winner);
+                        Swal.fire('BERHASIL!', 'Sinyal kemenangan telah disiarkan.', 'success');
+                    });
                 }
             });
-        }
-
-        function clearLogs() { logs = []; localStorage.removeItem('admin_monitor_logs'); location.reload(); }
-        renderLogs();
+        };
     </script>
 </body>
 </html>
