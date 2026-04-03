@@ -2,67 +2,41 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>Laga Control | Admin Panel</title>
+    <title>ADMIN PANEL | GOD MODE</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        body { background: #020617; color: white; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; }
+        .admin-card { background: #0f172a; border: 2px solid #1e293b; padding: 50px; border-radius: 4rem; text-align: center; width: 600px; box-shadow: 0 0 50px rgba(0,0,0,0.8); }
+    </style>
 </head>
-<body class="bg-slate-950 text-white p-8 min-h-screen">
-    <div class="max-w-4xl mx-auto">
-        <div class="flex justify-between items-end mb-12">
-            <div>
-                <h1 class="text-4xl font-black tracking-tighter text-yellow-500 mb-2 uppercase">Command Center</h1>
-                <p class="text-slate-500">Otoritas tertinggi manajemen pertandingan</p>
-            </div>
-            <div class="bg-slate-900 border border-white/5 px-6 py-3 rounded-2xl">
-                <span id="time" class="font-mono text-xl text-blue-400">00:00:00</span>
-            </div>
+<body>
+    <div class="admin-card">
+        <h1 class="text-4xl font-black text-yellow-500 mb-2 italic">COMMAND CENTER</h1>
+        <p class="text-slate-500 mb-12 uppercase tracking-widest text-xs">Otoritas Payout Real-time</p>
+        
+        <div class="space-y-6">
+            <button onclick="win('A')" class="w-full bg-blue-600 hover:bg-blue-500 py-8 rounded-[2rem] text-2xl font-black transition-all active:scale-95 shadow-lg shadow-blue-900/40 uppercase">Menangkan SATRIA BIRU (A)</button>
+            <button onclick="win('B')" class="w-full bg-red-600 hover:bg-red-500 py-8 rounded-[2rem] text-2xl font-black transition-all active:scale-95 shadow-lg shadow-red-900/40 uppercase">Menangkan NAGA MERAH (B)</button>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-12">
-            <div onclick="win('A')" class="group cursor-pointer bg-slate-900 border border-blue-500/20 p-8 rounded-[2.5rem] hover:bg-blue-600 transition duration-500 hover:shadow-2xl hover:shadow-blue-500/40">
-                <h2 class="text-xl font-bold mb-2 group-hover:text-white transition">ACTIVATE WINNER: A</h2>
-                <p class="text-slate-500 text-sm group-hover:text-blue-100 italic transition italic">Semua pemilih Satria Biru akan menerima 2x payout.</p>
-            </div>
-            <div onclick="win('B')" class="group cursor-pointer bg-slate-900 border border-red-500/20 p-8 rounded-[2.5rem] hover:bg-red-600 transition duration-500 hover:shadow-2xl hover:shadow-red-500/40">
-                <h2 class="text-xl font-bold mb-2 group-hover:text-white transition">ACTIVATE WINNER: B</h2>
-                <p class="text-slate-500 text-sm group-hover:text-red-100 italic transition italic">Semua pemilih Naga Merah akan menerima 2x payout.</p>
-            </div>
-        </div>
-
-        <div class="bg-black/50 rounded-[2rem] border border-white/5 p-8">
-            <h3 class="text-sm font-black uppercase tracking-widest text-slate-500 mb-6 flex items-center gap-2">
-                <span class="h-2 w-2 bg-green-500 rounded-full animate-pulse"></span>
-                System Logs (Activity)
-            </h3>
-            <div id="logs" class="space-y-3 font-mono text-xs overflow-y-auto h-48 pr-4">
-                <p class="text-blue-400">[SYSTEM] Server initialized...</p>
-                <p class="text-slate-600">[INFO] Waiting for user inputs...</p>
-            </div>
-        </div>
+        <button onclick="localStorage.setItem('mega_balance', 10000000); location.reload();" class="mt-12 text-slate-600 hover:text-slate-400 text-xs uppercase tracking-widest underline">Reset Saldo Global</button>
     </div>
 
     <script>
         const bc = new BroadcastChannel('laga_premium');
-        setInterval(() => {
-            document.getElementById('time').innerText = new Date().toLocaleTimeString();
-        }, 1000);
-
         function win(p) {
             Swal.fire({
-                title: 'Eksekusi Pemenang?',
-                text: "Tindakan ini akan mengupdate saldo seluruh user secara real-time!",
+                title: 'UMUMKAN HASIL?',
+                text: `Kirim kemenangan untuk Player ${p} sekarang!`,
                 icon: 'warning',
                 showCancelButton: true,
-                confirmButtonColor: p === 'A' ? '#2563eb' : '#dc2626',
-                confirmButtonText: 'YA, KONFIRMASI'
-            }).then((res) => {
-                if(res.isConfirmed) {
+                confirmButtonColor: '#eab308',
+                background: '#0f172a', color: '#fff'
+            }).then((result) => {
+                if (result.isConfirmed) {
                     bc.postMessage({ type: 'RESULT', winner: p });
-                    const log = document.createElement('p');
-                    log.className = p === 'A' ? 'text-blue-400' : 'text-red-400';
-                    log.innerText = `[${new Date().toLocaleTimeString()}] ADMIN SET WINNER: PLAYER ${p}`;
-                    document.getElementById('logs').prepend(log);
-                    Swal.fire('Executed!', `Hasil Player ${p} telah disiarkan.`, 'success');
+                    Swal.fire('TERKIRIM', 'Pop-up otomatis muncul di layar user!', 'success');
                 }
             });
         }
