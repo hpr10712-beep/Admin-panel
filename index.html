@@ -1,164 +1,76 @@
-<!<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=1280">
-    <title>LAGA PRO | ADMIN SUPER CONTROLLER</title>
+    <title>LAGA PRO | ADMIN POWER</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@400;700&display=swap" rel="stylesheet">
-    
-    <style>
-        body { background: #020617; font-family: 'Inter', sans-serif; color: #f8fafc; width: 1200px; margin: 0 auto; padding: 40px; }
-        .font-orbitron { font-family: 'Orbitron', sans-serif; }
-        .glass { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.05); }
-        .card-admin { border-top: 4px solid #eab308; box-shadow: 0 20px 50px rgba(0,0,0,0.5); }
-        ::-webkit-scrollbar { width: 5px; }
-        ::-webkit-scrollbar-thumb { background: #eab308; border-radius: 10px; }
-    </style>
 </head>
-<body>
+<body class="bg-slate-950 text-white p-10">
+    <div class="max-w-5xl mx-auto">
+        <h1 class="text-4xl font-black text-yellow-500 mb-10 italic">ADMIN MASTER</h1>
 
-    <nav class="flex justify-between items-center mb-10 glass p-8 rounded-[2.5rem] card-admin">
-        <div class="flex items-center gap-6">
-            <div class="h-14 w-14 bg-yellow-500 rounded-2xl flex items-center justify-center shadow-lg shadow-yellow-500/20">
-                <span class="text-black font-black text-2xl font-orbitron">A</span>
-            </div>
-            <div>
-                <h1 class="font-orbitron text-2xl font-black tracking-widest text-yellow-500">COMMAND CENTER</h1>
-                <p class="text-[10px] text-slate-500 font-bold uppercase tracking-[0.3em]">Otoritas Payout & User Monitoring</p>
-            </div>
-        </div>
-        <div class="flex gap-4">
-            <div class="glass px-8 py-3 rounded-2xl text-right">
-                <p class="text-[9px] text-slate-500 font-bold uppercase">Total Users</p>
-                <p id="totalUsers" class="text-xl font-orbitron font-bold text-white">0</p>
-            </div>
-        </div>
-    </nav>
-
-    <div class="grid grid-cols-2 gap-8 mb-10">
-        <button onclick="setWinner('A')" class="group relative overflow-hidden bg-blue-600 hover:bg-blue-500 p-10 rounded-[2.5rem] transition-all active:scale-95 shadow-xl shadow-blue-900/20">
-            <span class="relative z-10 font-orbitron font-black text-3xl italic tracking-tighter">WIN SATRIA BIRU (A)</span>
-            <div class="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-        </button>
-        <button onclick="setWinner('B')" class="group relative overflow-hidden bg-red-600 hover:bg-red-500 p-10 rounded-[2.5rem] transition-all active:scale-95 shadow-xl shadow-red-900/20">
-            <span class="relative z-10 font-orbitron font-black text-3xl italic tracking-tighter">WIN NAGA MERAH (B)</span>
-            <div class="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-        </button>
-    </div>
-
-    <div class="grid grid-cols-3 gap-8">
-        <div class="col-span-1 glass rounded-[2.5rem] p-8 h-[600px] flex flex-col">
-            <h3 class="font-orbitron font-bold text-slate-400 mb-6 flex items-center gap-2">
-                <span class="h-2 w-2 bg-green-500 rounded-full animate-pulse"></span> LIVE USERS
-            </h3>
-            <div id="userList" class="space-y-4 overflow-y-auto pr-2">
+        <div class="bg-slate-900 rounded-3xl p-8 border border-white/5 mb-10">
+            <h2 class="text-xl font-bold mb-6">DAFTAR USER & TOPUP SALDO</h2>
+            <div id="adminUserList" class="grid grid-cols-2 gap-6">
                 </div>
         </div>
 
-        <div class="col-span-2 glass rounded-[2.5rem] p-8 h-[600px] flex flex-col">
-            <h3 class="font-orbitron font-bold text-slate-400 mb-6 italic tracking-widest">GLOBAL TRANSACTION LOGS</h3>
-            <div class="overflow-hidden rounded-2xl border border-white/5 h-full">
-                <table class="w-full text-left font-mono text-xs">
-                    <thead class="bg-slate-900 text-slate-500 uppercase">
-                        <tr>
-                            <th class="p-4">Waktu</th>
-                            <th class="p-4">User ID</th>
-                            <th class="p-4">Aksi</th>
-                            <th class="p-4">Nominal</th>
-                        </tr>
-                    </thead>
-                    <tbody id="globalLogs" class="divide-y divide-white/5">
-                        </tbody>
-                </table>
-            </div>
+        <div class="grid grid-cols-2 gap-10">
+             <button onclick="setWinner('A')" class="bg-blue-600 p-10 rounded-3xl font-black text-2xl">WIN BLUE (A)</button>
+             <button onclick="setWinner('B')" class="bg-red-600 p-10 rounded-3xl font-black text-2xl">WIN RED (B)</button>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getDatabase, ref, onValue, set, update, push } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { getDatabase, ref, onValue, update, set } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-        // CONFIG FIREBASE (WAJIB ISI DENGAN PUNYA ANDA)
-        const firebaseConfig = {
-            apiKey: "AIzaSyD-CONTOH-API-KEY",
-            authDomain: "project-anda.firebaseapp.com",
-            databaseURL: "https://project-anda-default-rtdb.firebaseio.com",
-            projectId: "project-anda",
-            storageBucket: "project-anda.appspot.com",
-            messagingSenderId: "123456789",
-            appId: "1:123456789:web:abcdef"
-        };
-
+        const firebaseConfig = { ... }; // Samakan config
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // Monitoring Users
+        // List User & Fitur Tambah Saldo
         onValue(ref(db, 'users'), (snapshot) => {
             const users = snapshot.val();
-            const listContainer = document.getElementById('userList');
-            listContainer.innerHTML = "";
-            let count = 0;
-
-            if (users) {
-                for (let id in users) {
-                    count++;
-                    const user = users[id];
-                    listContainer.innerHTML += `
-                        <div class="bg-slate-900/50 p-4 rounded-2xl border border-white/5 flex justify-between items-center">
-                            <div>
-                                <p class="text-[10px] text-slate-500 font-bold uppercase">${id}</p>
-                                <p class="font-orbitron text-yellow-500 font-bold">Rp ${user.balance.toLocaleString()}</p>
-                            </div>
-                            <div class="text-right">
-                                <span class="text-[10px] bg-white/5 px-2 py-1 rounded text-slate-400 uppercase">Active</span>
-                            </div>
+            const container = document.getElementById('adminUserList');
+            container.innerHTML = "";
+            for(let id in users) {
+                container.innerHTML += `
+                    <div class="bg-black/50 p-6 rounded-2xl flex justify-between items-center border border-white/5">
+                        <div>
+                            <p class="font-bold text-yellow-500">${id.toUpperCase()}</p>
+                            <p class="text-xs text-slate-400 font-mono">Saldo: Rp ${users[id].balance.toLocaleString()}</p>
                         </div>
-                    `;
-                }
-            }
-            document.getElementById('totalUsers').innerText = count;
-        });
-
-        // Monitoring Global Logs
-        onValue(ref(db, 'logs'), (snapshot) => {
-            const logs = snapshot.val();
-            const logContainer = document.getElementById('globalLogs');
-            logContainer.innerHTML = "";
-            if (logs) {
-                const sortedLogs = Object.values(logs).reverse();
-                sortedLogs.forEach(log => {
-                    logContainer.innerHTML += `
-                        <tr class="hover:bg-white/5">
-                            <td class="p-4 text-slate-500">${log.time}</td>
-                            <td class="p-4 text-blue-400 font-bold">${log.userId}</td>
-                            <td class="p-4 italic text-slate-300">${log.desc}</td>
-                            <td class="p-4 font-bold ${log.type === 'win' ? 'text-green-500' : 'text-red-500'}">Rp ${log.amount.toLocaleString()}</td>
-                        </tr>
-                    `;
-                });
+                        <button onclick="topup('${id}')" class="bg-green-600 px-4 py-2 rounded-xl text-xs font-bold hover:bg-green-500 transition">TOPUP</button>
+                    </div>
+                `;
             }
         });
 
-        // Payout Function
-        window.setWinner = (winner) => {
+        window.topup = (uid) => {
             Swal.fire({
-                title: 'KONFIRMASI PAYOUT',
-                text: `Kirim kemenangan untuk Player ${winner}? Semua user akan terupdate!`,
-                icon: 'warning',
+                title: 'Top Up User: ' + uid,
+                input: 'number',
+                inputLabel: 'Masukkan Nominal (Contoh: 50000)',
                 showCancelButton: true,
-                confirmButtonColor: winner === 'A' ? '#2563eb' : '#dc2626',
                 background: '#0f172a', color: '#fff'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    // 1. Reset result dulu (untuk trigger onValue di user)
-                    set(ref(db, 'match/result'), null).then(() => {
-                        // 2. Set pemenang asli
-                        set(ref(db, 'match/result'), winner);
-                        Swal.fire('BERHASIL!', 'Sinyal kemenangan telah disiarkan.', 'success');
-                    });
+            }).then((res) => {
+                if(res.isConfirmed) {
+                    const amount = parseInt(res.value);
+                    const userRef = ref(db, 'users/' + uid);
+                    onValue(userRef, (snap) => {
+                        const current = snap.val().balance || 0;
+                        update(userRef, { balance: current + amount });
+                        Swal.fire('Sukses!', 'Saldo berhasil ditambah.', 'success');
+                    }, { onlyOnce: true });
                 }
+            });
+        };
+
+        window.setWinner = (w) => {
+            set(ref(db, 'match/result'), null).then(() => {
+                set(ref(db, 'match/result'), w);
             });
         };
     </script>
