@@ -2,44 +2,168 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>ADMIN PANEL | GOD MODE</title>
+    <meta name="viewport" content="width=1200"> 
+    <title>ELITE LAGA PRO | OFFICIAL ARENA</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.5.1/dist/confetti.browser.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        body { background: #020617; color: white; display: flex; align-items: center; justify-content: center; height: 100vh; margin: 0; }
-        .admin-card { background: #0f172a; border: 2px solid #1e293b; padding: 50px; border-radius: 4rem; text-align: center; width: 600px; box-shadow: 0 0 50px rgba(0,0,0,0.8); }
+        body { background: #020617; font-family: 'Inter', sans-serif; color: #f8fafc; width: 1200px; margin: 0 auto; overflow-x: hidden; padding: 40px; }
+        .font-orbitron { font-family: 'Orbitron', sans-serif; }
+        .glass { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(25px); border: 1px solid rgba(255, 255, 255, 0.08); }
+        .neon-blue { border-bottom: 5px solid #3b82f6; box-shadow: 0 10px 40px -10px rgba(59, 130, 246, 0.4); }
+        .neon-red { border-bottom: 5px solid #ef4444; box-shadow: 0 10px 40px -10px rgba(239, 68, 68, 0.4); }
+        .video-box { width: 100%; height: 400px; position: relative; border-radius: 40px; overflow: hidden; margin: 40px 0; border: 1px solid rgba(255,255,255,0.1); }
+        video { width: 100%; height: 100%; object-fit: cover; opacity: 0.4; }
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-thumb { background: #1e293b; border-radius: 10px; }
     </style>
 </head>
 <body>
-    <div class="admin-card">
-        <h1 class="text-4xl font-black text-yellow-500 mb-2 italic">COMMAND CENTER</h1>
-        <p class="text-slate-500 mb-12 uppercase tracking-widest text-xs">Otoritas Payout Real-time</p>
-        
-        <div class="space-y-6">
-            <button onclick="win('A')" class="w-full bg-blue-600 hover:bg-blue-500 py-8 rounded-[2rem] text-2xl font-black transition-all active:scale-95 shadow-lg shadow-blue-900/40 uppercase">Menangkan SATRIA BIRU (A)</button>
-            <button onclick="win('B')" class="w-full bg-red-600 hover:bg-red-500 py-8 rounded-[2rem] text-2xl font-black transition-all active:scale-95 shadow-lg shadow-red-900/40 uppercase">Menangkan NAGA MERAH (B)</button>
+
+    <nav class="flex justify-between items-center mb-10 glass p-8 rounded-[2.5rem]">
+        <div class="flex items-center gap-6">
+            <div class="h-14 w-14 bg-gradient-to-br from-yellow-400 to-orange-600 rounded-2xl flex items-center justify-center shadow-lg">
+                <span class="text-white font-black text-2xl font-orbitron">L</span>
+            </div>
+            <div>
+                <h1 class="font-orbitron text-3xl font-black tracking-widest italic">LAGA PRO</h1>
+                <p id="liveClock" class="text-[10px] text-blue-400 font-bold mt-1 font-mono tracking-widest uppercase">LOADING TIME...</p>
+            </div>
+        </div>
+        <div class="flex gap-4">
+            <div class="glass px-8 py-3 rounded-2xl border-l-4 border-blue-500 text-right">
+                <p class="text-[9px] text-slate-500 font-bold uppercase tracking-widest">Global Status</p>
+                <p class="text-xs font-bold text-green-500">CONNECTED</p>
+            </div>
+            <div class="glass px-10 py-3 rounded-2xl border-l-4 border-yellow-500 text-right">
+                <p class="text-[9px] text-slate-500 font-bold uppercase tracking-widest">Main Balance</p>
+                <h2 id="balanceTxt" class="text-2xl font-orbitron font-black text-yellow-400 italic">Rp 0</h2>
+            </div>
+        </div>
+    </nav>
+
+    <div class="grid grid-cols-2 gap-10">
+        <div class="glass p-10 rounded-[3.5rem] text-center neon-blue transition-all hover:scale-[1.02]">
+            <div class="mb-6 rounded-[2rem] h-64 bg-slate-950 flex items-center justify-center relative overflow-hidden">
+                <img src="https://api.dicebear.com/7.x/bottts/svg?seed=Blue" class="h-48 z-10">
+                <div class="absolute inset-0 opacity-5 font-black text-[120px] font-orbitron -bottom-10 text-blue-500">A</div>
+            </div>
+            <h3 class="text-2xl font-orbitron font-black mb-6">SATRIA BIRU</h3>
+            <input type="number" id="amtA" class="w-full bg-slate-950 border border-slate-800 p-5 rounded-2xl mb-4 text-center text-2xl font-orbitron font-bold text-blue-400 outline-none focus:border-blue-500" placeholder="Rp 0">
+            <button onclick="bet('A')" class="w-full bg-blue-600 hover:bg-blue-500 py-5 rounded-2xl font-black font-orbitron text-lg tracking-widest uppercase shadow-xl shadow-blue-900/30">Confirm Pick A</button>
         </div>
 
-        <button onclick="localStorage.setItem('mega_balance', 10000000); location.reload();" class="mt-12 text-slate-600 hover:text-slate-400 text-xs uppercase tracking-widest underline">Reset Saldo Global</button>
+        <div class="glass p-10 rounded-[3.5rem] text-center neon-red transition-all hover:scale-[1.02]">
+            <div class="mb-6 rounded-[2rem] h-64 bg-slate-950 flex items-center justify-center relative overflow-hidden">
+                <img src="https://api.dicebear.com/7.x/bottts/svg?seed=Red" class="h-48 z-10">
+                <div class="absolute inset-0 opacity-5 font-black text-[120px] font-orbitron -bottom-10 text-red-500">B</div>
+            </div>
+            <h3 class="text-2xl font-orbitron font-black mb-6">NAGA MERAH</h3>
+            <input type="number" id="amtB" class="w-full bg-slate-950 border border-slate-800 p-5 rounded-2xl mb-4 text-center text-2xl font-orbitron font-bold text-red-400 outline-none focus:border-red-500" placeholder="Rp 0">
+            <button onclick="bet('B')" class="w-full bg-red-600 hover:bg-red-500 py-5 rounded-2xl font-black font-orbitron text-lg tracking-widest uppercase shadow-xl shadow-red-900/30">Confirm Pick B</button>
+        </div>
+    </div>
+
+    <div class="video-box">
+        <video autoplay muted loop playsinline><source src="36577.mp4" type="video/mp4"></video>
+        <div class="absolute inset-0 bg-gradient-to-t from-[#020617] to-transparent flex flex-col justify-end p-10 items-center">
+            <h4 class="text-xl font-orbitron font-bold tracking-[0.4em] text-white/50 italic">ARENA RECORDING LIVE</h4>
+        </div>
+    </div>
+
+    <div class="glass p-10 rounded-[2.5rem] mt-10">
+        <div class="flex justify-between items-center mb-6">
+            <h3 class="text-xl font-orbitron font-black italic tracking-widest text-slate-400">RIWAYAT TRANSAKSI</h3>
+            <button onclick="clearHistory()" class="text-[10px] text-red-500 hover:underline uppercase font-bold">Clear Logs</button>
+        </div>
+        <div class="overflow-hidden rounded-2xl border border-white/5">
+            <table class="w-full text-left font-mono text-sm">
+                <thead class="bg-slate-900/80 text-slate-500 uppercase">
+                    <tr>
+                        <th class="p-4">Tanggal & Jam</th>
+                        <th class="p-4">Keterangan</th>
+                        <th class="p-4">Nominal</th>
+                        <th class="p-4">Saldo Akhir</th>
+                    </tr>
+                </thead>
+                <tbody id="historyBody" class="divide-y divide-white/5 bg-slate-950/40">
+                    </tbody>
+            </table>
+        </div>
     </div>
 
     <script>
+        let balance = parseInt(localStorage.getItem('mega_balance')) || 10000000;
+        let history = JSON.parse(localStorage.getItem('mega_history')) || [];
+        let currentBet = JSON.parse(localStorage.getItem('mega_bet')) || null;
         const bc = new BroadcastChannel('laga_premium');
-        function win(p) {
-            Swal.fire({
-                title: 'UMUMKAN HASIL?',
-                text: `Kirim kemenangan untuk Player ${p} sekarang!`,
-                icon: 'warning',
-                showCancelButton: true,
-                confirmButtonColor: '#eab308',
-                background: '#0f172a', color: '#fff'
-            }).then((result) => {
-                if (result.isConfirmed) {
-                    bc.postMessage({ type: 'RESULT', winner: p });
-                    Swal.fire('TERKIRIM', 'Pop-up otomatis muncul di layar user!', 'success');
-                }
-            });
+
+        // Jam Real-time
+        setInterval(() => {
+            const now = new Date();
+            document.getElementById('liveClock').innerText = now.toLocaleString('id-ID', { dateStyle: 'medium', timeStyle: 'medium' });
+        }, 1000);
+
+        function sync() {
+            document.getElementById('balanceTxt').innerText = `Rp ${balance.toLocaleString('id-ID')}`;
+            localStorage.setItem('mega_balance', balance);
+            localStorage.setItem('mega_bet', JSON.stringify(currentBet));
+            localStorage.setItem('mega_history', JSON.stringify(history));
+            renderHistory();
         }
+
+        function addLog(desc, amount, type) {
+            const now = new Date();
+            const timeStr = now.toLocaleDateString('id-ID') + ' | ' + now.toLocaleTimeString('id-ID');
+            history.unshift({ time: timeStr, desc, amount, balance, type });
+            if(history.length > 10) history.pop();
+            sync();
+        }
+
+        function renderHistory() {
+            const body = document.getElementById('historyBody');
+            body.innerHTML = history.map(item => `
+                <tr class="hover:bg-white/5 transition">
+                    <td class="p-4 text-slate-400">${item.time}</td>
+                    <td class="p-4 font-bold ${item.type === 'win' ? 'text-green-500' : item.type === 'lose' ? 'text-red-500' : 'text-blue-400'}">${item.desc}</td>
+                    <td class="p-4 font-bold">${item.type === 'win' ? '+' : '-' } Rp ${item.amount.toLocaleString()}</td>
+                    <td class="p-4 text-yellow-500 font-bold italic">Rp ${item.balance.toLocaleString()}</td>
+                </tr>
+            `).join('');
+        }
+
+        function bet(p) {
+            const val = parseInt(document.getElementById('amt' + p).value);
+            if(!val || val <= 0 || val > balance) return Swal.fire({ title: 'ERROR', text: 'Saldo atau Input tidak valid!', icon: 'error', background: '#0f172a', color: '#fff' });
+            if(currentBet) return Swal.fire({ title: 'LIMIT', text: 'Laga Sedang Berjalan!', icon: 'warning', background: '#0f172a', color: '#fff' });
+
+            balance -= val;
+            currentBet = { p, val };
+            addLog(`Pasang Taruhan: Player ${p}`, val, 'bet');
+            Swal.fire({ title: 'BERHASIL', text: 'Menunggu Hasil Admin...', icon: 'success', background: '#0f172a', color: '#fff', timer: 1500 });
+        }
+
+        bc.onmessage = (e) => {
+            if(e.data.type === 'RESULT' && currentBet) {
+                if(currentBet.p === e.data.winner) {
+                    let win = currentBet.val * 2;
+                    balance += win;
+                    confetti({ particleCount: 150, spread: 70, origin: { y: 0.6 } });
+                    addLog(`MENANG: Player ${e.data.winner}`, win, 'win');
+                    Swal.fire({ title: '🎉 MENANG!', html: `<h2 style="color:#fbbf24; font-size:2em;">+ Rp ${win.toLocaleString()}</h2>`, icon: 'success', background: '#020617', color: '#fff' });
+                } else {
+                    addLog(`KALAH: Player ${e.data.winner} Menang`, currentBet.val, 'lose');
+                    Swal.fire({ title: '💀 KALAH', text: 'Coba lagi!', icon: 'error', background: '#020617', color: '#fff' });
+                }
+                currentBet = null;
+                sync();
+            }
+        };
+
+        function clearHistory() { history = []; sync(); }
+        sync();
     </script>
 </body>
 </html>
