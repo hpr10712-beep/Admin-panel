@@ -116,38 +116,53 @@
                 confirmButtonText: 'TAMBAH SALDO',
                 confirmButtonColor: '#16a34a',
                 showCancelButton: true
-            }).then(r => {
-                if(r.isConfirmed && r.value) {
-                    const addAmt = parseInt(r.value);
-                    const newBal = currentBal + addAmt;
-                    update(ref(db, 'users/' + uid), { balance: newBal });
-                    
-                    // Catat top up di log pribadi dan global
-                    const timeStr = new Date().toLocaleString('id-ID', { dateStyle: 'short', timeStyle: 'short' });
-                    const logData = { time: timeStr, desc: 'Top Up dari Admin', amount: addAmt, type: 'win', bal: newBal };
-                    push(ref(db, `users/${uid}/logs`), logData);
-                    push(ref(db, `globalLogs`), { ...logData, user: uid });
-                    
-                    Swal.fire('Berhasil!', `Saldo ${uid} bertambah.`, 'success');
-                }
-            });
-        };
+            }).then(r => {<div class="glass p-8 rounded-[3rem] h-[500px] overflow-y-auto">
+    <h3 class="font-orbitron font-bold text-yellow-500 mb-6">MANAJEMEN SALDO USER</h3>
+    <div id="userList" class="space-y-4">
+        </div>
+</div>
 
-        // Fitur Set Pemenang
-        window.setWin = (side) => {
-            Swal.fire({
-                title: 'Konfirmasi Pemenang',
-                text: `Kirim kemenangan untuk Player ${side}?`,
-                icon: 'warning', showCancelButton: true, confirmButtonColor: side === 'A' ? '#2563eb' : '#dc2626',
-                background: '#0f172a', color: '#fff'
-            }).then((res) => {
-                if(res.isConfirmed) {
-                    set(ref(db, 'match/result'), null).then(() => {
-                        set(ref(db, 'match/result'), side);
-                    });
-                }
-            });
-        };
-    </script>
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getDatabase, ref, onValue, update } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+    const firebaseConfig = { /* SAMA DENGAN DI ATAS */ };
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    onValue(ref(db, 'users'), (snap) => {
+        const users = snap.val();
+        const container = document.getElementById('userList');
+        container.innerHTML = "";
+        
+        for (let id in users) {
+            container.innerHTML += `
+                <div class="bg-slate-900 p-5 rounded-2xl flex justify-between items-center border border-white/5">
+                    <div>
+                        <p class="font-bold text-blue-400 text-sm">${id}</p>
+                        <p class="text-yellow-500 font-bold font-orbitron">Rp ${users[id].balance.toLocaleString()}</p>
+                    </div>
+                    <button onclick="prosesTopUp('${id}', ${users[id].balance})" class="bg-yellow-600 text-black px-5 py-2 rounded-xl font-bold hover:bg-yellow-400 transition">TOP UP</button>
+                </div>
+            `;
+        }
+    });
+
+    window.prosesTopUp = (id, current) => {
+        Swal.fire({
+            title: 'Top Up: ' + id,
+            input: 'number',
+            inputPlaceholder: 'Nominal Saldo...',
+            showCancelButton: true,
+            confirmButtonText: 'Tambah'
+        }).then((res) => {
+            if (res.isConfirmed && res.value) {
+                update(ref(db, 'users/' + id), { balance: current + parseInt(res.value) });
+                Swal.fire('Sukses', 'Saldo ID ' + id + ' berhasil ditambah!', 'success');
+            }
+        });
+    };
+</script>
+
 </body>
 </html>
