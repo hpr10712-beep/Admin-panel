@@ -2,75 +2,118 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>LAGA PRO | ADMIN POWER</title>
+    <title>ADMIN | GOD MODE</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&display=swap" rel="stylesheet">
+    <style>
+        body { background: #020617; color: white; width: 1200px; margin: 0 auto; padding: 40px; font-family: 'Inter', sans-serif; }
+        .glass { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.05); }
+        .font-orbitron { font-family: 'Orbitron', sans-serif; }
+        ::-webkit-scrollbar { width: 4px; }
+        ::-webkit-scrollbar-thumb { background: #eab308; }
+    </style>
 </head>
-<body class="bg-slate-950 text-white p-10">
-    <div class="max-w-5xl mx-auto">
-        <h1 class="text-4xl font-black text-yellow-500 mb-10 italic">ADMIN MASTER</h1>
+<body>
 
-        <div class="bg-slate-900 rounded-3xl p-8 border border-white/5 mb-10">
-            <h2 class="text-xl font-bold mb-6">DAFTAR USER & TOPUP SALDO</h2>
-            <div id="adminUserList" class="grid grid-cols-2 gap-6">
+    <nav class="flex justify-between items-center mb-10 glass p-8 rounded-[2.5rem] border-b-4 border-yellow-500">
+        <h1 class="font-orbitron text-3xl font-black text-yellow-500 italic">ADMIN COMMAND</h1>
+        <div class="text-right">
+            <p id="totalU" class="text-2xl font-orbitron font-bold">0 USERS</p>
+        </div>
+    </nav>
+
+    <div class="grid grid-cols-2 gap-8 mb-10">
+        <button onclick="setWin('A')" class="bg-blue-600 hover:bg-blue-500 p-10 rounded-[2.5rem] font-orbitron font-black text-3xl transition-all shadow-xl shadow-blue-900/20">WIN BLUE (A)</button>
+        <button onclick="setWin('B')" class="bg-red-600 hover:bg-red-500 p-10 rounded-[2.5rem] font-orbitron font-black text-3xl transition-all shadow-xl shadow-red-900/20">WIN RED (B)</button>
+    </div>
+
+    <div class="grid grid-cols-3 gap-8">
+        <div class="col-span-1 glass p-8 rounded-[2.5rem] h-[550px] overflow-hidden flex flex-col">
+            <h3 class="font-orbitron font-bold text-yellow-500 mb-6 uppercase tracking-widest">User & Balance</h3>
+            <div id="uList" class="space-y-4 overflow-y-auto pr-2">
                 </div>
         </div>
 
-        <div class="grid grid-cols-2 gap-10">
-             <button onclick="setWinner('A')" class="bg-blue-600 p-10 rounded-3xl font-black text-2xl">WIN BLUE (A)</button>
-             <button onclick="setWinner('B')" class="bg-red-600 p-10 rounded-3xl font-black text-2xl">WIN RED (B)</button>
+        <div class="col-span-2 glass p-8 rounded-[2.5rem] h-[550px] overflow-hidden flex flex-col">
+            <h3 class="font-orbitron font-bold text-slate-400 mb-6 uppercase tracking-widest">Global Live Logs</h3>
+            <div class="overflow-y-auto pr-2 h-full rounded-2xl">
+                <table class="w-full text-left text-sm font-mono">
+                    <thead class="sticky top-0 bg-slate-900 text-slate-500">
+                        <tr><th class="p-4">Time</th><th class="p-4">User</th><th class="p-4">Action</th><th class="p-4">Amt</th></tr>
+                    </thead>
+                    <tbody id="logs"></tbody>
+                </table>
+            </div>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getDatabase, ref, onValue, update, set } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+        import { getDatabase, ref, onValue, set, update } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-        const firebaseConfig = { ... }; // Samakan config
+        const firebaseConfig = { apiKey: "ISI_API_KEY", databaseURL: "...", projectId: "..." };
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // List User & Fitur Tambah Saldo
-        onValue(ref(db, 'users'), (snapshot) => {
-            const users = snapshot.val();
-            const container = document.getElementById('adminUserList');
+        // SYNC USERS & TOPUP
+        onValue(ref(db, 'users'), (snap) => {
+            const users = snap.val();
+            const container = document.getElementById('uList');
             container.innerHTML = "";
+            let i = 0;
             for(let id in users) {
+                i++;
                 container.innerHTML += `
-                    <div class="bg-black/50 p-6 rounded-2xl flex justify-between items-center border border-white/5">
+                    <div class="bg-slate-900/80 p-5 rounded-2xl border border-white/5 flex justify-between items-center">
                         <div>
-                            <p class="font-bold text-yellow-500">${id.toUpperCase()}</p>
-                            <p class="text-xs text-slate-400 font-mono">Saldo: Rp ${users[id].balance.toLocaleString()}</p>
+                            <p class="font-bold text-white uppercase text-xs">${id}</p>
+                            <p class="text-yellow-500 font-bold font-orbitron">Rp ${users[id].balance.toLocaleString()}</p>
                         </div>
-                        <button onclick="topup('${id}')" class="bg-green-600 px-4 py-2 rounded-xl text-xs font-bold hover:bg-green-500 transition">TOPUP</button>
+                        <button onclick="topup('${id}', ${users[id].balance})" class="bg-yellow-600 text-black px-4 py-2 rounded-xl font-bold text-xs hover:bg-yellow-400 transition">TOP UP</button>
                     </div>
                 `;
             }
+            document.getElementById('totalU').innerText = i + " USERS";
         });
 
-        window.topup = (uid) => {
+        // SYNC LOGS
+        onValue(ref(db, 'logs'), (snap) => {
+            const logs = snap.val();
+            const container = document.getElementById('logs');
+            container.innerHTML = "";
+            if(logs) {
+                Object.values(logs).reverse().forEach(l => {
+                    container.innerHTML += `<tr class="border-b border-white/5 hover:bg-white/5 transition">
+                        <td class="p-4 text-slate-500">${l.time}</td>
+                        <td class="p-4 font-bold text-blue-400">${l.user}</td>
+                        <td class="p-4 italic">${l.action}</td>
+                        <td class="p-4 text-yellow-500">Rp ${l.amount.toLocaleString()}</td>
+                    </tr>`;
+                });
+            }
+        });
+
+        window.topup = (uid, current) => {
             Swal.fire({
-                title: 'Top Up User: ' + uid,
+                title: 'Top Up: ' + uid,
                 input: 'number',
-                inputLabel: 'Masukkan Nominal (Contoh: 50000)',
-                showCancelButton: true,
-                background: '#0f172a', color: '#fff'
-            }).then((res) => {
-                if(res.isConfirmed) {
-                    const amount = parseInt(res.value);
-                    const userRef = ref(db, 'users/' + uid);
-                    onValue(userRef, (snap) => {
-                        const current = snap.val().balance || 0;
-                        update(userRef, { balance: current + amount });
-                        Swal.fire('Sukses!', 'Saldo berhasil ditambah.', 'success');
-                    }, { onlyOnce: true });
+                inputPlaceholder: 'Masukkan Nominal...',
+                background: '#0f172a', color: '#fff',
+                confirmButtonText: 'TAMBAH',
+                showCancelButton: true
+            }).then(r => {
+                if(r.value) {
+                    const add = parseInt(r.value);
+                    update(ref(db, 'users/' + uid), { balance: current + add });
+                    Swal.fire('Sukses', 'Saldo ditambahkan!', 'success');
                 }
             });
         };
 
-        window.setWinner = (w) => {
+        window.setWin = (side) => {
             set(ref(db, 'match/result'), null).then(() => {
-                set(ref(db, 'match/result'), w);
+                set(ref(db, 'match/result'), side);
             });
         };
     </script>
