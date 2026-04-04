@@ -8,101 +8,63 @@
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --accent: #eab308;
-            --bg-dark: #020617;
-        }
-
         body { 
-            background: var(--bg-dark); 
-            color: white; 
-            width: 1200px; 
-            margin: 0 auto; 
-            padding: 40px; 
-            font-family: 'Inter', sans-serif;
-            overflow-x: hidden;
-            /* Latar Belakang Keren Animasi */
-            background-image: 
-                radial-gradient(circle at 0% 0%, rgba(30, 58, 138, 0.2) 0%, transparent 35%),
-                radial-gradient(circle at 100% 100%, rgba(127, 29, 29, 0.15) 0%, transparent 35%),
-                url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
+            background: #020617; color: white; width: 1200px; margin: 0 auto; padding: 40px; font-family: 'Inter', sans-serif;
+            background-image: radial-gradient(circle at 0% 0%, rgba(30, 58, 138, 0.2) 0%, transparent 40%), url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
             background-attachment: fixed;
         }
-
         .font-orbitron { font-family: 'Orbitron', sans-serif; }
-        .glass { background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(25px); border: 1px solid rgba(255, 255, 255, 0.05); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); }
-        
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
+        .glass { background: rgba(15, 23, 42, 0.75); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.05); }
+        ::-webkit-scrollbar { width: 5px; }
+        ::-webkit-scrollbar-thumb { background: #eab308; border-radius: 10px; }
 
-        /* Toggle Slider */
         .switch { position: relative; display: inline-block; width: 60px; height: 30px; }
         .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #1e293b; transition: .4s; border-radius: 34px; border: 1px solid rgba(255,255,255,0.1); }
-        .slider:before { position: absolute; content: ""; height: 22px; width: 22px; left: 4px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; box-shadow: 0 0 10px rgba(0,0,0,0.5); }
-        input:checked + .slider { background-color: #10b981; box-shadow: 0 0 20px rgba(16, 185, 129, 0.4); }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #1e293b; transition: .4s; border-radius: 34px; }
+        .slider:before { position: absolute; content: ""; height: 22px; width: 22px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: #10b981; }
         input:checked + .slider:before { transform: translateX(30px); }
 
-        /* Activity Card Design */
         .activity-card { 
-            background: linear-gradient(90deg, rgba(30, 41, 59, 0.4), rgba(15, 23, 42, 0.8)); 
-            border-left: 4px solid #3b82f6; 
-            padding: 15px 20px; border-radius: 12px; 
-            display: flex; justify-content: space-between; align-items: center; 
-            margin-bottom: 12px; transition: 0.3s;
+            background: rgba(30, 41, 59, 0.4); border-left: 4px solid #3b82f6; 
+            padding: 15px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; 
         }
-        .activity-card:hover { transform: scale(1.01); background: rgba(30, 41, 59, 0.6); }
-        .win-border { border-left-color: #10b981; }
-        .lose-border { border-left-color: #ef4444; }
-
-        .badge-status { font-size: 10px; font-weight: 900; padding: 4px 10px; border-radius: 6px; text-transform: uppercase; letter-spacing: 1px; }
+        .badge-status { font-size: 9px; font-weight: 900; padding: 3px 8px; border-radius: 4px; text-transform: uppercase; }
     </style>
 </head>
 <body>
 
-    <nav class="flex justify-between items-center mb-10 glass p-8 rounded-[3rem] border-b-2 border-yellow-500/30">
-        <div class="flex items-center gap-5">
-            <div class="h-14 w-14 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-2xl flex items-center justify-center shadow-[0_0_20px_rgba(234,179,8,0.4)]">
-                <span class="font-black text-black text-2xl font-orbitron">E</span>
-            </div>
-            <div>
-                <h1 class="font-orbitron text-3xl font-black text-white tracking-tighter italic">OMNI CONTROL</h1>
-                <p class="text-[10px] text-yellow-500 font-bold tracking-[0.3em] uppercase opacity-70">Elite Arena System v2.0</p>
-            </div>
+    <nav class="flex justify-between items-center mb-10 glass p-8 rounded-[3rem] border-b-2 border-yellow-500/30 shadow-2xl">
+        <div class="flex items-center gap-4">
+            <div class="h-12 w-12 bg-yellow-500 rounded-xl flex items-center justify-center font-black text-black text-xl font-orbitron shadow-lg shadow-yellow-500/20">A</div>
+            <h1 class="font-orbitron text-3xl font-black italic tracking-tighter text-white">OMNI CONTROL</h1>
         </div>
-        <div class="glass px-10 py-4 rounded-3xl text-right border-r-4 border-yellow-500 bg-slate-950/50">
-            <p class="text-[9px] text-slate-400 font-bold uppercase tracking-widest mb-1">Global Vault Balance</p>
-            <p id="globalBal" class="text-2xl font-orbitron font-black text-yellow-500">Rp 0</p>
+        <div class="glass px-10 py-3 rounded-2xl text-right border-r-4 border-yellow-500 bg-slate-950/50">
+            <p class="text-[9px] text-slate-500 font-bold uppercase tracking-widest mb-1">Global Vault Balance</p>
+            <p id="globalBal" class="text-2xl font-orbitron font-bold text-yellow-500">Rp 0</p>
         </div>
     </nav>
 
     <div class="grid grid-cols-12 gap-8">
         <div class="col-span-8 space-y-8">
-            <div class="glass p-8 rounded-[2.5rem] border-t-4 border-green-500">
-                <h3 class="font-orbitron font-bold text-xs mb-5 text-green-400 uppercase tracking-widest">Quick Top Up</h3>
+            <div class="glass p-8 rounded-[2.5rem] border-t-4 border-green-500 shadow-xl">
+                <h3 class="font-orbitron font-bold text-xs mb-4 text-green-400 uppercase tracking-widest">Manual Top Up</h3>
                 <div class="flex gap-4">
-                    <input type="text" id="manualId" class="flex-1 bg-slate-950/80 border border-slate-700 p-5 rounded-2xl font-orbitron text-yellow-500 outline-none focus:border-green-500 transition-all" placeholder="PASTE PLAYER ID">
-                    <input type="number" id="manualAmount" class="w-56 bg-slate-950/80 border border-slate-700 p-5 rounded-2xl text-white outline-none focus:border-green-500" placeholder="NOMINAL">
-                    <button id="btnTopUp" class="bg-green-600 hover:bg-green-500 px-10 rounded-2xl font-orbitron font-black text-white shadow-lg shadow-green-900/20 active:scale-95 transition-all">SEND</button>
+                    <input type="text" id="manualId" class="flex-1 bg-slate-950 border border-slate-800 p-4 rounded-xl font-orbitron text-yellow-500 outline-none focus:border-green-500" placeholder="PLAYER ID">
+                    <input type="number" id="manualAmount" class="w-48 bg-slate-950 border border-slate-800 p-4 rounded-xl text-white outline-none focus:border-green-500" placeholder="NOMINAL">
+                    <button id="btnTopUp" class="bg-green-600 hover:bg-green-500 px-8 rounded-xl font-orbitron font-black text-white transition-all active:scale-95 shadow-lg shadow-green-900/20">SEND</button>
                 </div>
             </div>
 
             <div class="grid grid-cols-2 gap-8">
-                <button id="btnWinA" class="group relative overflow-hidden bg-blue-600 p-12 rounded-[2.5rem] font-orbitron font-black text-3xl shadow-2xl transition-all active:scale-95">
-                    <span class="relative z-10">SET WIN A</span>
-                    <div class="absolute inset-0 bg-blue-400 opacity-0 group-hover:opacity-20 transition-opacity"></div>
-                </button>
-                <button id="btnWinB" class="group relative overflow-hidden bg-red-600 p-12 rounded-[2.5rem] font-orbitron font-black text-3xl shadow-2xl transition-all active:scale-95">
-                    <span class="relative z-10">SET WIN B</span>
-                    <div class="absolute inset-0 bg-red-400 opacity-0 group-hover:opacity-20 transition-opacity"></div>
-                </button>
+                <button id="btnWinA" class="bg-blue-600 hover:bg-blue-500 p-10 rounded-[2.5rem] font-orbitron font-black text-2xl shadow-xl transition-all active:scale-95">SET WIN A</button>
+                <button id="btnWinB" class="bg-red-600 hover:bg-red-500 p-10 rounded-[2.5rem] font-orbitron font-black text-2xl shadow-xl transition-all active:scale-95">SET WIN B</button>
             </div>
 
-            <div class="glass p-8 rounded-[2.5rem] border-r-4 border-blue-500 flex justify-between items-center bg-slate-900/30">
+            <div class="glass p-8 rounded-[2.5rem] border-r-4 border-blue-500 flex justify-between items-center bg-slate-900/30 shadow-lg">
                 <div>
-                    <h3 class="font-orbitron font-bold text-xl text-white mb-1">GATEWAY ACCESS: <span id="statusLabel" class="text-green-500">OPEN</span></h3>
-                    <p class="text-[11px] text-slate-400 font-medium">Kunci bursa untuk mencegah player memasang taruhan baru.</p>
+                    <h3 class="font-orbitron font-bold text-lg text-white">GATEWAY STATUS: <span id="statusLabel" class="text-green-500">OPEN</span></h3>
+                    <p class="text-xs text-slate-400 font-medium">Kunci bursa untuk menghentikan pemasangan taruhan player.</p>
                 </div>
                 <label class="switch">
                     <input type="checkbox" id="gateToggle" checked>
@@ -111,24 +73,17 @@
             </div>
         </div>
 
-        <div class="col-span-4 glass p-8 rounded-[3.5rem] h-[610px] flex flex-col border-t-4 border-yellow-500">
-            <h3 class="font-orbitron font-bold text-yellow-500 mb-6 text-[10px] uppercase tracking-[0.2em] text-center italic">Live Users Online</h3>
-            <div id="uList" class="space-y-3 overflow-y-auto pr-3"></div>
+        <div class="col-span-4 glass p-8 rounded-[3.5rem] h-[610px] flex flex-col border-t-4 border-yellow-500 shadow-2xl">
+            <h3 class="font-orbitron font-bold text-yellow-500 mb-6 text-[10px] uppercase tracking-widest text-center italic">Live Users</h3>
+            <div id="uList" class="space-y-3 overflow-y-auto pr-2"></div>
         </div>
 
-        <div class="col-span-12 glass p-10 rounded-[3.5rem] border-b-8 border-blue-600/50 mb-20">
+        <div class="col-span-12 glass p-10 rounded-[4rem] border-b-8 border-blue-600 shadow-2xl mb-10">
             <div class="flex justify-between items-end mb-8">
-                <div>
-                    <h3 class="font-orbitron font-black text-blue-400 text-lg uppercase tracking-tighter">Real-Time Activity Monitor</h3>
-                    <p class="text-xs text-slate-500 font-bold uppercase">Full Transaction History & Result Logs</p>
-                </div>
-                <div class="bg-blue-500/10 px-4 py-2 rounded-full border border-blue-500/20">
-                    <span class="h-2 w-2 bg-blue-500 rounded-full inline-block animate-ping mr-2"></span>
-                    <span class="text-[10px] font-black text-blue-400 uppercase">System Live</span>
-                </div>
+                <h3 class="font-orbitron font-black text-blue-400 text-lg uppercase tracking-tight italic">Global Transaction Monitor</h3>
+                <span class="bg-blue-500/10 px-4 py-2 rounded-full border border-blue-500/20 text-[10px] font-black text-blue-400 uppercase animate-pulse">System Live Stream</span>
             </div>
-            <div id="liveActivity" class="grid grid-cols-2 gap-6 h-[600px] overflow-y-auto pr-4">
-                </div>
+            <div id="liveActivity" class="grid grid-cols-2 gap-6 h-[600px] overflow-y-auto pr-4"></div>
         </div>
     </div>
 
@@ -145,75 +100,7 @@
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
-    // Fungsi Waktu Lengkap (Hari, Tgl Bln Thn Jam Menit Detik)
-    const getFullTime = () => {
-        const d = new Date();
-        const days = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
-        const dayName = days[d.getDay()];
-        const date = d.getDate().toString().padStart(2, '0');
-        const month = (d.getMonth() + 1).toString().padStart(2, '0');
-        const year = d.getFullYear();
-        const h = d.getHours().toString().padStart(2, '0');
-        const m = d.getMinutes().toString().padStart(2, '0');
-        const s = d.getSeconds().toString().padStart(2, '0');
-        
-        return `${dayName}, ${date}/${month}/${year} - ${h}:${m}:${s}`;
-    };
-
-    // --- TOP UP LOGIC ---
-    document.getElementById('btnTopUp').onclick = async () => {
-        const id = document.getElementById('manualId').value.toUpperCase().trim();
-        const amt = parseInt(document.getElementById('manualAmount').value);
-        if(!id || !amt) return Swal.fire('Data Missing', 'Masukkan ID dan Nominal!', 'warning');
-
-        const userRef = ref(db, 'users/' + id);
-        const snap = await get(userRef);
-        if(snap.exists()){
-            const current = snap.val().balance || 0;
-            await update(userRef, { balance: current + amt });
-            push(ref(db, 'globalLogs'), {
-                time: getFullTime(),
-                user: id, desc: 'Top Up Success (Admin)', amount: amt, type: 'win'
-            });
-            Swal.fire('Success', `Rp ${amt.toLocaleString()} dikirim ke ${id}`, 'success');
-            document.getElementById('manualAmount').value = "";
-        } else {
-            Swal.fire('Invalid ID', 'Player tidak ditemukan!', 'error');
-        }
-    };
-
-    // --- WINNER LOGIC ---
-    const handleWinner = (side) => {
-        Swal.fire({ 
-            title: 'Konfirmasi Pemenang', 
-            text: `Semua player yang pick UNIT ${side} akan menerima x2 saldo. Lanjutkan?`,
-            icon: 'question',
-            showCancelButton: true,
-            confirmButtonColor: side === 'A' ? '#2563eb' : '#dc2626'
-        }).then(res => {
-            if(res.isConfirmed){
-                set(ref(db, 'match/result'), null).then(() => {
-                    set(ref(db, 'match/result'), side);
-                });
-            }
-        });
-    };
-    document.getElementById('btnWinA').onclick = () => handleWinner('A');
-    document.getElementById('btnWinB').onclick = () => handleWinner('B');
-
-    // --- GATE LOGIC ---
-    const gateToggle = document.getElementById('gateToggle');
-    gateToggle.onchange = (e) => {
-        set(ref(db, 'match/status'), e.target.checked ? 'open' : 'closed');
-    };
-    onValue(ref(db, 'match/status'), snap => {
-        const status = snap.val() || 'open';
-        gateToggle.checked = (status === 'open');
-        document.getElementById('statusLabel').innerText = status.toUpperCase();
-        document.getElementById('statusLabel').className = status === 'open' ? "text-green-500" : "text-red-500";
-    });
-
-    // --- LIST PLAYER ---
+    // --- SINKRONISASI PEMAIN ---
     onValue(ref(db, 'users'), snap => {
         const users = snap.val();
         const container = document.getElementById('uList');
@@ -223,39 +110,75 @@
             const b = users[id].balance || 0;
             total += b;
             const div = document.createElement('div');
-            div.className = "bg-slate-900/60 p-4 rounded-2xl border border-white/5 flex justify-between items-center hover:border-yellow-500/30 transition-all";
-            div.innerHTML = `<div><p class="text-[10px] font-black text-blue-400 uppercase tracking-tighter">${id}</p><p class="text-sm font-black text-yellow-500 font-orbitron">Rp ${b.toLocaleString()}</p></div><button class="bg-slate-800 hover:bg-yellow-600 text-[8px] font-bold px-3 py-1.5 rounded-lg transition-colors">PILIH</button>`;
+            div.className = "bg-slate-900/60 p-4 rounded-xl border border-white/5 flex justify-between items-center";
+            div.innerHTML = `<div><p class="text-[10px] font-bold text-blue-400 uppercase tracking-tighter">${id}</p><p class="text-xs font-bold text-yellow-500">Rp ${b.toLocaleString()}</p></div><button class="bg-slate-800 text-[8px] px-2 py-1 rounded hover:bg-yellow-600 transition">PILIH</button>`;
             div.querySelector('button').onclick = () => { document.getElementById('manualId').value = id; };
             container.appendChild(div);
         }
         document.getElementById('globalBal').innerText = "Rp " + total.toLocaleString();
     });
 
-    // --- LIVE MONITOR LOGIC ---
+    // --- GATEWAY ---
+    const gateToggle = document.getElementById('gateToggle');
+    gateToggle.onchange = (e) => set(ref(db, 'match/status'), e.target.checked ? 'open' : 'closed');
+    onValue(ref(db, 'match/status'), snap => {
+        const status = snap.val() || 'open';
+        gateToggle.checked = (status === 'open');
+        document.getElementById('statusLabel').innerText = status.toUpperCase();
+        document.getElementById('statusLabel').className = status === 'open' ? "text-green-500" : "text-red-500";
+    });
+
+    // --- WINNER ---
+    const handleWin = (side) => {
+        Swal.fire({ title: 'Set Winner ' + side + '?', showCancelButton: true }).then(res => {
+            if(res.isConfirmed) {
+                set(ref(db, 'match/result'), null).then(() => set(ref(db, 'match/result'), side));
+            }
+        });
+    };
+    document.getElementById('btnWinA').onclick = () => handleWin('A');
+    document.getElementById('btnWinB').onclick = () => handleWin('B');
+
+    // --- MONITOR LOGS (PERBAIKAN STATUS & WAKTU) ---
     onValue(ref(db, 'globalLogs'), snap => {
         const logs = snap.val();
         const container = document.getElementById('liveActivity');
         container.innerHTML = "";
         if(logs){
             Object.values(logs).reverse().forEach(l => {
-                let sText = "WAITING", sClass = "bg-yellow-500/20 text-yellow-500", bClass = "";
-                if(l.type === 'win') { sText = "WIN/CREDIT"; sClass = "bg-green-500/20 text-green-500"; bClass = "win-border"; }
-                if(l.type === 'lose') { sText = "LOST/DEBIT"; sClass = "bg-red-500/20 text-red-500"; bClass = "lose-border"; }
+                let sText = "PROCESS", sClass = "bg-yellow-500/20 text-yellow-500", border = "border-l-yellow-500";
+                if(l.type === 'win') { sText = "WINNER"; sClass = "bg-green-500/20 text-green-500"; border = "border-l-green-500"; }
+                if(l.type === 'lose') { sText = "LOSE"; sClass = "bg-red-500/20 text-red-500"; border = "border-l-red-500"; }
                 
                 container.innerHTML += `
-                    <div class="activity-card ${bClass}">
+                    <div class="activity-card ${border}">
                         <div>
-                            <p class="text-[10px] font-black text-blue-400 uppercase mb-1">${l.user} <span class="text-slate-500 font-medium ml-3 font-mono text-[9px]">${l.time}</span></p>
-                            <p class="text-[12px] font-bold text-white tracking-tight">${l.desc}</p>
+                            <p class="text-[10px] font-black text-blue-400 uppercase mb-1">${l.user} <span class="text-slate-500 font-normal ml-3 font-mono text-[9px] italic">[${l.time || 'no-time'}]</span></p>
+                            <p class="text-[11px] font-bold text-white tracking-tight">${l.desc}</p>
                         </div>
                         <div class="text-right">
-                            <p class="text-[13px] font-orbitron font-black text-white italic">Rp ${l.amount.toLocaleString()}</p>
+                            <p class="text-[11px] font-orbitron font-black text-white italic">Rp ${l.amount.toLocaleString()}</p>
                             <span class="badge-status ${sClass}">${sText}</span>
                         </div>
                     </div>`;
             });
         }
     });
+
+    // --- TOP UP ---
+    document.getElementById('btnTopUp').onclick = async () => {
+        const id = document.getElementById('manualId').value.toUpperCase().trim();
+        const amt = parseInt(document.getElementById('manualAmount').value);
+        if(!id || !amt) return;
+        const snap = await get(ref(db, 'users/' + id));
+        if(snap.exists()){
+            await update(ref(db, 'users/' + id), { balance: snap.val().balance + amt });
+            push(ref(db, 'globalLogs'), {
+                time: "Admin Panel", user: id, desc: 'TOP UP BY ADMIN', amount: amt, type: 'win'
+            });
+            Swal.fire('Success', 'Top Up Berhasil', 'success');
+        }
+    };
 </script>
 </body>
 </html>
