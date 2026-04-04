@@ -287,14 +287,32 @@ document.getElementById('btnResetLogs').onclick = () => {
 // --- RESET MATCH WITH POPUP ---
 document.getElementById('btnResetMatch').onclick = () => {
     Swal.fire({
-        title: 'Reset Match?',
-        text: "Status pemenang akan dihapus dari arena.",
+        title: 'Reset Match & Market?',
+        text: "Status pemenang dan semua data taruhan di grafik akan dibersihkan!",
         icon: 'question',
         showCancelButton: true,
         confirmButtonColor: '#3b82f6',
         confirmButtonText: 'Ya, Reset Arena'
-    }).then(res => {
-        if(res.isConfirmed) set(ref(db, 'match/result'), null);
+    }).then(async (res) => {
+        if(res.isConfirmed){ 
+            // 1. Hapus status pemenang
+            await set(ref(db, 'match/result'), null);
+
+            // 2. Bersihkan data Market di semua User (Agar Grafik kembali ke 0)
+            const snap = await get(ref(db, 'users'));
+            if(snap.exists()){
+                const users = snap.val();
+                const updates = {};
+                for(let id in users) {
+                    // Kita set null pada side dan betAmount agar grafik Admin bersih
+                    updates[`users/${id}/side`] = null;
+                    updates[`users/${id}/betAmount`] = null;
+                }
+                await update(ref(db), updates);
+            }
+
+            Swal.fire('Arena Reset!', 'Pemenang dihapus dan market kembali ke nol.', 'success');
+        } 
     });
 };
 
