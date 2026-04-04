@@ -99,17 +99,31 @@
                 </button>
             </div>
 
-            <div class="glass p-8 rounded-[2.5rem] border-r-4 border-blue-500 flex justify-between items-center bg-slate-900/30">
-                <div>
-                    <h3 class="font-orbitron font-bold text-xl text-white mb-1">GATEWAY ACCESS: <span id="statusLabel" class="text-green-500">OPEN</span></h3>
-                    <p class="text-[11px] text-slate-400 font-medium">Kunci bursa untuk mencegah player memasang taruhan baru.</p>
-                </div>
-                <label class="switch">
-                    <input type="checkbox" id="gateToggle" checked>
-                    <span class="slider"></span>
-                </label>
-            </div>
+            <div class="flex flex-col gap-6">
+    <div class="glass p-6 rounded-[2.5rem] border-r-4 border-blue-500 flex justify-between items-center bg-slate-900/30 shadow-lg">
+        <div>
+            <h3 class="font-orbitron font-bold text-sm text-white uppercase tracking-tighter">GATEWAY: <span id="statusLabel" class="text-green-500">OPEN</span></h3>
+            <p class="text-[9px] text-slate-500 font-medium tracking-widest">Kunci bursa taruhan.</p>
         </div>
+        <label class="switch scale-90">
+            <input type="checkbox" id="gateToggle" checked>
+            <span class="slider"></span>
+        </label>
+    </div>
+
+    <div class="glass p-6 rounded-[2.5rem] border-r-4 border-red-600 flex justify-between items-center bg-slate-900/30 shadow-lg">
+        <div>
+            <h3 class="font-orbitron font-bold text-sm text-white uppercase tracking-tighter">RESET MATCH</h3>
+            <p class="text-[9px] text-slate-500 font-medium tracking-widest">Hapus status WIN/LOSE.</p>
+        </div>
+        <button id="btnResetMatch" class="group bg-red-600/10 hover:bg-red-600 border border-red-600/30 text-red-500 hover:text-white p-3 rounded-2xl transition-all active:scale-90 shadow-lg shadow-red-900/20">
+            <svg xmlns="http://www.w3.org/2001/svg" class="h-6 w-6 group-hover:rotate-180 transition-transform duration-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+            </svg>
+        </button>
+    </div>
+</div>
+
 
         <div class="col-span-4 glass p-8 rounded-[3.5rem] h-[610px] flex flex-col border-t-4 border-yellow-500">
             <h3 class="font-orbitron font-bold text-yellow-500 mb-6 text-[10px] uppercase tracking-[0.2em] text-center italic">Live Users Online</h3>
