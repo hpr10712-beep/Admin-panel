@@ -77,74 +77,81 @@
         </div>
     </nav>
 
-    <div class="grid grid-cols-12 gap-8">
-        <div class="col-span-8 space-y-8">
-            <div class="glass p-8 rounded-[2.5rem] border-t-4 border-green-500">
-                <h3 class="font-orbitron font-bold text-xs mb-5 text-green-400 uppercase tracking-widest">Quick Top Up</h3>
-                <div class="flex gap-4">
-                    <input type="text" id="manualId" class="flex-1 bg-slate-950/80 border border-slate-700 p-5 rounded-2xl font-orbitron text-yellow-500 outline-none focus:border-green-500 transition-all" placeholder="PASTE PLAYER ID">
-                    <input type="number" id="manualAmount" class="w-56 bg-slate-950/80 border border-slate-700 p-5 rounded-2xl text-white outline-none focus:border-green-500" placeholder="NOMINAL">
-                    <button id="btnTopUp" class="bg-green-600 hover:bg-green-500 px-10 rounded-2xl font-orbitron font-black text-white shadow-lg shadow-green-900/20 active:scale-95 transition-all">SEND</button>
+    <div class="grid grid-cols-12 gap-8 items-start">
+    <div class="col-span-9 space-y-8">
+        
+        <div class="glass p-8 rounded-[2.5rem] border-t-4 border-green-500">
+            <h3 class="font-orbitron font-bold text-xs mb-5 text-green-400 uppercase tracking-widest">Quick Top Up</h3>
+            <div class="flex gap-4">
+                <input type="text" id="manualId" class="flex-1 bg-slate-950/80 border border-slate-700 p-5 rounded-2xl font-orbitron text-yellow-500 outline-none focus:border-green-500 transition-all" placeholder="PASTE PLAYER ID">
+                <input type="number" id="manualAmount" class="w-56 bg-slate-950/80 border border-slate-700 p-5 rounded-2xl text-white outline-none focus:border-green-500" placeholder="NOMINAL">
+                <button id="btnTopUp" class="bg-green-600 hover:bg-green-500 px-10 rounded-2xl font-orbitron font-black text-white shadow-lg shadow-green-900/20 active:scale-95 transition-all">SEND</button>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-2 gap-8">
+            <button id="btnWinA" class="group relative overflow-hidden bg-blue-600 p-12 rounded-[2.5rem] font-orbitron font-black text-3xl shadow-2xl transition-all active:scale-95">
+                <span class="relative z-10">SET WIN A</span>
+                <div class="absolute inset-0 bg-blue-400 opacity-0 group-hover:opacity-20 transition-opacity"></div>
+            </button>
+            <button id="btnWinB" class="group relative overflow-hidden bg-red-600 p-12 rounded-[2.5rem] font-orbitron font-black text-3xl shadow-2xl transition-all active:scale-95">
+                <span class="relative z-10">SET WIN B</span>
+                <div class="absolute inset-0 bg-red-400 opacity-0 group-hover:opacity-20 transition-opacity"></div>
+            </button>
+        </div>
+
+        <div class="grid grid-cols-2 gap-6">
+            <div class="glass p-6 rounded-[2.5rem] border-r-4 border-blue-500 flex justify-between items-center bg-slate-900/30 shadow-lg">
+                <div>
+                    <h3 class="font-orbitron font-bold text-sm text-white uppercase tracking-tighter">GATEWAY: <span id="statusLabel" class="text-green-500">OPEN</span></h3>
+                    <p class="text-[9px] text-slate-500 font-medium tracking-widest">Kunci bursa taruhan.</p>
                 </div>
+                <label class="switch scale-90">
+                    <input type="checkbox" id="gateToggle" checked>
+                    <span class="slider"></span>
+                </label>
             </div>
-
-            <div class="grid grid-cols-2 gap-8">
-                <button id="btnWinA" class="group relative overflow-hidden bg-blue-600 p-12 rounded-[2.5rem] font-orbitron font-black text-3xl shadow-2xl transition-all active:scale-95">
-                    <span class="relative z-10">SET WIN A</span>
-                    <div class="absolute inset-0 bg-blue-400 opacity-0 group-hover:opacity-20 transition-opacity"></div>
-                </button>
-                <button id="btnWinB" class="group relative overflow-hidden bg-red-600 p-12 rounded-[2.5rem] font-orbitron font-black text-3xl shadow-2xl transition-all active:scale-95">
-                    <span class="relative z-10">SET WIN B</span>
-                    <div class="absolute inset-0 bg-red-400 opacity-0 group-hover:opacity-20 transition-opacity"></div>
+            <div class="glass p-6 rounded-[2.5rem] border-r-4 border-red-600 flex justify-between items-center bg-slate-900/30 shadow-lg">
+                <div>
+                    <h3 class="font-orbitron font-bold text-sm text-white uppercase tracking-tighter">RESET MATCH</h3>
+                    <p class="text-[9px] text-slate-500 font-medium tracking-widest">Hapus status WIN/LOSE.</p>
+                </div>
+                <button id="btnResetMatch" class="group bg-red-600/10 hover:bg-red-600 border border-red-600/30 text-red-500 hover:text-white p-3 rounded-2xl transition-all active:scale-90 shadow-lg shadow-red-900/20">
+                    <svg xmlns="http://www.w3.org/2001/svg" class="h-6 w-6 group-hover:rotate-180 transition-transform duration-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+                    </svg>
                 </button>
             </div>
-
-            <div class="flex flex-col gap-6">
-    <div class="glass p-6 rounded-[2.5rem] border-r-4 border-blue-500 flex justify-between items-center bg-slate-900/30 shadow-lg">
-        <div>
-            <h3 class="font-orbitron font-bold text-sm text-white uppercase tracking-tighter">GATEWAY: <span id="statusLabel" class="text-green-500">OPEN</span></h3>
-            <p class="text-[9px] text-slate-500 font-medium tracking-widest">Kunci bursa taruhan.</p>
-        </div>
-        <label class="switch scale-90">
-            <input type="checkbox" id="gateToggle" checked>
-            <span class="slider"></span>
-        </label>
-    </div>
-
-    <div class="glass p-6 rounded-[2.5rem] border-r-4 border-red-600 flex justify-between items-center bg-slate-900/30 shadow-lg">
-        <div>
-            <h3 class="font-orbitron font-bold text-sm text-white uppercase tracking-tighter">RESET MATCH</h3>
-            <p class="text-[9px] text-slate-500 font-medium tracking-widest">Hapus status WIN/LOSE.</p>
-        </div>
-        <button id="btnResetMatch" class="group bg-red-600/10 hover:bg-red-600 border border-red-600/30 text-red-500 hover:text-white p-3 rounded-2xl transition-all active:scale-90 shadow-lg shadow-red-900/20">
-            <svg xmlns="http://www.w3.org/2001/svg" class="h-6 w-6 group-hover:rotate-180 transition-transform duration-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-            </svg>
-        </button>
-    </div>
-</div>
-
-
-        <div class="col-span-4 glass p-8 rounded-[3.5rem] h-[610px] flex flex-col border-t-4 border-yellow-500">
-            <h3 class="font-orbitron font-bold text-yellow-500 mb-6 text-[10px] uppercase tracking-[0.2em] text-center italic">Live Users Online</h3>
-            <div id="uList" class="space-y-3 overflow-y-auto pr-3"></div>
         </div>
 
-        <div class="col-span-12 glass p-10 rounded-[3.5rem] border-b-8 border-blue-600/50 mb-20">
+        <div class="glass p-10 rounded-[3.5rem] border-b-8 border-blue-600/50 mb-10">
             <div class="flex justify-between items-end mb-8">
                 <div>
                     <h3 class="font-orbitron font-black text-blue-400 text-lg uppercase tracking-tighter">Real-Time Activity Monitor</h3>
                     <p class="text-xs text-slate-500 font-bold uppercase">Full Transaction History & Result Logs</p>
                 </div>
-                <div class="bg-blue-500/10 px-4 py-2 rounded-full border border-blue-500/20">
-                    <span class="h-2 w-2 bg-blue-500 rounded-full inline-block animate-ping mr-2"></span>
-                    <span class="text-[10px] font-black text-blue-400 uppercase">System Live</span>
+                <div class="flex items-center gap-4">
+                    <button id="btnResetLogs" class="bg-red-600/20 hover:bg-red-600 border border-red-600/50 text-red-500 hover:text-white px-4 py-1.5 rounded-xl font-orbitron text-[9px] font-bold transition-all active:scale-95">
+                        RESET ALL TRX
+                    </button>
+                    <div class="bg-blue-500/10 px-4 py-2 rounded-full border border-blue-500/20">
+                        <span class="h-2 w-2 bg-blue-500 rounded-full inline-block animate-ping mr-2"></span>
+                        <span class="text-[10px] font-black text-blue-400 uppercase">System Live</span>
+                    </div>
                 </div>
             </div>
-            <div id="liveActivity" class="grid grid-cols-2 gap-6 h-[600px] overflow-y-auto pr-4">
+            <div id="liveActivity" class="grid grid-cols-2 gap-4 h-[600px] overflow-y-auto pr-4">
                 </div>
         </div>
     </div>
+
+    <div class="col-span-3 glass p-6 rounded-[3rem] border-t-4 border-yellow-500 sticky top-10 self-stretch mb-10">
+        <h3 class="font-orbitron font-bold text-yellow-500 mb-6 text-[10px] uppercase tracking-[0.2em] text-center italic">Live Users Online</h3>
+        <div id="uList" class="space-y-3 overflow-y-auto pr-2 h-[1150px]">
+            </div>
+    </div>
+</div>
+
         
 </div>
         <button id="btnResetLogs" class="bg-red-600/20 hover:bg-red-600 border border-red-600/50 text-red-500 hover:text-white px-6 py-2 rounded-xl font-orbitron text-[10px] font-bold transition-all active:scale-95">
