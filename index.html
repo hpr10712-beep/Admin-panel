@@ -28,6 +28,19 @@
 input:checked + .slider { background-color: #10b981; box-shadow: 0 0 15px rgba(16, 185, 129, 0.5); }
 input:checked + .slider:before { transform: translateX(26px); }
 
+        .activity-card {
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    padding: 12px 20px;
+    border-radius: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    transition: all 0.3s;
+}
+.activity-card:hover { border-color: rgba(59, 130, 246, 0.5); transform: translateX(5px); }
+.badge-status { font-size: 9px; font-weight: 900; padding: 2px 8px; border-radius: 5px; text-transform: uppercase; }
+
     
     </style>
 </head>
@@ -65,6 +78,18 @@ input:checked + .slider:before { transform: translateX(26px); }
                 </div>
         </div>
 
+<div class="col-span-2 glass p-8 rounded-[3rem] h-[500px] flex flex-col">
+            <h3 class="font-orbitron font-bold text-slate-400 mb-6 uppercase tracking-widest text-xs italic">Riwayat Transaksi Global</h3>
+            <div class="overflow-y-auto pr-2 h-full rounded-2xl border border-white/5 bg-slate-950/40">
+                <table class="w-full text-left text-[11px] font-mono">
+                    <thead class="sticky top-0 bg-slate-900 text-slate-500 uppercase">
+                        <tr><th class="p-4">Time</th><th class="p-4">ID</th><th class="p-4">Action</th><th class="p-4">Amount</th></tr>
+                    </thead>
+                    <tbody id="globalLogs" class="divide-y divide-white/5"></tbody>
+                </table>
+            </div>
+      
+        
         <div class="glass p-8 rounded-[2.5rem] mb-10 border-r-4 border-blue-500 flex justify-between items-center">
     <div>
         <h3 class="font-orbitron font-bold text-lg text-white">GATE CONTROL: <span id="statusLabel" class="text-green-500">OPEN</span></h3>
@@ -77,16 +102,19 @@ input:checked + .slider:before { transform: translateX(26px); }
 </div>
 
 
-        <div class="col-span-2 glass p-8 rounded-[3rem] h-[500px] flex flex-col">
-            <h3 class="font-orbitron font-bold text-slate-400 mb-6 uppercase tracking-widest text-xs italic">Riwayat Transaksi Global</h3>
-            <div class="overflow-y-auto pr-2 h-full rounded-2xl border border-white/5 bg-slate-950/40">
-                <table class="w-full text-left text-[11px] font-mono">
-                    <thead class="sticky top-0 bg-slate-900 text-slate-500 uppercase">
-                        <tr><th class="p-4">Time</th><th class="p-4">ID</th><th class="p-4">Action</th><th class="p-4">Amount</th></tr>
-                    </thead>
-                    <tbody id="globalLogs" class="divide-y divide-white/5"></tbody>
-                </table>
+        
+        <div class="col-span-3 glass p-8 rounded-[3rem] mt-8 border-b-4 border-blue-500">
+    <div class="flex justify-between items-center mb-6">
+        <h3 class="font-orbitron font-bold text-blue-400 uppercase tracking-widest text-xs italic">Live User Activity</h3>
+        <span class="bg-blue-500/20 text-blue-400 text-[9px] px-2 py-1 rounded-full animate-pulse font-bold">REAL-TIME MONITOR</span>
+    </div>
+    <div class="overflow-y-auto pr-2 h-[300px]">
+        <div id="liveActivity" class="space-y-3">
             </div>
+    </div>
+</div>
+
+        
         </div>
     </div>
 
@@ -264,6 +292,54 @@ onValue(ref(db, 'globalLogs'), (snap) => {
     }
 });
 
+// --- MONITOR AKTIVITAS USER DETIL ---
+onValue(ref(db, 'globalLogs'), (snap) => {
+    const data = snap.val();
+    const container = document.getElementById('liveActivity');
+    container.innerHTML = "";
+
+    if(data) {
+        // Ambil 10 aktivitas terakhir
+        Object.values(data).reverse().slice(0, 100000).forEach(item => {
+            const isWin = item.type === 'win';
+            const isTopUp = item.desc === 'Top Up Admin';
+            
+            // Logika Penentuan Status
+            let statusText = "PROSES";
+            let statusClass = "bg-yellow-500/20 text-yellow-500";
+            
+            if (isTopUp || isWin) {
+                statusText = "SUCCESS";
+                statusClass = "bg-green-500/20 text-green-500";
+            } else if (item.desc === 'LOSE') {
+                statusText = "LOST";
+                statusClass = "bg-red-500/20 text-red-400";
+            }
+
+            container.innerHTML += `
+                <div class="activity-card">
+                    <div>
+                        <div class="flex items-center gap-2 mb-1">
+                            <span class="text-[10px] font-black text-blue-400 uppercase tracking-tighter">${item.user}</span>
+                            <span class="text-[8px] text-slate-500">${item.time}</span>
+                        </div>
+                        <p class="text-[11px] font-bold text-white">
+                            ${isTopUp ? 'Melakukan Top Up' : `Pick Unit: <span class="text-yellow-500">${item.desc}</span>`}
+                        </p>
+                    </div>
+                    <div class="text-right">
+                        <p class="text-[11px] font-orbitron font-black text-white">Rp ${item.amount.toLocaleString()}</p>
+                        <span class="badge-status ${statusClass}">${statusText}</span>
+                    </div>
+                </div>
+            `;
+        });
+    } else {
+        container.innerHTML = `<p class="text-center text-slate-600 text-xs mt-10 italic italic">Belum ada aktivitas...</p>`;
+    }
+});
+
+    
 </script>
 
 </body>
