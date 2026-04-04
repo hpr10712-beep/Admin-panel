@@ -3,45 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=1200">
-    <title>ADMIN | GOD MODE CONTROL</title>
+    <title>ADMIN | ELITE CONTROL</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;900&family=Inter:wght@400;700&display=swap" rel="stylesheet">
     <style>
-        body { background: #020617; color: white; width: 1200px; margin: 0 auto; padding: 40px; font-family: 'Inter', sans-serif; }
+        body { background: #020617; color: white; width: 1200px; margin: 0 auto; padding: 40px; font-family: 'Inter', sans-serif; background-image: radial-gradient(circle at top right, #1e293b, #020617 60%); }
         .glass { background: rgba(15, 23, 42, 0.8); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.05); }
         .font-orbitron { font-family: 'Orbitron', sans-serif; }
-        ::-webkit-scrollbar { width: 5px; }
-        ::-webkit-scrollbar-thumb { background: #eab308; border-radius: 10px; }
-  
-    /* Toggle Switch Style */
-.switch { position: relative; display: inline-block; width: 60px; height: 34px; }
-.switch input { opacity: 0; width: 0; height: 0; }
-.slider {
-  position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
-  background-color: #334155; transition: .4s; border-radius: 34px;
-}
-.slider:before {
-  position: absolute; content: ""; height: 26px; width: 26px; left: 4px; bottom: 4px;
-  background-color: white; transition: .4s; border-radius: 50%;
-}
-input:checked + .slider { background-color: #10b981; box-shadow: 0 0 15px rgba(16, 185, 129, 0.5); }
-input:checked + .slider:before { transform: translateX(26px); }
-
-        .activity-card {
-    background: rgba(15, 23, 42, 0.6);
-    border: 1px solid rgba(255, 255, 255, 0.05);
-    padding: 12px 20px;
-    border-radius: 15px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    transition: all 0.3s;
-}
-.activity-card:hover { border-color: rgba(59, 130, 246, 0.5); transform: translateX(5px); }
-.badge-status { font-size: 9px; font-weight: 900; padding: 2px 8px; border-radius: 5px; text-transform: uppercase; }
-
-    
+        .switch { position: relative; display: inline-block; width: 60px; height: 34px; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #334155; transition: .4s; border-radius: 34px; }
+        .slider:before { position: absolute; content: ""; height: 26px; width: 26px; left: 4px; bottom: 4px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: #10b981; }
+        input:checked + .slider:before { transform: translateX(26px); }
+        .activity-card { background: rgba(15, 23, 42, 0.6); border: 1px solid rgba(255, 255, 255, 0.05); padding: 12px 20px; border-radius: 15px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .badge-status { font-size: 9px; font-weight: 900; padding: 2px 8px; border-radius: 5px; text-transform: uppercase; }
     </style>
 </head>
 <body>
@@ -49,7 +26,7 @@ input:checked + .slider:before { transform: translateX(26px); }
     <nav class="flex justify-between items-center mb-10 glass p-8 rounded-[2.5rem] border-t-4 border-yellow-500 shadow-2xl">
         <div class="flex items-center gap-4">
             <div class="h-12 w-12 bg-yellow-500 rounded-xl flex items-center justify-center font-black text-black text-xl font-orbitron">A</div>
-            <h1 class="font-orbitron text-3xl font-black text-white italic">CONTROL CENTER</h1>
+            <h1 class="font-orbitron text-3xl font-black text-white italic">ADMIN PANEL</h1>
         </div>
         <div class="glass px-8 py-3 rounded-2xl text-right border-r-4 border-yellow-500">
             <p class="text-[9px] text-slate-500 font-bold uppercase tracking-widest">Global Balance</p>
@@ -57,64 +34,42 @@ input:checked + .slider:before { transform: translateX(26px); }
         </div>
     </nav>
 
-    <div class="glass p-8 rounded-[2.5rem] mb-10 border-l-4 border-green-500">
-        <h3 class="font-orbitron font-bold text-sm mb-4 text-green-400">MANUAL TOP UP (INPUT ID)</h3>
-        <div class="flex gap-4">
-            <input type="text" id="manualId" class="flex-1 bg-slate-950 border border-slate-800 p-4 rounded-xl font-orbitron font-bold text-yellow-500 outline-none focus:border-green-500" placeholder="MASUKKAN ID (CONTOH: PLAYER-1234)">
-            <input type="number" id="manualAmount" class="w-64 bg-slate-950 border border-slate-800 p-4 rounded-xl font-orbitron font-bold text-white outline-none focus:border-green-500" placeholder="NOMINAL RP">
-            <button onclick="manualTopUp()" class="bg-green-600 hover:bg-green-500 px-10 rounded-xl font-orbitron font-black text-white transition-all active:scale-95 shadow-lg shadow-green-900/40">PROSES TOP UP</button>
-        </div>
-    </div>
-
-    <div class="grid grid-cols-2 gap-8 mb-10 text-center">
-        <button onclick="setWinner('A')" class="bg-blue-600 hover:bg-blue-500 p-8 rounded-[2rem] font-orbitron font-black text-2xl transition-all active:scale-95 shadow-xl shadow-blue-900/30">SET WINNER A</button>
-        <button onclick="setWinner('B')" class="bg-red-600 hover:bg-red-500 p-8 rounded-[2rem] font-orbitron font-black text-2xl transition-all active:scale-95 shadow-xl shadow-red-900/30">SET WINNER B</button>
-    </div>
-
-    <div class="grid grid-cols-3 gap-8">
-        <div class="col-span-1 glass p-8 rounded-[3rem] h-[500px] flex flex-col">
-            <h3 class="font-orbitron font-bold text-yellow-500 mb-6 uppercase tracking-widest text-xs">Daftar Player Online</h3>
-            <div id="uList" class="space-y-4 overflow-y-auto pr-2">
+    <div class="grid grid-cols-12 gap-8">
+        <div class="col-span-8 space-y-8">
+            <div class="glass p-8 rounded-[2.5rem] border-l-4 border-green-500">
+                <h3 class="font-orbitron font-bold text-sm mb-4 text-green-400 uppercase">Manual Top Up</h3>
+                <div class="flex gap-4">
+                    <input type="text" id="manualId" class="flex-1 bg-slate-950 border border-slate-800 p-4 rounded-xl font-orbitron text-yellow-500 outline-none" placeholder="PLAYER ID">
+                    <input type="number" id="manualAmount" class="w-48 bg-slate-950 border border-slate-800 p-4 rounded-xl text-white outline-none" placeholder="NOMINAL">
+                    <button id="btnTopUp" class="bg-green-600 hover:bg-green-500 px-8 rounded-xl font-orbitron font-black text-sm">PROSES</button>
                 </div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-8">
+                <button id="btnWinA" class="bg-blue-600 hover:bg-blue-500 p-10 rounded-[2rem] font-orbitron font-black text-2xl shadow-xl active:scale-95">SET WINNER A</button>
+                <button id="btnWinB" class="bg-red-600 hover:bg-red-500 p-10 rounded-[2rem] font-orbitron font-black text-2xl shadow-xl active:scale-95">SET WINNER B</button>
+            </div>
+
+            <div class="glass p-8 rounded-[2.5rem] border-r-4 border-blue-500 flex justify-between items-center">
+                <div>
+                    <h3 class="font-orbitron font-bold text-lg text-white">GATE CONTROL: <span id="statusLabel" class="text-green-500">OPEN</span></h3>
+                    <p class="text-xs text-slate-400 italic">Geser untuk mengunci/membuka bursa taruhan</p>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" id="gateToggle" checked>
+                    <span class="slider"></span>
+                </label>
+            </div>
         </div>
 
-<div class="col-span-2 glass p-8 rounded-[3rem] h-[500px] flex flex-col">
-            <h3 class="font-orbitron font-bold text-slate-400 mb-6 uppercase tracking-widest text-xs italic">Riwayat Transaksi Global</h3>
-            <div class="overflow-y-auto pr-2 h-full rounded-2xl border border-white/5 bg-slate-950/40">
-                <table class="w-full text-left text-[11px] font-mono">
-                    <thead class="sticky top-0 bg-slate-900 text-slate-500 uppercase">
-                        <tr><th class="p-4">Time</th><th class="p-4">ID</th><th class="p-4">Action</th><th class="p-4">Amount</th></tr>
-                    </thead>
-                    <tbody id="globalLogs" class="divide-y divide-white/5"></tbody>
-                </table>
-            </div>
-      
-        
-        <div class="glass p-8 rounded-[2.5rem] mb-10 border-r-4 border-blue-500 flex justify-between items-center">
-    <div>
-        <h3 class="font-orbitron font-bold text-lg text-white">GATE CONTROL: <span id="statusLabel" class="text-green-500">OPEN</span></h3>
-        <p class="text-xs text-slate-400 italic">Geser untuk Mengunci/Membuka akses taruhan pemain</p>
-    </div>
-    <label class="switch">
-        <input type="checkbox" id="gateToggle" onchange="toggleGate(this)" checked>
-        <span class="slider"></span>
-    </label>
-</div>
+        <div class="col-span-4 glass p-8 rounded-[3rem] h-[550px] flex flex-col">
+            <h3 class="font-orbitron font-bold text-yellow-500 mb-6 text-xs uppercase tracking-widest text-center italic">Online Players</h3>
+            <div id="uList" class="space-y-3 overflow-y-auto pr-2"></div>
+        </div>
 
-
-        
-        <div class="col-span-3 glass p-8 rounded-[3rem] mt-8 border-b-4 border-blue-500">
-    <div class="flex justify-between items-center mb-6">
-        <h3 class="font-orbitron font-bold text-blue-400 uppercase tracking-widest text-xs italic">Live User Activity</h3>
-        <span class="bg-blue-500/20 text-blue-400 text-[9px] px-2 py-1 rounded-full animate-pulse font-bold">REAL-TIME MONITOR</span>
-    </div>
-    <div class="overflow-y-auto pr-2 h-[300px]">
-        <div id="liveActivity" class="space-y-3">
-            </div>
-    </div>
-</div>
-
-        
+        <div class="col-span-12 glass p-8 rounded-[3rem] border-b-4 border-blue-500">
+            <h3 class="font-orbitron font-bold text-blue-400 mb-6 text-xs uppercase tracking-widest italic">Live Activity Monitor</h3>
+            <div id="liveActivity" class="grid grid-cols-2 gap-4 h-[300px] overflow-y-auto pr-2"></div>
         </div>
     </div>
 
@@ -122,7 +77,6 @@ input:checked + .slider:before { transform: translateX(26px); }
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getDatabase, ref, onValue, set, update, push, get } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-    // PERBAIKAN: Tanda kutip diperbaiki, garis miring di akhir URL dihapus
     const firebaseConfig = { 
         apiKey: "AIzaSyCHr0eemIkfHNFDUkSaFDklp_c1OgmSnl8", 
         databaseURL: "https://mybro-9ba5f-default-rtdb.firebaseio.com",
@@ -132,343 +86,95 @@ input:checked + .slider:before { transform: translateX(26px); }
     const app = initializeApp(firebaseConfig);
     const db = getDatabase(app);
 
-    // --- FUNGSI TOP UP MANUAL ---
-    window.manualTopUp = async () => {
-        const idInput = document.getElementById('manualId');
-        const amtInput = document.getElementById('manualAmount');
-        const id = idInput.value.toUpperCase().trim();
-        const amount = parseInt(amtInput.value);
-
-        if(!id || !amount) return Swal.fire('Error', 'ID dan Nominal harus diisi!', 'error');
+    // --- TOP UP ---
+    document.getElementById('btnTopUp').onclick = async () => {
+        const id = document.getElementById('manualId').value.toUpperCase().trim();
+        const amt = parseInt(document.getElementById('manualAmount').value);
+        if(!id || !amt) return Swal.fire('Error', 'Isi data!', 'error');
 
         const userRef = ref(db, 'users/' + id);
-        try {
-            const snapshot = await get(userRef);
-            if (snapshot.exists()) {
-                const currentBal = snapshot.val().balance || 0;
-                const newBal = currentBal + amount;
-                
-                await update(userRef, { balance: newBal });
-                
-                // Tambahkan ke Log Riwayat
-                const time = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
-                push(ref(db, 'globalLogs'), {
-                    time: time, user: id, desc: 'Top Up Admin', amount: amount, type: 'win'
-                });
-
-                Swal.fire('Sukses', `Berhasil Top Up Rp ${amount.toLocaleString()} ke ${id}`, 'success');
-                idInput.value = "";
-                amtInput.value = "";
-            } else {
-                Swal.fire('Gagal', 'ID Player tidak ditemukan!', 'error');
-            }
-        } catch (e) {
-            Swal.fire('Error', 'Gagal akses database. Cek koneksi/rules!', 'error');
-        }
-    };
-
-    // --- SINKRONISASI DAFTAR PLAYER ---
-    onValue(ref(db, 'users'), (snap) => {
-        const users = snap.val();
-        const container = document.getElementById('uList');
-        let totalB = 0;
-        container.innerHTML = "";
-        
-        if(users) {
-            for(let id in users) {
-                const bal = users[id].balance || 0;
-                totalB += bal;
-                container.innerHTML += `
-                    <div class="bg-slate-900/80 p-4 rounded-xl border border-white/5 flex justify-between items-center mb-2">
-                        <div>
-                            <p class="font-bold text-white uppercase text-[10px] tracking-widest">${id}</p>
-                            <p class="text-yellow-500 font-bold font-orbitron text-xs">Rp ${bal.toLocaleString('id-ID')}</p>
-                        </div>
-                        <button onclick="fillID('${id}')" class="bg-blue-600 text-[9px] px-3 py-1 rounded-lg font-bold uppercase hover:bg-blue-500 transition">PILIH</button>
-                    </div>
-                `;
-            }
-        }
-        document.getElementById('globalBal').innerText = "Rp " + totalB.toLocaleString('id-ID');
-    });
-
-    window.fillID = (id) => {
-        document.getElementById('manualId').value = id;
-        document.getElementById('manualAmount').focus();
-    };
-
-    // --- SINKRONISASI LOG TRANSAKSI ---
-    onValue(ref(db, 'globalLogs'), (snap) => {
-        const logs = snap.val();
-        const container = document.getElementById('globalLogs');
-        container.innerHTML = "";
-        if(logs) {
-            Object.values(logs).reverse().forEach(l => {
-                container.innerHTML += `
-                    <tr class="hover:bg-white/5 transition border-b border-white/5">
-                        <td class="p-4 text-slate-500">${l.time}</td>
-                        <td class="p-4 font-bold text-blue-400 uppercase">${l.user}</td>
-                        <td class="p-4 italic text-slate-300 text-[10px]">${l.desc}</td>
-                        <td class="p-4 text-yellow-500 font-bold">Rp ${l.amount.toLocaleString()}</td>
-                    </tr>
-                `;
+        const snap = await get(userRef);
+        if(snap.exists()){
+            const current = snap.val().balance || 0;
+            await update(userRef, { balance: current + amt });
+            push(ref(db, 'globalLogs'), {
+                time: new Date().toLocaleTimeString('id-ID', {hour:'2-digit', minute:'2-digit'}),
+                user: id, desc: 'Top Up Admin', amount: amt, type: 'win'
             });
+            Swal.fire('Sukses', 'Top Up Berhasil', 'success');
+        } else {
+            Swal.fire('Error', 'ID Tidak Ditemukan', 'error');
         }
-    });
-
-    // --- TENTUKAN PEMENANG ---
-    window.setWinner = (side) => {
-        Swal.fire({
-            title: 'Tentukan Pemenang?',
-            text: "Player " + side + " akan menang!",
-            icon: 'warning',
-            showCancelButton: true,
-            confirmButtonText: 'YA, BERIKAN HADIAH'
-        }).then((result) => {
-            if (result.isConfirmed) {
-                set(ref(db, 'match/result'), null).then(() => {
-                    set(ref(db, 'match/result'), side);
-                    Swal.fire('Match Selesai', `Player ${side} menang!`, 'success');
-                });
-            }
-        });
-    };
-
-    // --- KONTROL BUKA/TUTUP PICK ---
-const gateRef = ref(db, 'match/status');
-
-// Pantau status awal dari DB
-onValue(gateRef, (snap) => {
-    const status = snap.val() || 'open';
-    const toggle = document.getElementById('gateToggle');
-    const label = document.getElementById('statusLabel');
-    
-    if (status === 'open') {
-        toggle.checked = true;
-        label.innerText = "OPEN";
-        label.className = "text-green-500";
-    } else {
-        toggle.checked = false;
-        label.innerText = "CLOSED";
-        label.className = "text-red-500";
-    }
-});
-
-// Fungsi saat tombol digeser
-window.toggleGate = (el) => {
-    const newStatus = el.checked ? 'open' : 'closed';
-    set(gateRef, newStatus).then(() => {
-        Swal.fire({
-            toast: true, position: 'top-end', icon: 'info',
-            title: `Pick bursa: ${newStatus.toUpperCase()}`,
-            showConfirmButton: false, timer: 2000, background: '#0f172a', color: '#fff'
-        });
-    });
-};
-
-// --- SINKRONISASI LOG TRANSAKSI (DIPERLENGKAP) ---
-// Pastikan tabel kamu punya kolom: Time, ID, Action, Amount, Result
-onValue(ref(db, 'globalLogs'), (snap) => {
-    const logs = snap.val();
-    const container = document.getElementById('globalLogs');
-    container.innerHTML = "";
-    if(logs) {
-        Object.values(logs).reverse().forEach(l => {
-            const isWin = l.type === 'win';
-            container.innerHTML += `
-                <tr class="hover:bg-white/5 transition border-b border-white/5">
-                    <td class="p-4 text-slate-500 text-[10px]">${l.time}</td>
-                    <td class="p-4 font-bold text-blue-400 uppercase text-[10px]">${l.user}</td>
-                    <td class="p-4 italic text-slate-300 text-[10px]">${l.desc || 'Pick Player'}</td>
-                    <td class="p-4 text-yellow-500 font-bold text-[10px]">Rp ${l.amount.toLocaleString()}</td>
-                    <td class="p-4">
-                        <span class="px-2 py-1 rounded text-[8px] font-black uppercase ${isWin ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}">
-                            ${isWin ? 'SUCCESS/WIN' : 'BET/LOSE'}
-                        </span>
-                    </td>
-                </tr>
-            `;
-        });
-    }
-});
-
-// --- MONITOR AKTIVITAS USER DETIL ---
-onValue(ref(db, 'globalLogs'), (snap) => {
-    const data = snap.val();
-    const container = document.getElementById('liveActivity');
-    container.innerHTML = "";
-
-    if(data) {
-        // Ambil 10 aktivitas terakhir
-        Object.values(data).reverse().slice(0, 100000).forEach(item => {
-            const isWin = item.type === 'win';
-            const isTopUp = item.desc === 'Top Up Admin';
-            
-            // Logika Penentuan Status
-            // Di file ADMIN (Bagian Monitor Aktivitas)
-let statusClass = "bg-yellow-500/20 text-yellow-500"; // Default PROSES
-if (item.type === 'win') statusClass = "bg-green-500/20 text-green-500";
-if (item.type === 'lose') statusClass = "bg-red-500/20 text-red-500";
-
-            container.innerHTML += `
-                <div class="activity-card">
-                    <div>
-                        <div class="flex items-center gap-2 mb-1">
-                            <span class="text-[10px] font-black text-blue-400 uppercase tracking-tighter">${item.user}</span>
-                            <span class="text-[8px] text-slate-500">${item.time}</span>
-                        </div>
-                        <p class="text-[11px] font-bold text-white">
-                            ${isTopUp ? 'Melakukan Top Up' : `Pick Unit: <span class="text-yellow-500">${item.desc}</span>`}
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-    import { getDatabase, ref, onValue, set, update, push, get } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
-
-    const firebaseConfig = { 
-        apiKey: "AIzaSyCHr0eemIkfHNFDUkSaFDklp_c1OgmSnl8", 
-        databaseURL: "https://mybro-9ba5f-default-rtdb.firebaseio.com",
-        projectId: "mybro-9ba5f"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
-
-    // --- TOP UP MANUAL ---
-    window.manualTopUp = async () => {
-        const idInput = document.getElementById('manualId');
-        const amtInput = document.getElementById('manualAmount');
-        const id = idInput.value.toUpperCase().trim();
-        const amount = parseInt(amtInput.value);
-
-        if(!id || !amount) return Swal.fire('Error', 'ID dan Nominal harus diisi!', 'error');
-
-        const userRef = ref(db, 'users/' + id);
-        try {
-            const snapshot = await get(userRef);
-            if (snapshot.exists()) {
-                const currentBal = snapshot.val().balance || 0;
-                await update(userRef, { balance: currentBal + amount });
-                
-                const time = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
-                push(ref(db, 'globalLogs'), {
-                    time: time, user: id, desc: 'Top Up Admin', amount: amount, type: 'win'
-                });
-
-                Swal.fire('Sukses', 'Top Up Berhasil!', 'success');
-                idInput.value = ""; amtInput.value = "";
-            } else {
-                Swal.fire('Gagal', 'ID Player tidak ditemukan!', 'error');
-            }
-        } catch (e) { console.error(e); }
-    };
-
-    // --- SINKRONISASI PLAYER ---
-    onValue(ref(db, 'users'), (snap) => {
-        const users = snap.val();
-        const container = document.getElementById('uList');
-        let totalB = 0;
-        container.innerHTML = "";
-        if(users) {
-            for(let id in users) {
-                const bal = users[id].balance || 0;
-                totalB += bal;
-                container.innerHTML += `
-                    <div class="bg-slate-900/80 p-4 rounded-xl border border-white/5 flex justify-between items-center mb-2">
-                        <div>
-                            <p class="font-bold text-white uppercase text-[10px] tracking-widest">${id}</p>
-                            <p class="text-yellow-500 font-bold font-orbitron text-xs">Rp ${bal.toLocaleString('id-ID')}</p>
-                        </div>
-                        <button onclick="fillID('${id}')" class="bg-blue-600 text-[9px] px-3 py-1 rounded-lg font-bold uppercase hover:bg-blue-500">PILIH</button>
-                    </div>`;
-            }
-        }
-        document.getElementById('globalBal').innerText = "Rp " + totalB.toLocaleString('id-ID');
-    });
-
-    window.fillID = (id) => { document.getElementById('manualId').value = id; };
-
-    // --- GATE CONTROL ---
-    onValue(ref(db, 'match/status'), (snap) => {
-        const status = snap.val() || 'open';
-        const label = document.getElementById('statusLabel');
-        document.getElementById('gateToggle').checked = (status === 'open');
-        label.innerText = status.toUpperCase();
-        label.className = status === 'open' ? "text-green-500" : "text-red-500";
-    });
-
-    window.toggleGate = (el) => {
-        set(ref(db, 'match/status'), el.checked ? 'open' : 'closed');
     };
 
     // --- SET WINNER ---
-    window.setWinner = (side) => {
-        Swal.fire({
-            title: 'Set Pemenang?',
-            text: "Unit " + side + " akan menang!",
-            icon: 'warning',
-            showCancelButton: true
-        }).then((res) => {
-            if (res.isConfirmed) {
+    const handleWinner = (side) => {
+        Swal.fire({ title: 'Set Winner ' + side + '?', showCancelButton: true }).then(res => {
+            if(res.isConfirmed){
                 set(ref(db, 'match/result'), null).then(() => {
                     set(ref(db, 'match/result'), side);
                 });
             }
         });
     };
+    document.getElementById('btnWinA').onclick = () => handleWinner('A');
+    document.getElementById('btnWinB').onclick = () => handleWinner('B');
 
-    // --- MONITOR LOGS & AKTIVITAS (PERBAIKAN UTAMA) ---
-    onValue(ref(db, 'globalLogs'), (snap) => {
+    // --- GATE CONTROL ---
+    const gateToggle = document.getElementById('gateToggle');
+    gateToggle.onchange = (e) => {
+        set(ref(db, 'match/status'), e.target.checked ? 'open' : 'closed');
+    };
+    onValue(ref(db, 'match/status'), snap => {
+        const status = snap.val() || 'open';
+        gateToggle.checked = (status === 'open');
+        document.getElementById('statusLabel').innerText = status.toUpperCase();
+        document.getElementById('statusLabel').className = status === 'open' ? "text-green-500" : "text-red-500";
+    });
+
+    // --- SINKRONISASI PEMAIN & BALANCE ---
+    onValue(ref(db, 'users'), snap => {
+        const users = snap.val();
+        const container = document.getElementById('uList');
+        let total = 0;
+        container.innerHTML = "";
+        for(let id in users){
+            const b = users[id].balance || 0;
+            total += b;
+            const div = document.createElement('div');
+            div.className = "bg-slate-900/80 p-4 rounded-xl border border-white/5 flex justify-between items-center";
+            div.innerHTML = `<div><p class="text-[10px] font-bold text-blue-400 uppercase">${id}</p><p class="text-xs font-bold text-yellow-500">Rp ${b.toLocaleString()}</p></div><button class="bg-blue-600 text-[8px] px-2 py-1 rounded">PILIH</button>`;
+            div.querySelector('button').onclick = () => { document.getElementById('manualId').value = id; };
+            container.appendChild(div);
+        }
+        document.getElementById('globalBal').innerText = "Rp " + total.toLocaleString();
+    });
+
+    // --- LIVE ACTIVITY MONITOR ---
+    onValue(ref(db, 'globalLogs'), snap => {
         const logs = snap.val();
-        const tableBody = document.getElementById('globalLogs');
-        const liveContainer = document.getElementById('liveActivity');
-        
-        tableBody.innerHTML = "";
-        liveContainer.innerHTML = "";
-
-        if(logs) {
-            const logArray = Object.values(logs).reverse();
-
-            logArray.forEach(l => {
-                // 1. Logika untuk Tabel Riwayat
-                const badgeColor = l.type === 'win' ? 'bg-green-500/20 text-green-400' : (l.type === 'lose' ? 'bg-red-500/20 text-red-400' : 'bg-yellow-500/20 text-yellow-500');
-                tableBody.innerHTML += `
-                    <tr class="hover:bg-white/5 border-b border-white/5">
-                        <td class="p-4 text-slate-500 text-[10px]">${l.time}</td>
-                        <td class="p-4 font-bold text-blue-400 uppercase text-[10px]">${l.user}</td>
-                        <td class="p-4 italic text-slate-300 text-[10px]">${l.desc}</td>
-                        <td class="p-4 text-yellow-500 font-bold text-[10px]">Rp ${l.amount.toLocaleString()}</td>
-                    </tr>`;
-
-                // 2. Logika untuk Live Activity Monitor
-                let statusText = "PROSES";
-                let statusClass = "bg-yellow-500/20 text-yellow-500";
+        const container = document.getElementById('liveActivity');
+        container.innerHTML = "";
+        if(logs){
+            Object.values(logs).reverse().forEach(l => {
+                let sText = "PROSES", sClass = "bg-yellow-500/20 text-yellow-500";
+                if(l.type === 'win') { sText = "SUCCESS"; sClass = "bg-green-500/20 text-green-500"; }
+                if(l.type === 'lose') { sText = "LOST"; sClass = "bg-red-500/20 text-red-500"; }
                 
-                if (l.type === 'win') {
-                    statusText = "SUCCESS";
-                    statusClass = "bg-green-500/20 text-green-500";
-                } else if (l.type === 'lose') {
-                    statusText = "LOST";
-                    statusClass = "bg-red-500/20 text-red-500";
-                }
-
-                liveContainer.innerHTML += `
+                container.innerHTML += `
                     <div class="activity-card">
                         <div>
-                            <div class="flex items-center gap-2 mb-1">
-                                <span class="text-[10px] font-black text-blue-400 uppercase tracking-tighter">${l.user}</span>
-                                <span class="text-[8px] text-slate-500">${l.time}</span>
-                            </div>
+                            <p class="text-[10px] font-black text-blue-400 uppercase mb-1">${l.user} <span class="text-slate-600 font-normal ml-2">${l.time}</span></p>
                             <p class="text-[11px] font-bold text-white">${l.desc}</p>
                         </div>
                         <div class="text-right">
-                            <p class="text-[11px] font-orbitron font-black text-white">Rp ${l.amount.toLocaleString()}</p>
-                            <span class="badge-status ${statusClass}">${statusText}</span>
+                            <p class="text-[11px] font-orbitron font-black text-white italic">Rp ${l.amount.toLocaleString()}</p>
+                            <span class="badge-status ${sClass}">${sText}</span>
                         </div>
                     </div>`;
             });
         }
     });
 </script>
-
-
 </body>
 </html>
