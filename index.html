@@ -306,6 +306,27 @@ document.getElementById('btnResetLogs').onclick = () => {
     });
 };
 
+    // --- LOGIKA TOMBOL RESET MATCH ---
+document.getElementById('btnResetMatch').onclick = () => {
+    Swal.fire({
+        title: 'Reset Arena?',
+        text: "Status pemenang sebelumnya akan dihapus.",
+        icon: 'question',
+        showCancelButton: true,
+        confirmButtonColor: '#dc2626',
+        confirmButtonText: 'Ya, Reset!',
+        background: '#020617',
+        color: '#fff'
+    }).then((result) => {
+        if (result.isConfirmed) {
+            set(ref(db, 'match/result'), null).then(() => {
+                Swal.fire({ title: 'CLEARED!', icon: 'success', timer: 1000, showConfirmButton: false, background: '#020617', color: '#fff' });
+            });
+        }
+    });
+};
+
+
 
 </script>
 </body>
