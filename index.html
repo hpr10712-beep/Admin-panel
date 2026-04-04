@@ -160,12 +160,13 @@ onValue(ref(db, 'users'), snap => {
     
     for(let id in users){
         const u = users[id];
-        const b = u.balance || 0;
+        const b = Number(u.balance || 0); // Pastikan angka
         totalVault += b;
 
-        // Ambil data taruhan dari tiap user
-        if(u.side === 'A') totalBetA += (u.betAmount || 0);
-        if(u.side === 'B') totalBetB += (u.betAmount || 0);
+        // PERBAIKAN: Gunakan Number() agar terjumlahkan, bukan digabung sebagai teks
+        // Dan pastikan pengecekan side tidak sensitif huruf besar/kecil
+        if(u.side === 'A') totalBetA += Number(u.betAmount || 0);
+        if(u.side === 'B') totalBetB += Number(u.betAmount || 0);
 
         const div = document.createElement('div');
         div.className = "bg-slate-900/60 p-4 rounded-2xl border border-white/5 flex justify-between items-center hover:border-yellow-500/30 transition-all";
@@ -179,17 +180,28 @@ onValue(ref(db, 'users'), snap => {
         container.appendChild(div);
     }
     
-    // Update Tampilan Balance & Market
+    // Update Tampilan Global Balance
     document.getElementById('globalBal').innerText = "Rp " + totalVault.toLocaleString();
     
-    const maxVal = Math.max(totalBetA, totalBetB, 100000); 
-    document.getElementById('barA').style.height = (totalBetA / maxVal * 100) + "%";
-    document.getElementById('barB').style.height = (totalBetB / maxVal * 100) + "%";
+    // PERBAIKAN LOGIKA GRAFIK:
+    // Gunakan total gabungan (Total Market) sebagai pembagi agar kedua batang 
+    // bergerak secara proporsional satu sama lain.
+    const totalMarket = totalBetA + totalBetB || 1; // Cegah pembagian dengan nol
+    
+    const heightA = (totalBetA / totalMarket) * 100;
+    const heightB = (totalBetB / totalMarket) * 100;
+
+    // Set tinggi minimal 5% agar bar tidak hilang total saat Rp 0
+    document.getElementById('barA').style.height = Math.max(heightA, 5) + "%";
+    document.getElementById('barB').style.height = Math.max(heightB, 5) + "%";
+    
+    // Tampilkan nominal asli di atas bar
     document.getElementById('valA').innerText = "Rp " + totalBetA.toLocaleString();
     document.getElementById('valB').innerText = "Rp " + totalBetB.toLocaleString();
     
     window.currentMarket = { a: totalBetA, b: totalBetB };
 });
+
 
 // --- SHARE REPORT ---
 window.copyMarketReport = () => {
