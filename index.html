@@ -319,22 +319,156 @@ if (item.type === 'lose') statusClass = "bg-red-500/20 text-red-500";
                         </div>
                         <p class="text-[11px] font-bold text-white">
                             ${isTopUp ? 'Melakukan Top Up' : `Pick Unit: <span class="text-yellow-500">${item.desc}</span>`}
-                        </p>
-                    </div>
-                    <div class="text-right">
-                        <p class="text-[11px] font-orbitron font-black text-white">Rp ${item.amount.toLocaleString()}</p>
-                        <span class="badge-status ${statusClass}">${statusText}</span>
-                    </div>
-                </div>
-            `;
-        });
-    } else {
-        container.innerHTML = `<p class="text-center text-slate-600 text-xs mt-10 italic italic">Belum ada aktivitas...</p>`;
-    }
-});
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getDatabase, ref, onValue, set, update, push, get } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
-    
+    const firebaseConfig = { 
+        apiKey: "AIzaSyCHr0eemIkfHNFDUkSaFDklp_c1OgmSnl8", 
+        databaseURL: "https://mybro-9ba5f-default-rtdb.firebaseio.com",
+        projectId: "mybro-9ba5f"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
+
+    // --- TOP UP MANUAL ---
+    window.manualTopUp = async () => {
+        const idInput = document.getElementById('manualId');
+        const amtInput = document.getElementById('manualAmount');
+        const id = idInput.value.toUpperCase().trim();
+        const amount = parseInt(amtInput.value);
+
+        if(!id || !amount) return Swal.fire('Error', 'ID dan Nominal harus diisi!', 'error');
+
+        const userRef = ref(db, 'users/' + id);
+        try {
+            const snapshot = await get(userRef);
+            if (snapshot.exists()) {
+                const currentBal = snapshot.val().balance || 0;
+                await update(userRef, { balance: currentBal + amount });
+                
+                const time = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+                push(ref(db, 'globalLogs'), {
+                    time: time, user: id, desc: 'Top Up Admin', amount: amount, type: 'win'
+                });
+
+                Swal.fire('Sukses', 'Top Up Berhasil!', 'success');
+                idInput.value = ""; amtInput.value = "";
+            } else {
+                Swal.fire('Gagal', 'ID Player tidak ditemukan!', 'error');
+            }
+        } catch (e) { console.error(e); }
+    };
+
+    // --- SINKRONISASI PLAYER ---
+    onValue(ref(db, 'users'), (snap) => {
+        const users = snap.val();
+        const container = document.getElementById('uList');
+        let totalB = 0;
+        container.innerHTML = "";
+        if(users) {
+            for(let id in users) {
+                const bal = users[id].balance || 0;
+                totalB += bal;
+                container.innerHTML += `
+                    <div class="bg-slate-900/80 p-4 rounded-xl border border-white/5 flex justify-between items-center mb-2">
+                        <div>
+                            <p class="font-bold text-white uppercase text-[10px] tracking-widest">${id}</p>
+                            <p class="text-yellow-500 font-bold font-orbitron text-xs">Rp ${bal.toLocaleString('id-ID')}</p>
+                        </div>
+                        <button onclick="fillID('${id}')" class="bg-blue-600 text-[9px] px-3 py-1 rounded-lg font-bold uppercase hover:bg-blue-500">PILIH</button>
+                    </div>`;
+            }
+        }
+        document.getElementById('globalBal').innerText = "Rp " + totalB.toLocaleString('id-ID');
+    });
+
+    window.fillID = (id) => { document.getElementById('manualId').value = id; };
+
+    // --- GATE CONTROL ---
+    onValue(ref(db, 'match/status'), (snap) => {
+        const status = snap.val() || 'open';
+        const label = document.getElementById('statusLabel');
+        document.getElementById('gateToggle').checked = (status === 'open');
+        label.innerText = status.toUpperCase();
+        label.className = status === 'open' ? "text-green-500" : "text-red-500";
+    });
+
+    window.toggleGate = (el) => {
+        set(ref(db, 'match/status'), el.checked ? 'open' : 'closed');
+    };
+
+    // --- SET WINNER ---
+    window.setWinner = (side) => {
+        Swal.fire({
+            title: 'Set Pemenang?',
+            text: "Unit " + side + " akan menang!",
+            icon: 'warning',
+            showCancelButton: true
+        }).then((res) => {
+            if (res.isConfirmed) {
+                set(ref(db, 'match/result'), null).then(() => {
+                    set(ref(db, 'match/result'), side);
+                });
+            }
+        });
+    };
+
+    // --- MONITOR LOGS & AKTIVITAS (PERBAIKAN UTAMA) ---
+    onValue(ref(db, 'globalLogs'), (snap) => {
+        const logs = snap.val();
+        const tableBody = document.getElementById('globalLogs');
+        const liveContainer = document.getElementById('liveActivity');
+        
+        tableBody.innerHTML = "";
+        liveContainer.innerHTML = "";
+
+        if(logs) {
+            const logArray = Object.values(logs).reverse();
+
+            logArray.forEach(l => {
+                // 1. Logika untuk Tabel Riwayat
+                const badgeColor = l.type === 'win' ? 'bg-green-500/20 text-green-400' : (l.type === 'lose' ? 'bg-red-500/20 text-red-400' : 'bg-yellow-500/20 text-yellow-500');
+                tableBody.innerHTML += `
+                    <tr class="hover:bg-white/5 border-b border-white/5">
+                        <td class="p-4 text-slate-500 text-[10px]">${l.time}</td>
+                        <td class="p-4 font-bold text-blue-400 uppercase text-[10px]">${l.user}</td>
+                        <td class="p-4 italic text-slate-300 text-[10px]">${l.desc}</td>
+                        <td class="p-4 text-yellow-500 font-bold text-[10px]">Rp ${l.amount.toLocaleString()}</td>
+                    </tr>`;
+
+                // 2. Logika untuk Live Activity Monitor
+                let statusText = "PROSES";
+                let statusClass = "bg-yellow-500/20 text-yellow-500";
+                
+                if (l.type === 'win') {
+                    statusText = "SUCCESS";
+                    statusClass = "bg-green-500/20 text-green-500";
+                } else if (l.type === 'lose') {
+                    statusText = "LOST";
+                    statusClass = "bg-red-500/20 text-red-500";
+                }
+
+                liveContainer.innerHTML += `
+                    <div class="activity-card">
+                        <div>
+                            <div class="flex items-center gap-2 mb-1">
+                                <span class="text-[10px] font-black text-blue-400 uppercase tracking-tighter">${l.user}</span>
+                                <span class="text-[8px] text-slate-500">${l.time}</span>
+                            </div>
+                            <p class="text-[11px] font-bold text-white">${l.desc}</p>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-[11px] font-orbitron font-black text-white">Rp ${l.amount.toLocaleString()}</p>
+                            <span class="badge-status ${statusClass}">${statusText}</span>
+                        </div>
+                    </div>`;
+            });
+        }
+    });
 </script>
+
 
 </body>
 </html>
