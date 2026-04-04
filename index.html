@@ -131,8 +131,16 @@
                 </div>
         </div>
     </div>
-    
+        
+</div>
+        <button id="btnResetLogs" class="bg-red-600/20 hover:bg-red-600 border border-red-600/50 text-red-500 hover:text-white px-6 py-2 rounded-xl font-orbitron text-[10px] font-bold transition-all active:scale-95">
+            RESET ALL TRX
+        </button>
+    </div>
+    <div id="liveActivity" class="grid grid-cols-2 gap-6 h-[600px] overflow-y-auto pr-4"></div>
+</div>
 
+    
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
     import { getDatabase, ref, onValue, set, update, push, get } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
