@@ -305,16 +305,10 @@ onValue(ref(db, 'globalLogs'), (snap) => {
             const isTopUp = item.desc === 'Top Up Admin';
             
             // Logika Penentuan Status
-            let statusText = "PROSES";
-            let statusClass = "bg-yellow-500/20 text-yellow-500";
-            
-            if (isTopUp || isWin) {
-                statusText = "SUCCESS";
-                statusClass = "bg-green-500/20 text-green-500";
-            } else if (item.desc === 'LOSE') {
-                statusText = "LOST";
-                statusClass = "bg-red-500/20 text-red-400";
-            }
+            // Di file ADMIN (Bagian Monitor Aktivitas)
+let statusClass = "bg-yellow-500/20 text-yellow-500"; // Default PROSES
+if (item.type === 'win') statusClass = "bg-green-500/20 text-green-500";
+if (item.type === 'lose') statusClass = "bg-red-500/20 text-red-500";
 
             container.innerHTML += `
                 <div class="activity-card">
