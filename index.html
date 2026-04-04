@@ -56,7 +56,16 @@
         .win-border { border-left-color: #10b981; }
         .lose-border { border-left-color: #ef4444; }
 
-        .badge-status { font-size: 10px; font-weight: 900; padding: 4px 10px; border-radius: 6px; text-transform: uppercase; letter-spacing: 1px; }
+     
+    .badge-status { font-size: 10px; font-weight: 900; padding: 4px 10px; border-radius: 6px; text-transform: uppercase; letter-spacing: 1px; }
+   
+    /* Styling Bar Chart yang Futuristik */
+.market-box { background: rgba(15, 23, 42, 0.5); border: 1px dashed rgba(59, 130, 246, 0.3); }
+.chart-wrapper { display: flex; gap: 15px; align-items: flex-end; height: 120px; padding: 10px 20px; }
+.bar-item { flex: 1; transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); border-radius: 6px 6px 2px 2px; position: relative; min-height: 5px; }
+.bar-value { position: absolute; top: -25px; width: 100%; text-align: center; font-size: 10px; font-family: 'Orbitron'; font-weight: 900; }
+
+    
     </style>
 </head>
 <body>
@@ -80,25 +89,37 @@
     <div class="grid grid-cols-12 gap-8 items-start">
     <div class="col-span-9 space-y-8">
         
-        <div class="glass p-8 rounded-[2.5rem] border-t-4 border-green-500">
-            <h3 class="font-orbitron font-bold text-xs mb-5 text-green-400 uppercase tracking-widest">Quick Top Up</h3>
-            <div class="flex gap-4">
-                <input type="text" id="manualId" class="flex-1 bg-slate-950/80 border border-slate-700 p-5 rounded-2xl font-orbitron text-yellow-500 outline-none focus:border-green-500 transition-all" placeholder="PASTE PLAYER ID">
-                <input type="number" id="manualAmount" class="w-56 bg-slate-950/80 border border-slate-700 p-5 rounded-2xl text-white outline-none focus:border-green-500" placeholder="NOMINAL">
-                <button id="btnTopUp" class="bg-green-600 hover:bg-green-500 px-10 rounded-2xl font-orbitron font-black text-white shadow-lg shadow-green-900/20 active:scale-95 transition-all">SEND</button>
-            </div>
+        <div class="glass p-8 rounded-[2.5rem] border-l-4 border-blue-500 mb-8 market-box">
+    <div class="flex justify-between items-center mb-6">
+        <div>
+            <h3 class="font-orbitron font-bold text-xs text-blue-400 uppercase tracking-[0.2em]">Market Volume Analysis</h3>
+            <p class="text-[9px] text-slate-500 font-bold uppercase tracking-widest">Real-time betting weight</p>
         </div>
+        <button onclick="copyMarketReport()" class="bg-blue-600/20 hover:bg-blue-600 text-blue-400 hover:text-white p-3 rounded-2xl transition-all border border-blue-500/30 active:scale-90">
+            <svg xmlns="http://www.w3.org/2001/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 100-2.684 3 3 0 000 2.684zm0 12.684a3 3 0 100-2.684 3 3 0 000 2.684z" />
+            </svg>
+        </button>
+    </div>
 
-        <div class="grid grid-cols-2 gap-8">
-            <button id="btnWinA" class="group relative overflow-hidden bg-blue-600 p-12 rounded-[2.5rem] font-orbitron font-black text-3xl shadow-2xl transition-all active:scale-95">
-                <span class="relative z-10">SET WIN A</span>
-                <div class="absolute inset-0 bg-blue-400 opacity-0 group-hover:opacity-20 transition-opacity"></div>
-            </button>
-            <button id="btnWinB" class="group relative overflow-hidden bg-red-600 p-12 rounded-[2.5rem] font-orbitron font-black text-3xl shadow-2xl transition-all active:scale-95">
-                <span class="relative z-10">SET WIN B</span>
-                <div class="absolute inset-0 bg-red-400 opacity-0 group-hover:opacity-20 transition-opacity"></div>
-            </button>
+    <div class="chart-wrapper">
+        <div class="bar-item bg-gradient-to-t from-blue-700 to-blue-400 shadow-[0_0_15px_rgba(37,99,235,0.4)]" id="barA" style="height: 10%">
+            <div class="bar-value text-blue-400" id="valA">Rp 0</div>
         </div>
+        <div class="bar-item bg-gradient-to-t from-red-700 to-red-400 shadow-[0_0_15px_rgba(220,38,38,0.4)]" id="barB" style="height: 10%">
+            <div class="bar-value text-red-400" id="valB">Rp 0</div>
+        </div>
+    </div>
+    
+    <div class="flex justify-between mt-4 font-orbitron text-[11px] font-black tracking-widest">
+        <div class="flex items-center gap-2 text-blue-500">
+            <span class="h-2 w-2 bg-blue-500 rounded-full animate-pulse"></span> UNIT A
+        </div>
+        <div class="flex items-center gap-2 text-red-500">
+            UNIT B <span class="h-2 w-2 bg-red-500 rounded-full animate-pulse"></span>
+        </div>
+    </div>
+</div>
 
         <div class="grid grid-cols-2 gap-6">
             <div class="glass p-6 rounded-[2.5rem] border-r-4 border-blue-500 flex justify-between items-center bg-slate-900/30 shadow-lg">
@@ -153,13 +174,6 @@
 </div>
 
         
-</div>
-        <button id="btnResetLogs" class="bg-red-600/20 hover:bg-red-600 border border-red-600/50 text-red-500 hover:text-white px-6 py-2 rounded-xl font-orbitron text-[10px] font-bold transition-all active:scale-95">
-            RESET ALL TRX
-        </button>
-    </div>
-    <div id="liveActivity" class="grid grid-cols-2 gap-6 h-[600px] overflow-y-auto pr-4"></div>
-</div>
 
     
 <script type="module">
@@ -260,6 +274,46 @@
         }
         document.getElementById('globalBal').innerText = "Rp " + total.toLocaleString();
     });
+
+    // Tambahkan variabel ini di dalam fungsi onValue('users')
+let totalBetA = 0;
+let totalBetB = 0;
+
+// ... di dalam loop for(let id in users) ...
+// Asumsi: di database player ada field 'betAmount' dan 'side' saat mereka pasang taruhan
+if(users[id].side === 'A') totalBetA += (users[id].betAmount || 0);
+if(users[id].side === 'B') totalBetB += (users[id].betAmount || 0);
+
+// ... setelah loop selesai, update visual chart ...
+const maxVal = Math.max(totalBetA, totalBetB, 500000); // 500rb sebagai skala minimal
+document.getElementById('barA').style.height = (totalBetA / maxVal * 100) + "%";
+document.getElementById('barB').style.height = (totalBetB / maxVal * 100) + "%";
+document.getElementById('valA').innerText = "Rp " + totalBetA.toLocaleString();
+document.getElementById('valB').innerText = "Rp " + totalBetB.toLocaleString();
+
+// --- FUNGSI SHARE/COPY LAPORAN ---
+window.copyMarketReport = () => {
+    const report = `📊 OMNI CONTROL REPORT\n` +
+                   `--------------------------\n` +
+                   `🔵 UNIT A: Rp ${totalBetA.toLocaleString()}\n` +
+                   `🔴 UNIT B: Rp ${totalBetB.toLocaleString()}\n` +
+                   `💰 VAULT : ${document.getElementById('globalBal').innerText}\n` +
+                   `⏰ Waktu : ${new Date().toLocaleTimeString()}`;
+    
+    navigator.clipboard.writeText(report);
+    Swal.fire({
+        title: 'Report Copied!',
+        text: 'Laporan bursa berhasil disalin ke clipboard.',
+        icon: 'success',
+        toast: true,
+        position: 'top-end',
+        showConfirmButton: false,
+        timer: 2000,
+        background: '#020617',
+        color: '#fff'
+    });
+};
+
 
     // --- LIVE MONITOR LOGIC ---
     onValue(ref(db, 'globalLogs'), snap => {
