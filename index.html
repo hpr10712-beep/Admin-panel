@@ -129,20 +129,6 @@
             </div>
             <div id="liveActivity" class="grid grid-cols-2 gap-6 h-[600px] overflow-y-auto pr-4">
                 </div>
-
-            <div class="col-span-12 glass p-10 rounded-[4rem] border-b-8 border-blue-600 shadow-2xl mb-10">
-    <div class="flex justify-between items-end mb-8">
-        <div>
-            <h3 class="font-orbitron text-blue-400 text-lg uppercase tracking-tight italic">Global Transaction Monitor</h3>
-            <span class="bg-blue-500/10 px-4 py-2 rounded-full border border-blue-500/20 text-[10px] font-black text-blue-400 uppercase animate-pulse">System Live Stream</span>
-        </div>
-        <button id="btnResetLogs" class="bg-red-600/20 hover:bg-red-600 border border-red-600/50 text-red-500 hover:text-white px-6 py-2 rounded-xl font-orbitron text-[10px] font-bold transition-all active:scale-95">
-            RESET ALL TRX
-        </button>
-    </div>
-    <div id="liveActivity" class="grid grid-cols-2 gap-6 h-[600px] overflow-y-auto pr-4"></div>
-</div>
-
         </div>
     </div>
 
@@ -270,31 +256,6 @@
             });
         }
     });
-    // --- FUNGSI RESET LOG TRANSAKSI ---
-document.getElementById('btnResetLogs').onclick = () => {
-    Swal.fire({
-        title: 'Hapus Semua Log?',
-        text: "Data transaksi di monitor akan hilang permanen!",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#d33',
-        cancelButtonColor: '#3085d6',
-        confirmButtonText: 'Ya, Hapus Semua!',
-        background: '#020617',
-        color: '#fff'
-    }).then((result) => {
-        if (result.isConfirmed) {
-            // Menghapus seluruh data di path globalLogs
-            set(ref(db, 'globalLogs'), null)
-            .then(() => {
-                Swal.fire('Terhapus!', 'Semua history transaksi telah dibersihkan.', 'success');
-            })
-            .catch((error) => {
-                Swal.fire('Gagal', 'Terjadi kesalahan: ' + error.message, 'error');
-            });
-        }
-    });
-};
 
 </script>
 </body>
