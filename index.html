@@ -13,6 +13,22 @@
         .font-orbitron { font-family: 'Orbitron', sans-serif; }
         ::-webkit-scrollbar { width: 5px; }
         ::-webkit-scrollbar-thumb { background: #eab308; border-radius: 10px; }
+  
+    /* Toggle Switch Style */
+.switch { position: relative; display: inline-block; width: 60px; height: 34px; }
+.switch input { opacity: 0; width: 0; height: 0; }
+.slider {
+  position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0;
+  background-color: #334155; transition: .4s; border-radius: 34px;
+}
+.slider:before {
+  position: absolute; content: ""; height: 26px; width: 26px; left: 4px; bottom: 4px;
+  background-color: white; transition: .4s; border-radius: 50%;
+}
+input:checked + .slider { background-color: #10b981; box-shadow: 0 0 15px rgba(16, 185, 129, 0.5); }
+input:checked + .slider:before { transform: translateX(26px); }
+
+    
     </style>
 </head>
 <body>
@@ -48,6 +64,18 @@
             <div id="uList" class="space-y-4 overflow-y-auto pr-2">
                 </div>
         </div>
+
+        <div class="glass p-8 rounded-[2.5rem] mb-10 border-r-4 border-blue-500 flex justify-between items-center">
+    <div>
+        <h3 class="font-orbitron font-bold text-lg text-white">GATE CONTROL: <span id="statusLabel" class="text-green-500">OPEN</span></h3>
+        <p class="text-xs text-slate-400 italic">Geser untuk Mengunci/Membuka akses taruhan pemain</p>
+    </div>
+    <label class="switch">
+        <input type="checkbox" id="gateToggle" onchange="toggleGate(this)" checked>
+        <span class="slider"></span>
+    </label>
+</div>
+
 
         <div class="col-span-2 glass p-8 rounded-[3rem] h-[500px] flex flex-col">
             <h3 class="font-orbitron font-bold text-slate-400 mb-6 uppercase tracking-widest text-xs italic">Riwayat Transaksi Global</h3>
@@ -177,6 +205,65 @@
             }
         });
     };
+
+    // --- KONTROL BUKA/TUTUP PICK ---
+const gateRef = ref(db, 'match/status');
+
+// Pantau status awal dari DB
+onValue(gateRef, (snap) => {
+    const status = snap.val() || 'open';
+    const toggle = document.getElementById('gateToggle');
+    const label = document.getElementById('statusLabel');
+    
+    if (status === 'open') {
+        toggle.checked = true;
+        label.innerText = "OPEN";
+        label.className = "text-green-500";
+    } else {
+        toggle.checked = false;
+        label.innerText = "CLOSED";
+        label.className = "text-red-500";
+    }
+});
+
+// Fungsi saat tombol digeser
+window.toggleGate = (el) => {
+    const newStatus = el.checked ? 'open' : 'closed';
+    set(gateRef, newStatus).then(() => {
+        Swal.fire({
+            toast: true, position: 'top-end', icon: 'info',
+            title: `Pick bursa: ${newStatus.toUpperCase()}`,
+            showConfirmButton: false, timer: 2000, background: '#0f172a', color: '#fff'
+        });
+    });
+};
+
+// --- SINKRONISASI LOG TRANSAKSI (DIPERLENGKAP) ---
+// Pastikan tabel kamu punya kolom: Time, ID, Action, Amount, Result
+onValue(ref(db, 'globalLogs'), (snap) => {
+    const logs = snap.val();
+    const container = document.getElementById('globalLogs');
+    container.innerHTML = "";
+    if(logs) {
+        Object.values(logs).reverse().forEach(l => {
+            const isWin = l.type === 'win';
+            container.innerHTML += `
+                <tr class="hover:bg-white/5 transition border-b border-white/5">
+                    <td class="p-4 text-slate-500 text-[10px]">${l.time}</td>
+                    <td class="p-4 font-bold text-blue-400 uppercase text-[10px]">${l.user}</td>
+                    <td class="p-4 italic text-slate-300 text-[10px]">${l.desc || 'Pick Player'}</td>
+                    <td class="p-4 text-yellow-500 font-bold text-[10px]">Rp ${l.amount.toLocaleString()}</td>
+                    <td class="p-4">
+                        <span class="px-2 py-1 rounded text-[8px] font-black uppercase ${isWin ? 'bg-green-500/20 text-green-400' : 'bg-red-500/20 text-red-400'}">
+                            ${isWin ? 'SUCCESS/WIN' : 'BET/LOSE'}
+                        </span>
+                    </td>
+                </tr>
+            `;
+        });
+    }
+});
+
 </script>
 
 </body>
