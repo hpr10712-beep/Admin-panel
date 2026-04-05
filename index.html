@@ -2,332 +2,224 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=1200">
-    <title>ELITE ADMIN | OMNI CONTROL</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Inter:wght@400;700&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyBro - Admin Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
     <style>
-        :root { --accent: #eab308; --bg-dark: #020617; }
-        body { 
-            background: var(--bg-dark); color: white; width: 1200px; margin: 0 auto; padding: 40px; font-family: 'Inter', sans-serif; overflow-x: hidden;
-            background-image: radial-gradient(circle at 0% 0%, rgba(30, 58, 138, 0.2) 0%, transparent 35%), radial-gradient(circle at 100% 100%, rgba(127, 29, 29, 0.15) 0%, transparent 35%), url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
-            background-attachment: fixed;
+        :root {
+            --bg: #0b1120;
+            --sidebar: #0f172a;
+            --panel: #1e293b;
+            --panel-hover: #334155;
+            --accent: #10b981;
+            --accent-glow: rgba(16, 185, 129, 0.2);
+            --danger: #ef4444;
+            --text: #f8fafc;
+            --text-dim: #94a3b8;
+            --border: rgba(255, 255, 255, 0.08);
         }
-        .font-orbitron { font-family: 'Orbitron', sans-serif; }
-        .glass { background: rgba(15, 23, 42, 0.7); backdrop-filter: blur(25px); border: 1px solid rgba(255, 255, 255, 0.05); box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); }
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 10px; }
-        .switch { position: relative; display: inline-block; width: 60px; height: 30px; }
-        .switch input { opacity: 0; width: 0; height: 0; }
-        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #1e293b; transition: .4s; border-radius: 34px; border: 1px solid rgba(255,255,255,0.1); }
-        .slider:before { position: absolute; content: ""; height: 22px; width: 22px; left: 4px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
-        input:checked + .slider { background-color: #10b981; }
-        input:checked + .slider:before { transform: translateX(30px); }
-        .activity-card { background: linear-gradient(90deg, rgba(30, 41, 59, 0.4), rgba(15, 23, 42, 0.8)); border-left: 4px solid #3b82f6; padding: 15px 20px; border-radius: 12px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; transition: 0.3s; }
-        .win-border { border-left-color: #10b981; }
-        .lose-border { border-left-color: #ef4444; }
-        .badge-status { font-size: 10px; font-weight: 900; padding: 4px 10px; border-radius: 6px; text-transform: uppercase; }
-        .market-box { background: rgba(15, 23, 42, 0.5); border: 1px dashed rgba(59, 130, 246, 0.3); }
-        .chart-wrapper { display: flex; gap: 15px; align-items: flex-end; height: 120px; padding: 10px 20px; }
-        .bar-item { flex: 1; transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275); border-radius: 6px 6px 2px 2px; position: relative; min-height: 5px; }
-        .bar-value { position: absolute; top: -25px; width: 100%; text-align: center; font-size: 10px; font-family: 'Orbitron'; font-weight: 900; }
+
+        * { box-sizing: border-box; font-family: 'Inter', sans-serif; margin: 0; padding: 0; }
+        body { background: var(--bg); color: var(--text); display: flex; height: 100vh; overflow: hidden; }
+
+        /* SIDEBAR */
+        aside { width: 260px; background: var(--sidebar); border-right: 1px solid var(--border); display: flex; flex-direction: column; }
+        .logo { padding: 25px 20px; font-size: 1.5rem; font-weight: 700; color: var(--text); letter-spacing: -0.5px; border-bottom: 1px solid var(--border); }
+        .logo span { color: var(--accent); }
+        .nav-menu { padding: 20px 10px; display: flex; flex-direction: column; gap: 5px; flex: 1; }
+        .nav-item { padding: 12px 15px; border-radius: 8px; display: flex; align-items: center; gap: 15px; color: var(--text-dim); text-decoration: none; transition: 0.2s; cursor: pointer; }
+        .nav-item:hover, .nav-item.active { background: var(--panel-hover); color: var(--accent); }
+
+        /* MAIN CONTENT */
+        main { flex: 1; display: flex; flex-direction: column; overflow-y: auto; padding: 30px; }
+        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; }
+        h1 { font-size: 1.8rem; font-weight: 600; }
+        .admin-badge { background: var(--panel); padding: 8px 15px; border-radius: 20px; font-size: 0.85rem; border: 1px solid var(--border); color: var(--accent); font-weight: 600; }
+
+        /* STATS GRID */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 40px; }
+        .stat-card { background: var(--panel); border: 1px solid var(--border); border-radius: 16px; padding: 20px; display: flex; align-items: center; gap: 20px; transition: 0.3s; }
+        .stat-card:hover { transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.3); border-color: var(--accent); }
+        .stat-icon { width: 60px; height: 60px; border-radius: 12px; background: var(--accent-glow); color: var(--accent); display: flex; justify-content: center; align-items: center; font-size: 1.8rem; }
+        .stat-info h3 { font-size: 2rem; margin-bottom: 5px; }
+        .stat-info p { color: var(--text-dim); font-size: 0.9rem; font-weight: 500; }
+
+        /* DATA TABLE */
+        .table-container { background: var(--panel); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; }
+        .table-header { padding: 20px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+        .table-header h2 { font-size: 1.2rem; }
+        
+        table { width: 100%; border-collapse: collapse; text-align: left; }
+        th { padding: 15px 20px; font-size: 0.85rem; color: var(--text-dim); text-transform: uppercase; border-bottom: 1px solid var(--border); }
+        td { padding: 15px 20px; font-size: 0.95rem; border-bottom: 1px solid var(--border); vertical-align: middle; }
+        tr:last-child td { border-bottom: none; }
+        tr:hover td { background: rgba(255, 255, 255, 0.02); }
+
+        .user-cell { display: flex; align-items: center; gap: 15px; }
+        .user-pfp { width: 40px; height: 40px; border-radius: 50%; object-fit: cover; background: var(--sidebar); border: 1px solid var(--border); }
+        .user-id { font-size: 0.8rem; background: var(--sidebar); padding: 4px 8px; border-radius: 6px; color: var(--accent); margin-top: 4px; display: inline-block; border: 1px solid var(--border); }
+        
+        .btn-action { background: transparent; border: 1px solid var(--border); color: var(--text); padding: 8px 12px; border-radius: 8px; cursor: pointer; transition: 0.2s; font-size: 0.85rem; }
+        .btn-action.danger:hover { background: var(--danger); border-color: var(--danger); color: white; }
+
+        @media(max-width: 768px) {
+            body { flex-direction: column; }
+            aside { width: 100%; height: auto; flex-direction: row; align-items: center; border-right: none; border-bottom: 1px solid var(--border); }
+            .nav-menu { flex-direction: row; padding: 10px; flex: unset; }
+            .nav-item span { display: none; }
+            .table-container { overflow-x: auto; }
+        }
     </style>
 </head>
 <body>
 
-    <nav class="flex justify-between items-center mb-10 glass p-8 rounded-[3rem] border-b-2 border-yellow-500/30">
-        <div class="flex items-center gap-5">
-            <div class="h-14 w-14 bg-gradient-to-br from-yellow-400 to-yellow-600 rounded-2xl flex items-center justify-center shadow-[0_0_20px_rgba(234,179,8,0.4)]">
-                <span class="font-black text-black text-2xl font-orbitron">E</span>
-            </div>
-            <div>
-                <h1 class="font-orbitron text-3xl font-black text-white tracking-tighter italic">OMNI CONTROL</h1>
-                <p class="text-[10px] text-yellow-500 font-bold tracking-[0.3em] uppercase opacity-70">Elite Arena System v2.0</p>
-            </div>
+    <aside>
+        <div class="logo">My<span>Bro</span> Admin</div>
+        <div class="nav-menu">
+            <div class="nav-item active"><i class="fas fa-chart-pie"></i> <span>Dashboard</span></div>
+            <div class="nav-item" onclick="alert('Fitur pengaturan belum tersedia')"><i class="fas fa-cog"></i> <span>Pengaturan Sistem</span></div>
         </div>
-        <div class="glass px-10 py-4 rounded-3xl text-right border-r-4 border-yellow-500 bg-slate-950/50">
-            <p class="text-[9px] text-slate-400 font-bold uppercase tracking-widest mb-1">Global Vault Balance</p>
-            <p id="globalBal" class="text-2xl font-orbitron font-black text-yellow-500">Rp 0</p>
-        </div>
-    </nav>
+    </aside>
 
-    <div class="grid grid-cols-12 gap-8 items-start">
-        <div class="col-span-9 space-y-8">
-            
-            <div class="glass p-8 rounded-[2.5rem] border-t-4 border-green-500">
-                <h3 class="font-orbitron font-bold text-xs mb-5 text-green-400 uppercase tracking-widest">Quick Top Up</h3>
-                <div class="flex gap-4">
-                    <input type="text" id="manualId" class="flex-1 bg-slate-950/80 border border-slate-700 p-5 rounded-2xl font-orbitron text-yellow-500 outline-none" placeholder="PASTE PLAYER ID">
-                    <input type="number" id="manualAmount" class="w-56 bg-slate-950/80 border border-slate-700 p-5 rounded-2xl text-white outline-none" placeholder="NOMINAL">
-                    <button id="btnTopUp" class="bg-green-600 hover:bg-green-500 px-10 rounded-2xl font-orbitron font-black text-white shadow-lg shadow-green-900/20 active:scale-95 transition-all">SEND</button>
+    <main>
+        <header>
+            <h1>Overview</h1>
+            <div class="admin-badge"><i class="fas fa-shield-alt"></i> Super Admin</div>
+        </header>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-users"></i></div>
+                <div class="stat-info">
+                    <h3 id="statUsers">0</h3>
+                    <p>Total Pengguna</p>
                 </div>
             </div>
-
-            <div class="glass p-8 rounded-[2.5rem] border-l-4 border-blue-500 market-box">
-                <div class="flex justify-between items-center mb-6">
-                    <div>
-                        <h3 class="font-orbitron font-bold text-xs text-blue-400 uppercase tracking-[0.2em]">Market Volume Analysis</h3>
-                        <p class="text-[9px] text-slate-500 font-bold uppercase tracking-widest">Real-time betting weight</p>
-                    </div>
-                    <button onclick="copyMarketReport()" class="bg-blue-600/20 hover:bg-blue-600 text-blue-400 hover:text-white p-3 rounded-2xl transition-all border border-blue-500/30">
-                        <svg xmlns="http://www.w3.org/2001/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 100-2.684 3 3 0 000 2.684zm0 12.684a3 3 0 100-2.684 3 3 0 000 2.684z" /></svg>
-                    </button>
-                </div>
-                <div class="chart-wrapper">
-                    <div class="bar-item bg-gradient-to-t from-blue-700 to-blue-400 shadow-[0_0_15px_rgba(37,99,235,0.4)]" id="barA" style="height: 10%">
-                        <div class="bar-value text-blue-400" id="valA">Rp 0</div>
-                    </div>
-                    <div class="bar-item bg-gradient-to-t from-red-700 to-red-400 shadow-[0_0_15px_rgba(220,38,38,0.4)]" id="barB" style="height: 10%">
-                        <div class="bar-value text-red-400" id="valB">Rp 0</div>
-                    </div>
-                </div>
-                <div class="flex justify-between mt-4 font-orbitron text-[11px] font-black tracking-widest">
-                    <div class="flex items-center gap-2 text-blue-500"><span class="h-2 w-2 bg-blue-500 rounded-full animate-pulse"></span> UNIT A</div>
-                    <div class="flex items-center gap-2 text-red-500">UNIT B <span class="h-2 w-2 bg-red-500 rounded-full animate-pulse"></span></div>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-comments"></i></div>
+                <div class="stat-info">
+                    <h3 id="statChats">0</h3>
+                    <p>Total Ruang Obrolan</p>
                 </div>
             </div>
-
-            <div class="grid grid-cols-2 gap-8">
-                <button id="btnWinA" class="group bg-blue-600 p-12 rounded-[2.5rem] font-orbitron font-black text-3xl shadow-2xl active:scale-95 transition-all">SET WIN A</button>
-                <button id="btnWinB" class="group bg-red-600 p-12 rounded-[2.5rem] font-orbitron font-black text-3xl shadow-2xl active:scale-95 transition-all">SET WIN B</button>
-            </div>
-
-            <div class="grid grid-cols-2 gap-6">
-                <div class="glass p-6 rounded-[2.5rem] border-r-4 border-blue-500 flex justify-between items-center">
-                    <div>
-                        <h3 class="font-orbitron font-bold text-sm text-white uppercase">GATEWAY: <span id="statusLabel" class="text-green-500">OPEN</span></h3>
-                        <p class="text-[9px] text-slate-500 font-medium">Kunci bursa taruhan.</p>
-                    </div>
-                    <label class="switch scale-90"><input type="checkbox" id="gateToggle" checked><span class="slider"></span></label>
+            <div class="stat-card">
+                <div class="stat-icon"><i class="fas fa-circle-notch"></i></div>
+                <div class="stat-info">
+                    <h3 id="statStories">0</h3>
+                    <p>Pengguna Buat Status</p>
                 </div>
-                <div class="glass p-6 rounded-[2.5rem] border-r-4 border-red-600 flex justify-between items-center">
-                    <div><h3 class="font-orbitron font-bold text-sm text-white uppercase">RESET MATCH</h3><p class="text-[9px] text-slate-500 font-medium">Hapus status WIN/LOSE.</p></div>
-                    <button id="btnResetMatch" class="bg-red-600/10 hover:bg-red-600 text-red-500 hover:text-white p-3 rounded-2xl transition-all">
-                        <svg xmlns="http://www.w3.org/2001/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
-                    </button>
-                </div>
-            </div>
-
-            <div class="glass p-10 rounded-[3.5rem] border-b-8 border-blue-600/50 mb-10">
-                <div class="flex justify-between items-end mb-8">
-                    <div><h3 class="font-orbitron font-black text-blue-400 text-lg uppercase">Real-Time Activity Monitor</h3></div>
-                    <button id="btnResetLogs" class="bg-red-600/20 hover:bg-red-600 text-red-500 hover:text-white px-4 py-1.5 rounded-xl font-orbitron text-[9px] font-bold">RESET ALL TRX</button>
-                </div>
-                <div id="liveActivity" class="grid grid-cols-1 gap-4 h-[600px] overflow-y-auto pr-4"></div>
             </div>
         </div>
 
-        <div class="col-span-3 glass p-6 rounded-[3rem] border-t-4 border-yellow-500 sticky top-10 self-stretch mb-10">
-            <h3 class="font-orbitron font-bold text-yellow-500 mb-6 text-[10px] uppercase text-center italic">Live Users Online</h3>
-            <div id="uList" class="space-y-3 overflow-y-auto pr-2 h-[1150px]"></div>
-        </div>
-    </div>
-
-<script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-import { getDatabase, ref, onValue, set, update, push, get } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
-
-const firebaseConfig = { 
-    apiKey: "AIzaSyCHr0eemIkfHNFDUkSaFDklp_c1OgmSnl8", 
-    databaseURL: "https://mybro-9ba5f-default-rtdb.firebaseio.com",
-    projectId: "mybro-9ba5f"
-};
-
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
-
-// Fungsi Waktu
-const getFullTime = () => {
-    const d = new Date();
-    const days = ["Minggu", "Senin", "Selasa", "Rabu", "Kamis", "Jumat", "Sabtu"];
-    return `${days[d.getDay()]}, ${d.getDate().toString().padStart(2, '0')}/${(d.getMonth() + 1).toString().padStart(2, '0')} - ${d.getHours().toString().padStart(2, '0')}:${d.getMinutes().toString().padStart(2, '0')}`;
-};
-
-// Variabel Global untuk Laporan
-window.currentMarket = { a: 0, b: 0 };
-
-// --- LOGIKA LIST PLAYER & MARKET VOLUME ---
-onValue(ref(db, 'users'), snap => {
-    const users = snap.val() || {};
-    const container = document.getElementById('uList');
-    
-    let totalVault = 0;
-    let totalBetA = 0;
-    let totalBetB = 0;
-
-    container.innerHTML = "";
-    
-    for(let id in users){
-        const u = users[id];
-        const b = Number(u.balance || 0); // Pastikan angka
-        totalVault += b;
-
-        // PERBAIKAN: Gunakan Number() agar terjumlahkan, bukan digabung sebagai teks
-        // Dan pastikan pengecekan side tidak sensitif huruf besar/kecil
-        if(u.side === 'A') totalBetA += Number(u.betAmount || 0);
-        if(u.side === 'B') totalBetB += Number(u.betAmount || 0);
-
-        const div = document.createElement('div');
-        div.className = "bg-slate-900/60 p-4 rounded-2xl border border-white/5 flex justify-between items-center hover:border-yellow-500/30 transition-all";
-        div.innerHTML = `
-            <div>
-                <p class="text-[10px] font-black text-blue-400 uppercase tracking-tighter">${id}</p>
-                <p class="text-sm font-black text-yellow-500 font-orbitron">Rp ${b.toLocaleString()}</p>
+        <div class="table-container">
+            <div class="table-header">
+                <h2>Daftar Pengguna</h2>
             </div>
-            <button onclick="document.getElementById('manualId').value = '${id}'" class="bg-slate-800 hover:bg-yellow-600 text-[8px] font-bold px-3 py-1.5 rounded-lg">PILIH</button>
-        `;
-        container.appendChild(div);
-    }
-    
-    // Update Tampilan Global Balance
-    document.getElementById('globalBal').innerText = "Rp " + totalVault.toLocaleString();
-    
-    // PERBAIKAN LOGIKA GRAFIK:
-    // Gunakan total gabungan (Total Market) sebagai pembagi agar kedua batang 
-    // bergerak secara proporsional satu sama lain.
-    const totalMarket = totalBetA + totalBetB || 1; // Cegah pembagian dengan nol
-    
-    const heightA = (totalBetA / totalMarket) * 100;
-    const heightB = (totalBetB / totalMarket) * 100;
+            <table id="usersTable">
+                <thead>
+                    <tr>
+                        <th>Profil</th>
+                        <th>Bio</th>
+                        <th>ID Kontak</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody id="usersTableBody">
+                    <tr>
+                        <td colspan="4" style="text-align:center; padding:30px; color:var(--text-dim);">Memuat data pengguna...</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </main>
 
-    // Set tinggi minimal 5% agar bar tidak hilang total saat Rp 0
-    document.getElementById('barA').style.height = Math.max(heightA, 5) + "%";
-    document.getElementById('barB').style.height = Math.max(heightB, 5) + "%";
-    
-    // Tampilkan nominal asli di atas bar
-    document.getElementById('valA').innerText = "Rp " + totalBetA.toLocaleString();
-    document.getElementById('valB').innerText = "Rp " + totalBetB.toLocaleString();
-    
-    window.currentMarket = { a: totalBetA, b: totalBetB };
-});
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getDatabase, ref, onValue, set } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
 
+        // Gunakan kredensial yang sama dengan aplikasi utama
+        const firebaseConfig = {
+            apiKey: "AIzaSyCHr0eemIkfHNFDUkSaFDklp_c1OgmSnl8",
+            authDomain: "mybro-9ba5f.firebaseapp.com",
+            databaseURL: "https://mybro-9ba5f-default-rtdb.firebaseio.com/",
+            projectId: "mybro-9ba5f"
+        };
+        const app_fire = initializeApp(firebaseConfig);
+        const db = getDatabase(app_fire);
 
-// --- SHARE REPORT ---
-window.copyMarketReport = () => {
-    const report = `📊 OMNI CONTROL REPORT\n🔵 UNIT A: Rp ${window.currentMarket.a.toLocaleString()}\n🔴 UNIT B: Rp ${window.currentMarket.b.toLocaleString()}\n💰 VAULT : ${document.getElementById('globalBal').innerText}\n⏰ ${new Date().toLocaleTimeString()}`;
-    navigator.clipboard.writeText(report);
-    Swal.fire({ title: 'Report Copied!', icon: 'success', toast: true, position: 'top-end', showConfirmButton: false, timer: 2000, background: '#020617', color: '#fff' });
-};
-
-// --- TOP UP LOGIC ---
-document.getElementById('btnTopUp').onclick = async () => {
-    const id = document.getElementById('manualId').value.toUpperCase().trim();
-    const amt = parseInt(document.getElementById('manualAmount').value);
-    if(!id || !amt) return Swal.fire('Data Missing', 'ID & Nominal harus diisi!', 'warning');
-    
-    const userRef = ref(db, 'users/' + id);
-    const snap = await get(userRef);
-    if(snap.exists()){
-        const current = snap.val().balance || 0;
-        await update(userRef, { balance: current + amt });
-        push(ref(db, 'globalLogs'), { time: getFullTime(), user: id, desc: 'Top Up Admin', amount: amt, type: 'win' });
-        Swal.fire('Success', `Berhasil Top Up ke ${id}`, 'success');
-        document.getElementById('manualAmount').value = "";
-    } else {
-        Swal.fire('Error', 'ID Player tidak ada!', 'error');
-    }
-};
-
-// --- WINNER LOGIC ---
-const handleWinner = (side) => {
-    Swal.fire({ 
-        title: 'Set Pemenang?', 
-        text: `UNIT ${side} akan menang dan menerima pembayaran.`, 
-        icon: 'warning', 
-        showCancelButton: true, 
-        confirmButtonColor: side === 'A' ? '#2563eb' : '#dc2626' 
-    }).then(res => { 
-        if(res.isConfirmed){ 
-            set(ref(db, 'match/result'), null).then(() => set(ref(db, 'match/result'), side));
-            Swal.fire('Berhasil!', `Unit ${side} telah menang.`, 'success');
-        } 
-    });
-};
-document.getElementById('btnWinA').onclick = () => handleWinner('A');
-document.getElementById('btnWinB').onclick = () => handleWinner('B');
-
-// --- GATEWAY LOGIC ---
-const gateToggle = document.getElementById('gateToggle');
-gateToggle.onchange = (e) => set(ref(db, 'match/status'), e.target.checked ? 'open' : 'closed');
-onValue(ref(db, 'match/status'), snap => {
-    const status = snap.val() || 'open';
-    gateToggle.checked = (status === 'open');
-    document.getElementById('statusLabel').innerText = status.toUpperCase();
-    document.getElementById('statusLabel').className = status === 'open' ? "text-green-500" : "text-red-500";
-});
-
-// --- LIVE MONITOR (1 KOLOM LEBAR) ---
-onValue(ref(db, 'globalLogs'), snap => {
-    const logs = snap.val() || {};
-    const container = document.getElementById('liveActivity');
-    container.innerHTML = "";
-    Object.values(logs).reverse().forEach(l => {
-        let sClass = l.type === 'win' ? "bg-green-500/20 text-green-500" : "bg-red-500/20 text-red-500";
-        let bClass = l.type === 'win' ? "win-border" : "lose-border";
-        container.innerHTML += `
-            <div class="activity-card ${bClass} w-full">
-                <div class="flex gap-6 items-center">
-                    <div class="px-3 py-1 bg-slate-800 rounded-lg text-[10px] font-mono text-slate-400">${l.time}</div>
-                    <div>
-                        <p class="text-[11px] font-black text-blue-400 uppercase tracking-widest">${l.user}</p>
-                        <p class="text-[13px] font-bold text-white">${l.desc}</p>
-                    </div>
-                </div>
-                <div class="text-right">
-                    <p class="text-[15px] font-orbitron font-black text-white italic">Rp ${l.amount.toLocaleString()}</p>
-                    <span class="badge-status ${sClass} px-3 py-1 rounded text-[9px]">${l.type.toUpperCase()}</span>
-                </div>
-            </div>`;
-    });
-});
-
-// --- RESET LOGS WITH POPUP ---
-document.getElementById('btnResetLogs').onclick = () => {
-    Swal.fire({
-        title: 'Hapus Riwayat?',
-        text: "Semua data transaksi akan hilang permanen!",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#ef4444',
-        confirmButtonText: 'Ya, Hapus Semua'
-    }).then(res => {
-        if(res.isConfirmed) set(ref(db, 'globalLogs'), null);
-    });
-};
-
-// --- RESET MATCH WITH POPUP ---
-document.getElementById('btnResetMatch').onclick = () => {
-    Swal.fire({
-        title: 'Reset Match & Market?',
-        text: "Status pemenang dan semua data taruhan di grafik akan dibersihkan!",
-        icon: 'question',
-        showCancelButton: true,
-        confirmButtonColor: '#3b82f6',
-        confirmButtonText: 'Ya, Reset Arena'
-    }).then(async (res) => {
-        if(res.isConfirmed){ 
-            // 1. Hapus status pemenang
-            await set(ref(db, 'match/result'), null);
-
-            // 2. Bersihkan data Market di semua User (Agar Grafik kembali ke 0)
-            const snap = await get(ref(db, 'users'));
-            if(snap.exists()){
-                const users = snap.val();
-                const updates = {};
-                for(let id in users) {
-                    // Kita set null pada side dan betAmount agar grafik Admin bersih
-                    updates[`users/${id}/side`] = null;
-                    updates[`users/${id}/betAmount`] = null;
-                }
-                await update(ref(db), updates);
+        // --- FETCH DATA STATISTIK & PENGGUNA ---
+        const tbody = document.getElementById('usersTableBody');
+        
+        // 1. Data Pengguna
+        onValue(ref(db, 'users'), (snapshot) => {
+            if (!snapshot.exists()) {
+                document.getElementById('statUsers').innerText = "0";
+                tbody.innerHTML = `<tr><td colspan="4" style="text-align:center;">Belum ada pengguna terdaftar.</td></tr>`;
+                return;
             }
 
-            Swal.fire('Arena Reset!', 'Pemenang dihapus dan market kembali ke nol.', 'success');
-        } 
-    });
-};
+            const users = snapshot.val();
+            const userKeys = Object.keys(users);
+            document.getElementById('statUsers').innerText = userKeys.length;
+            
+            tbody.innerHTML = ""; // Bersihkan tabel
+            
+            userKeys.forEach(uid => {
+                const profile = users[uid].profile || { name: 'User '+uid, bio: '-', pfp: '' };
+                const pfp = profile.pfp || `https://ui-avatars.com/api/?name=${profile.name}&background=1e293b&color=fff`;
+                
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>
+                        <div class="user-cell">
+                            <img src="${pfp}" class="user-pfp" alt="PFP">
+                            <div>
+                                <div style="font-weight:600; font-size:1rem;">${profile.name}</div>
+                                <div class="user-id">${uid}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td style="color:var(--text-dim); max-width:200px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis;">
+                        ${profile.bio || '-'}
+                    </td>
+                    <td>
+                        ${users[uid].contacts ? Object.keys(users[uid].contacts).length + ' Teman' : '0 Teman'}
+                    </td>
+                    <td>
+                        <button class="btn-action danger" onclick="window.deleteUser('${uid}', '${profile.name}')">
+                            <i class="fas fa-trash"></i> Hapus
+                        </button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        });
 
-</script>
+        // 2. Data Ruang Obrolan
+        onValue(ref(db, 'chats'), (snapshot) => {
+            const count = snapshot.exists() ? Object.keys(snapshot.val()).length : 0;
+            document.getElementById('statChats').innerText = count;
+        });
+
+        // 3. Data Status/Stories
+        onValue(ref(db, 'stories'), (snapshot) => {
+            const count = snapshot.exists() ? Object.keys(snapshot.val()).length : 0;
+            document.getElementById('statStories').innerText = count;
+        });
+
+        // --- FUNGSI AKSI ADMIN ---
+        window.deleteUser = (uid, name) => {
+            if(confirm(`PERINGATAN: Apakah Anda yakin ingin menghapus pengguna "${name}" (${uid})?\n\nIni akan menghapus profil dan daftar kontaknya (Riwayat chat dan story mungkin harus dihapus manual).`)) {
+                // Hapus data pengguna
+                set(ref(db, `users/${uid}`), null).then(() => {
+                    alert(`Pengguna ${name} berhasil dihapus.`);
+                }).catch(err => {
+                    alert("Gagal menghapus pengguna: " + err.message);
+                });
+            }
+        };
+    </script>
 </body>
 </html>
