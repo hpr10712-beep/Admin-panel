@@ -2,187 +2,263 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <title>MyBro - High Tech Admin</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <title>MyBro - Professional Admin Panel</title>
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
         :root {
-            --bg-main: #0a0a0c;
-            --bg-side: #0f0f12;
-            --card-bg: #16161a;
-            --accent: #00ffaa; /* Neon Green */
-            --accent-glow: rgba(0, 255, 170, 0.2);
-            --border: rgba(255, 255, 255, 0.05);
-            --text-main: #ffffff;
-            --text-dim: #888888;
-            --danger: #ff4d4d;
+            --sidebar-bg: #0f172a;
+            --main-bg: #f8fafc;
+            --card-bg: #ffffff;
+            --primary: #3b82f6;
+            --text-dark: #1e293b;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --danger: #ef4444;
+            --success: #10b981;
         }
 
-        * { box-sizing: border-box; font-family: 'Inter', sans-serif; margin: 0; padding: 0; }
+        * { box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; margin: 0; padding: 0; }
         
-        /* Memaksa Tampilan Desktop Luas */
+        /* Desktop Force Mode */
         body { 
-            background: var(--bg-main); 
-            color: var(--text-main); 
-            min-width: 1300px; 
+            background: var(--main-bg); 
+            color: var(--text-dark); 
+            min-width: 1280px; 
             height: 100vh;
             display: flex;
             overflow: hidden;
         }
 
-        /* SIDEBAR: Dibuat lebih slim dan elegan */
+        /* SIDEBAR - Lebih Rapi & Profesional */
         aside { 
-            width: 240px; 
-            min-width: 240px;
-            background: var(--bg-side); 
-            border-right: 1px solid var(--border); 
+            width: 260px; 
+            min-width: 260px;
+            background: var(--sidebar-bg); 
             display: flex; 
             flex-direction: column; 
-            padding: 24px;
+            padding: 0;
+            z-index: 10;
         }
 
-        .brand { 
-            font-size: 1.4rem; font-weight: 800; color: var(--accent);
-            display: flex; align-items: center; gap: 10px; margin-bottom: 40px;
-            text-transform: uppercase; letter-spacing: 2px;
+        .brand-area {
+            padding: 30px 25px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: white;
+            font-size: 1.25rem;
+            font-weight: 700;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
         }
+        .brand-area i { color: var(--primary); }
 
+        .nav-list { padding: 20px 15px; flex: 1; }
         .nav-item {
-            padding: 12px 16px; border-radius: 8px; color: var(--text-dim);
-            text-decoration: none; display: flex; align-items: center; gap: 12px;
-            margin-bottom: 8px; transition: 0.2s; cursor: pointer; font-size: 0.9rem;
+            padding: 12px 15px;
+            border-radius: 8px;
+            color: #94a3b8;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            margin-bottom: 5px;
+            transition: 0.2s;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
         }
         .nav-item:hover, .nav-item.active { 
-            background: rgba(255,255,255,0.03); color: var(--text-main);
+            background: rgba(255,255,255,0.05);
+            color: white;
+        }
+        .nav-item.active { background: var(--primary); color: white; }
+
+        /* MAIN CONTENT */
+        main { 
+            flex: 1; 
+            overflow-y: auto; 
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Top Header */
+        .top-nav {
+            background: white;
+            padding: 15px 40px;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 5;
+        }
+
+        .search-wrapper {
+            position: relative;
+            width: 400px;
+        }
+        .search-wrapper input {
+            width: 100%;
+            padding: 10px 15px 10px 40px;
+            border-radius: 10px;
             border: 1px solid var(--border);
+            background: #f1f5f9;
+            outline: none;
+            transition: 0.3s;
         }
-        .nav-item.active { border-left: 3px solid var(--accent); color: var(--accent); }
+        .search-wrapper i { position: absolute; left: 15px; top: 12px; color: var(--text-muted); }
+        .search-wrapper input:focus { border-color: var(--primary); background: white; box-shadow: 0 0 0 4px rgba(59, 130, 246, 0.1); }
 
-        /* KONTEN UTAMA */
-        main { flex: 1; overflow-y: auto; padding: 30px 40px; }
+        /* Content Padding Area */
+        .content-body { padding: 40px; }
 
-        /* HEADER: Padat & Rapi */
-        header { 
-            display: flex; justify-content: space-between; align-items: flex-end;
-            margin-bottom: 40px; padding-bottom: 20px; border-bottom: 1px solid var(--border);
-        }
-        .header-left h1 { font-size: 1.8rem; font-weight: 800; margin-bottom: 5px; }
-        .header-left p { color: var(--text-dim); font-size: 0.9rem; }
-
-        .search-container {
-            position: relative; width: 350px;
-        }
-        .search-container input {
-            width: 100%; background: var(--card-bg); border: 1px solid var(--border);
-            padding: 12px 12px 12px 40px; border-radius: 10px; color: white;
-            outline: none; transition: 0.3s;
-        }
-        .search-container input:focus { border-color: var(--accent); box-shadow: 0 0 15px var(--accent-glow); }
-        .search-container i { position: absolute; left: 15px; top: 14px; color: var(--text-dim); }
-
-        /* STATS: Card Kecil & Elegan */
+        /* Stats Row */
         .stats-grid { 
-            display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; margin-bottom: 40px; 
+            display: grid; 
+            grid-template-columns: repeat(4, 1fr); 
+            gap: 25px; 
+            margin-bottom: 40px; 
         }
-        .stat-box { 
-            background: var(--card-bg); border: 1px solid var(--border);
-            padding: 20px; border-radius: 16px; position: relative; overflow: hidden;
+        .stat-card { 
+            background: white; 
+            padding: 25px; 
+            border-radius: 16px; 
+            border: 1px solid var(--border);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
         }
-        .stat-box::after {
-            content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 2px;
-            background: var(--accent); opacity: 0.3;
-        }
-        .stat-label { color: var(--text-dim); font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 1px; }
-        .stat-value { font-size: 2rem; font-weight: 800; margin-top: 5px; color: var(--accent); }
+        .stat-card p { color: var(--text-muted); font-size: 0.85rem; font-weight: 600; text-transform: uppercase; margin-bottom: 8px; }
+        .stat-card h2 { font-size: 1.8rem; font-weight: 700; color: var(--text-dark); }
 
-        /* USER GRID: Sangat Rapi */
+        /* User Grid */
+        .grid-title { 
+            margin-bottom: 25px; 
+            font-size: 1.2rem; 
+            font-weight: 700; 
+            display: flex; 
+            align-items: center; 
+            justify-content: space-between;
+        }
+
         .user-grid { 
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; 
+            display: grid; 
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); 
+            gap: 20px; 
         }
 
         .user-card { 
-            background: var(--card-bg); border: 1px solid var(--border);
-            border-radius: 14px; padding: 18px; transition: 0.3s;
-            display: flex; flex-direction: column; gap: 15px; position: relative;
+            background: white; 
+            border: 1px solid var(--border);
+            border-radius: 16px; 
+            padding: 20px; 
+            transition: 0.3s;
+            position: relative;
         }
-        .user-card:hover { border-color: rgba(255,255,255,0.2); background: #1c1c21; transform: translateY(-3px); }
+        .user-card:hover { transform: translateY(-3px); box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1); border-color: var(--primary); }
 
-        .card-header { display: flex; align-items: center; gap: 12px; }
-        .user-avatar { width: 50px; height: 50px; border-radius: 10px; object-fit: cover; border: 1px solid var(--border); }
-        .user-info h3 { font-size: 1rem; font-weight: 700; margin-bottom: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 140px; }
-        .user-status { font-size: 0.7rem; color: var(--accent); font-weight: 600; text-transform: uppercase; display: flex; align-items: center; gap: 4px; }
+        .u-header { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; }
+        .u-img { width: 55px; height: 55px; border-radius: 12px; object-fit: cover; background: #f1f5f9; }
+        .u-name-box h4 { font-size: 1rem; color: var(--text-dark); margin-bottom: 2px; }
+        .u-id-tag { font-size: 0.7rem; color: var(--primary); font-weight: 700; background: #eff6ff; padding: 2px 8px; border-radius: 4px; }
 
-        .user-bio { font-size: 0.8rem; color: var(--text-dim); line-height: 1.4; height: 35px; overflow: hidden; }
-
-        .card-footer { 
-            display: flex; justify-content: space-between; align-items: center;
-            padding-top: 15px; border-top: 1px solid var(--border);
+        .u-bio { 
+            font-size: 0.85rem; 
+            color: var(--text-muted); 
+            line-height: 1.5; 
+            margin-bottom: 20px; 
+            height: 40px; 
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
         }
-        .friend-count { font-size: 0.8rem; color: var(--text-dim); }
-        .friend-count b { color: var(--text-main); }
 
-        .btn-del {
-            background: rgba(255, 77, 77, 0.1); color: var(--danger);
-            border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer;
-            font-size: 0.8rem; font-weight: 600; transition: 0.2s;
+        .u-footer { 
+            display: flex; 
+            justify-content: space-between; 
+            align-items: center; 
+            padding-top: 15px; 
+            border-top: 1px solid var(--border);
         }
-        .btn-del:hover { background: var(--danger); color: white; }
+        .friend-badge { font-size: 0.8rem; color: var(--text-muted); }
+        .friend-badge b { color: var(--text-dark); }
 
-        /* Scrollbar */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 10px; }
+        .btn-delete {
+            background: #fff1f2; 
+            color: var(--danger);
+            border: 1px solid #fee2e2; 
+            padding: 7px 12px; 
+            border-radius: 8px; 
+            cursor: pointer;
+            font-size: 0.8rem; 
+            font-weight: 600;
+            transition: 0.2s;
+        }
+        .btn-delete:hover { background: var(--danger); color: white; border-color: var(--danger); }
+
+        /* Status Indicator */
+        .online-dot { width: 8px; height: 8px; background: var(--success); border-radius: 50%; display: inline-block; margin-right: 5px; }
 
     </style>
 </head>
 <body>
 
     <aside>
-        <div class="brand"><i class="fas fa-layer-group"></i> MyBro</div>
-        <div class="nav-item active"><i class="fas fa-home"></i> Dashboard</div>
-        <div class="nav-item" onclick="location.reload()"><i class="fas fa-sync"></i> Refresh Database</div>
-        <div class="nav-item"><i class="fas fa-users"></i> User List</div>
-        <div class="nav-item"><i class="fas fa-cog"></i> Settings</div>
-        
-        <div style="margin-top: auto;">
-            <div class="nav-item" style="color: var(--danger);"><i class="fas fa-sign-out-alt"></i> Logout Admin</div>
+        <div class="brand-area"><i class="fas fa-cube fa-lg"></i> MyBro Admin</div>
+        <div class="nav-list">
+            <div class="nav-item active"><i class="fas fa-chart-pie"></i> Dashboard</div>
+            <div class="nav-item" onclick="location.reload()"><i class="fas fa-rotate"></i> Refresh Data</div>
+            <div class="nav-item"><i class="fas fa-user-group"></i> User Management</div>
+            <div class="nav-item"><i class="fas fa-message"></i> Messages</div>
+            <div class="nav-item"><i class="fas fa-gear"></i> Settings</div>
+        </div>
+        <div style="padding: 20px;">
+            <div class="nav-item" style="color: #f87171;" onclick="alert('Logout')"><i class="fas fa-right-from-bracket"></i> Sign Out</div>
         </div>
     </aside>
 
     <main>
-        <header>
-            <div class="header-left">
-                <h1>Server Overview</h1>
-                <p>Monitoring data user dan aktivitas sistem secara real-time.</p>
-            </div>
-            <div class="search-container">
+        <div class="top-nav">
+            <div class="search-wrapper">
                 <i class="fas fa-search"></i>
-                <input type="text" id="search" placeholder="Cari user berdasarkan nama atau ID..." oninput="window.filterUsers()">
+                <input type="text" id="userSearch" placeholder="Cari nama atau ID user..." oninput="window.filterUsers()">
             </div>
-        </header>
-
-        <div class="stats-grid">
-            <div class="stat-box">
-                <div class="stat-label">Total Users</div>
-                <div class="stat-value" id="countUsers">0</div>
-            </div>
-            <div class="stat-box">
-                <div class="stat-label">Conversations</div>
-                <div class="stat-value" id="countChats">0</div>
-            </div>
-            <div class="stat-box">
-                <div class="stat-label">System Stories</div>
-                <div class="stat-value" id="countStories">0</div>
-            </div>
-            <div class="stat-box" style="border-color: var(--accent);">
-                <div class="stat-label">Server Status</div>
-                <div class="stat-value" style="font-size: 1.2rem; padding-top: 10px;">OPERATIONAL</div>
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <span style="font-size: 0.85rem; font-weight: 600; color: var(--text-muted);">Status: <span style="color: var(--success);">Online</span></span>
+                <img src="https://ui-avatars.com/api/?name=Admin&background=3b82f6&color=fff" style="width: 35px; height: 35px; border-radius: 50%;">
             </div>
         </div>
 
-        <h2 style="margin-bottom: 20px; font-size: 1.2rem; letter-spacing: 1px;">DATABASE EXPLORER</h2>
-        <div class="user-grid" id="userGrid">
-            <div style="color: var(--text-dim);">Menghubungkan ke Firebase...</div>
+        <div class="content-body">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <p>Total Users</p>
+                    <h2 id="st-users">0</h2>
+                </div>
+                <div class="stat-card">
+                    <p>Total Chats</p>
+                    <h2 id="st-chats">0</h2>
+                </div>
+                <div class="stat-card">
+                    <p>Active Stories</p>
+                    <h2 id="st-stories">0</h2>
+                </div>
+                <div class="stat-card">
+                    <p>System Load</p>
+                    <h2>Stable</h2>
+                </div>
+            </div>
+
+            <div class="grid-title">
+                <span>Database Pengguna</span>
+                <span style="font-size: 0.8rem; color: var(--text-muted); font-weight: 400;">Real-time sync enabled</span>
+            </div>
+
+            <div class="user-grid" id="userContainer">
+                </div>
         </div>
     </main>
 
@@ -200,58 +276,62 @@
         const db = getDatabase(app);
 
         // SYNC USERS
-        onValue(ref(db, 'users'), (snap) => {
-            const grid = document.getElementById('userGrid');
-            grid.innerHTML = "";
-            if(!snap.exists()) return;
+        onValue(ref(db, 'users'), (snapshot) => {
+            const container = document.getElementById('userContainer');
+            container.innerHTML = "";
+            if(!snapshot.exists()) return;
 
-            const users = snap.val();
+            const users = snapshot.val();
             const keys = Object.keys(users);
-            document.getElementById('countUsers').innerText = keys.length;
+            document.getElementById('st-users').innerText = keys.length;
 
             keys.forEach(uid => {
                 const u = users[uid];
-                const p = u.profile || { name: 'User '+uid, bio: 'Hey there!', pfp: '' };
-                const pfp = p.pfp || `https://ui-avatars.com/api/?name=${p.name}&background=333&color=fff`;
-                const friends = u.contacts ? Object.keys(u.contacts).length : 0;
+                const p = u.profile || { name: 'New User', bio: 'No bio.', pfp: '' };
+                const pfp = p.pfp || `https://ui-avatars.com/api/?name=${p.name}&background=f1f5f9&color=3b82f6&bold=true`;
+                const contacts = u.contacts ? Object.keys(u.contacts).length : 0;
 
                 const card = document.createElement('div');
                 card.className = 'user-card';
-                card.dataset.search = (p.name + uid).toLowerCase();
+                card.dataset.info = (p.name + uid).toLowerCase();
                 
                 card.innerHTML = `
-                    <div class="card-header">
-                        <img src="${pfp}" class="user-avatar">
-                        <div class="user-info">
-                            <h3>${p.name}</h3>
-                            <div class="user-status"><i class="fas fa-circle" style="font-size: 0.5rem;"></i> Active ID: ${uid}</div>
+                    <div class="u-header">
+                        <img src="${pfp}" class="u-img">
+                        <div class="u-name-box">
+                            <h4>${p.name}</h4>
+                            <span class="u-id-tag">ID: ${uid}</span>
                         </div>
                     </div>
-                    <div class="user-bio">${p.bio}</div>
-                    <div class="card-footer">
-                        <div class="friend-count"><i class="fas fa-link"></i> <b>${friends}</b> Friends</div>
-                        <button class="btn-del" onclick="window.delUser('${uid}', '${p.name}')">Delete</button>
+                    <div class="u-bio">${p.bio}</div>
+                    <div class="u-footer">
+                        <div class="friend-badge"><i class="fas fa-user-group" style="margin-right:5px; font-size:0.75rem;"></i> <b>${contacts}</b> Friends</div>
+                        <button class="btn-delete" onclick="window.confirmDelete('${uid}', '${p.name}')">Delete</button>
                     </div>
                 `;
-                grid.appendChild(card);
+                container.appendChild(card);
             });
         });
 
         // SYNC STATS
-        onValue(ref(db, 'chats'), s => document.getElementById('countChats').innerText = s.exists() ? Object.keys(s.val()).length : 0);
-        onValue(ref(db, 'stories'), s => document.getElementById('countStories').innerText = s.exists() ? Object.keys(s.val()).length : 0);
+        onValue(ref(db, 'chats'), s => document.getElementById('st-chats').innerText = s.exists() ? Object.keys(s.val()).length : 0);
+        onValue(ref(db, 'stories'), s => document.getElementById('st-stories').innerText = s.exists() ? Object.keys(s.val()).length : 0);
 
-        // FUNCTIONS
+        // FILTER SEARCH
         window.filterUsers = () => {
-            const q = document.getElementById('search').value.toLowerCase();
+            const val = document.getElementById('userSearch').value.toLowerCase();
             document.querySelectorAll('.user-card').forEach(c => {
-                c.style.display = c.dataset.search.includes(q) ? "flex" : "none";
+                c.style.display = c.dataset.info.includes(val) ? "block" : "none";
             });
         };
 
-        window.delUser = (id, name) => {
-            if(confirm(`Hapus user ${name}?`)) set(ref(db, `users/${id}`), null);
+        // DELETE
+        window.confirmDelete = (id, name) => {
+            if(confirm(`Hapus user "${name}" secara permanen?`)) {
+                set(ref(db, `users/${id}`), null);
+            }
         };
+
     </script>
 </body>
 </html>
