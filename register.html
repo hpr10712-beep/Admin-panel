@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Register — ChatingYuk</title>
+<meta name="theme-color" content="#0a0e1a">
+<link rel="manifest" href="manifest.json">
+<link rel="stylesheet" href="css/main.css">
+<link rel="stylesheet" href="css/auth.css">
+</head>
+<body class="auth-body">
+
+<div class="auth-wrap">
+  <div class="auth-aside">
+    <a href="/" class="brand">
+      <div class="brand-logo">CY</div>
+      <span class="brand-name">ChatingYuk</span>
+    </a>
+    <div class="aside-content">
+      <h2>Buat akun baru ✨</h2>
+      <p>Mulai perjalanan ngobrolmu di NEOCHAT. Gratis & cepat.</p>
+    </div>
+    <div class="aside-foot">Connect. Chat. Share.</div>
+  </div>
+
+  <div class="auth-main">
+    <div class="auth-card">
+      <div class="auth-head">
+        <h1>Register</h1>
+        <p class="muted">Isi data untuk membuat akun baru</p>
+      </div>
+
+      <div id="auth-error" class="alert-error hidden"></div>
+
+      <form id="register-form">
+        <div class="avatar-upload">
+          <label for="avatar-input" class="avatar-label">
+            <div class="avatar-preview" id="avatar-preview">+</div>
+            <span class="small muted">Foto profil (opsional)</span>
+          </label>
+          <input type="file" id="avatar-input" accept="image/*" hidden>
+        </div>
+
+        <div class="field">
+          <label for="displayName">Nama Lengkap</label>
+          <input type="text" id="displayName" name="displayName" class="input" placeholder="Nama lengkapmu" required maxlength="40">
+        </div>
+
+        <div class="field">
+          <label for="username">Username</label>
+          <input type="text" id="username" name="username" class="input" placeholder="username unik (min 3)" required pattern="[a-zA-Z0-9_]{3,20}">
+          <small class="hint">Hanya huruf, angka, underscore. Min 3, max 20.</small>
+        </div>
+
+        <div class="field">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email" class="input" placeholder="kamu@email.com" required>
+        </div>
+
+        <div class="field">
+          <label for="password">Password</label>
+          <div class="input-wrap">
+            <input type="password" id="password" name="password" class="input" placeholder="min 8 karakter" required minlength="8">
+            <button type="button" class="input-eye" data-eye="password">👁️</button>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="confirmPassword">Konfirmasi Password</label>
+          <input type="password" id="confirmPassword" class="input" placeholder="ulangi password" required minlength="8">
+        </div>
+
+        <label class="check">
+          <input type="checkbox" id="agree" required>
+          <span>Saya setuju dengan <a href="#" class="link">Syarat & Ketentuan</a>.</span>
+        </label>
+
+        <button type="submit" class="btn btn-primary btn-block" id="register-btn">
+          <span class="btn-text">Daftar Sekarang</span>
+        </button>
+      </form>
+
+      <div class="auth-foot">
+        Sudah punya akun? <a href="login.html">Login di sini</a>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script type="module" src="js/auth.js" data-page="register"></script>
+</body>
+</html>
