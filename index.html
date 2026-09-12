@@ -2,39 +2,468 @@
 <html lang="id">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>MyBro Admin - Eclipse X</title>
-    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NexusSMM - Beli Nokos OTP</title>
+    
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- FontAwesome untuk Ikon -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts: Poppins -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     
     <style>
         :root {
-            --bg: #020617;
-            --panel: rgba(15, 23, 42, 0.7);
-            --primary: #3b82f6;
-            --accent: #10b981;
-            --danger: #ef4444;
-            --warning: #f59e0b;
-            --text: #f8fafc;
-            --text-dim: #94a3b8;
-            --border: rgba(255, 255, 255, 0.08);
+            --primary-color: #6366f1;
+            --primary-hover: #4f46e5;
+            --bg-color: #0f172a;
+            --card-bg: #1e293b;
+            --text-color: #f8fafc;
+            --text-muted: #94a3b8;
         }
 
-        * { box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
-        body { 
-            background: var(--bg); color: var(--text); 
-            margin: 0; padding: 0; min-height: 100vh;
-            background-image: radial-gradient(circle at 50% 0%, #1e293b 0%, #020617 100%);
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
         }
 
-        /* HEADER & NAVIGATION */
-        header {
-            padding: 20px; background: rgba(0,0,0,0.3); backdrop-filter: blur(10px);
-            border-bottom: 1px solid var(--border); position: sticky; top: 0; z-index: 100;
-            display: flex; justify-content: space-between; align-items: center;
+        .card-custom {
+            background-color: var(--card-bg);
+            border: 1px solid #334155;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            width: 100%;
+            max-width: 500px;
+            overflow: hidden;
         }
-        .logo { font-size: 1.3rem; font-weight: 800; letter-spacing: -1px; }
-        .logo span { color: var(--primary); }
+
+        .card-header-custom {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            padding: 20px;
+            text-align: center;
+            border-bottom: none;
+        }
+
+        .card-header-custom h3 {
+            margin: 0;
+            font-weight: 600;
+            letter-spacing: 1px;
+        }
+
+        .form-control, .form-select {
+            background-color: #0f172a;
+            border: 1px solid #334155;
+            color: var(--text-color);
+            border-radius: 10px;
+            padding: 12px 15px;
+            transition: all 0.3s;
+        }
+
+        .form-control:focus, .form-select:focus {
+            background-color: #0f172a;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 0.25rem rgba(99, 102, 241, 0.25);
+            color: var(--text-color);
+        }
+
+        .form-control::placeholder {
+            color: var(--text-muted);
+        }
+
+        .btn-primary-custom {
+            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+            border: none;
+            border-radius: 10px;
+            padding: 12px;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .btn-primary-custom:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(99, 102, 241, 0.4);
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+        }
+
+        .btn-primary-custom:disabled {
+            background: #475569;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .otp-box {
+            background-color: #0f172a;
+            border: 2px dashed #6366f1;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            position: relative;
+        }
+
+        .otp-code {
+            font-family: 'Courier New', monospace;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #a5b4fc;
+            letter-spacing: 8px;
+            margin: 0;
+        }
+
+        .copy-btn {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: #334155;
+            border: none;
+            color: #94a3b8;
+            border-radius: 8px;
+            padding: 5px 10px;
+            transition: all 0.2s;
+        }
+
+        .copy-btn:hover {
+            background: #6366f1;
+            color: white;
+        }
+
+        /* Animasi Transisi */
+        .fade-in {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 9999;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Toast untuk Notifikasi -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <div class="card card-custom fade-in">
+        <!-- Header -->
+        <div class="card-header-custom">
+            <h3><i class="fas fa-mobile-alt me-2"></i>NexusSMM</h3>
+            <p class="mb-0 text-white-50 text-sm">Layanan Beli Nomor OTP (Nokos)</p>
+        </div>
+
+        <!-- Body -->
+        <div class="card-body p-4">
+            
+            <!-- Section 1: Form Pemesanan -->
+            <div id="order-section">
+                <div class="mb-4">
+                    <label class="form-label text-muted small fw-bold">PILIH LAYANAN</label>
+                    <select id="service_id" class="form-select">
+                        <option value="">Memuat layanan...</option>
+                    </select>
+                </div>
+                
+                <div class="mb-4">
+                    <label class="form-label text-muted small fw-bold">PILIH NEGARA</label>
+                    <select id="country_id" class="form-select">
+                        <option value="1">🇮🇩 Indonesia</option>
+                        <option value="2">🇲🇾 Malaysia</option>
+                        <option value="3">🇻🇳 Vietnam</option>
+                        <option value="4">🇵🇭 Filipina</option>
+                        <!-- Sesuaikan dengan kode negara dari dokumentasi NexusSMM -->
+                    </select>
+                </div>
+
+                <button onclick="beliNokos()" id="btnBuy" class="btn btn-primary-custom w-100 text-white">
+                    <i class="fas fa-shopping-cart me-2"></i> Beli Sekarang
+                </button>
+            </div>
+
+            <!-- Section 2: Status dan OTP (Tersembunyi) -->
+            <div id="status-section" class="d-none">
+                <div class="text-center mb-4">
+                    <div id="status_badge" class="badge bg-warning text-dark px-3 py-2 rounded-pill">
+                        <i class="fas fa-spinner fa-spin me-1"></i> Menunggu...
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label text-muted small fw-bold">ORDER ID</label>
+                    <div class="input-group">
+                        <input type="text" id="order_id_display" class="form-control" readonly>
+                        <button class="btn btn-outline-secondary" onclick="copyText('order_id_display')" title="Salin Order ID">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="otp-box mb-4">
+                    <small class="text-muted d-block mb-2">KODE OTP / SMS</small>
+                    <div class="d-flex justify-content-center align-items-center">
+                        <span id="otp_display" class="otp-code">- - - -</span>
+                        <button class="copy-btn" onclick="copyText('otp_display')" title="Salin OTP">
+                            <i class="fas fa-copy"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="d-grid gap-2">
+                    <button onclick="cekStatus()" id="btnCheck" class="btn btn-success py-2 fw-bold">
+                        <i class="fas fa-sync-alt me-2"></i> Cek Status / OTP
+                    </button>
+                    <button onclick="resetForm()" class="btn btn-outline-secondary py-2">
+                        <i class="fas fa-arrow-left me-2"></i> Beli Lagi
+                    </button>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- Script JS -->
+    <script>
+        // ==========================================
+        // KONFIGURASI API PROXY (PHP)
+        // ==========================================
+        const API_PROXY_URL = 'api.php'; 
+
+        let currentOrderId = null;
+        let pollingInterval = null;
+
+        // ==========================================
+        // FUNGSI NOTIFIKASI (TOAST)
+        // ==========================================
+        function showToast(message, type = 'info') {
+            const toastContainer = document.getElementById('toastContainer');
+            const bgClass = type === 'success' ? 'bg-success' : type === 'error' ? 'bg-danger' : 'bg-primary';
+            const icon = type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle';
+
+            const toastHTML = `
+                <div class="toast align-items-center text-white ${bgClass} border-0 show" role="alert" aria-live="assertive" aria-atomic="true">
+                    <div class="d-flex">
+                        <div class="toast-body">
+                            <i class="fas ${icon} me-2"></i> ${message}
+                        </div>
+                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                    </div>
+                </div>
+            `;
+            
+            toastContainer.insertAdjacentHTML('beforeend', toastHTML);
+            
+            // Hapus otomatis setelah 4 detik
+            setTimeout(() => {
+                const toast = toastContainer.lastElementChild;
+                if(toast) toast.remove();
+            }, 4000);
+        }
+
+        // ==========================================
+        // FUNGSI COPY TEXT
+        // ==========================================
+        function copyText(elementId) {
+            const text = document.getElementById(elementId).value || document.getElementById(elementId).innerText;
+            if (text && text !== '-') {
+                navigator.clipboard.writeText(text).then(() => {
+                    showToast('Berhasil disalin!', 'success');
+                }).catch(err => {
+                    showToast('Gagal menyalin teks.', 'error');
+                });
+            }
+        }
+
+        // ==========================================
+        // FUNGSI LOADING BUTTON
+        // ==========================================
+        function setLoading(buttonId, isLoading, originalText) {
+            const btn = document.getElementById(buttonId);
+            if (isLoading) {
+                btn.disabled = true;
+                btn.innerHTML = `<i class="fas fa-spinner fa-spin me-2"></i> Memproses...`;
+            } else {
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+            }
+        }
+
+        // ==========================================
+        // FUNGSI 1: MENGAMBIL DAFTAR LAYANAN
+        // ==========================================
+        async function loadServices() {
+            const select = document.getElementById('service_id');
+            
+            try {
+                const response = await fetch(API_PROXY_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: new URLSearchParams({ action: 'get_services' })
+                });
+                
+                const data = await response.json();
+                
+                select.innerHTML = '<option value="">-- Pilih Layanan --</option>';
+                
+                if (data && data.data) {
+                    data.data.forEach(svc => {
+                        select.innerHTML += `<option value="${svc.id}">${svc.name}</option>`;
+                    });
+                } else {
+                    select.innerHTML = '<option value="">Gagal memuat layanan</option>';
+                    showToast('Gagal memuat daftar layanan.', 'error');
+                }
+            } catch (error) {
+                console.error("Error loading services:", error);
+                select.innerHTML = '<option value="">Error koneksi ke server</option>';
+                showToast('Terjadi kesalahan koneksi ke server.', 'error');
+            }
+        }
+
+        // ==========================================
+        // FUNGSI 2: MEMBELI NOKOS
+        // ==========================================
+        async function beliNokos() {
+            const serviceId = document.getElementById('service_id').value;
+            const countryId = document.getElementById('country_id').value;
+            
+            if (!serviceId) {
+                showToast('Silakan pilih layanan terlebih dahulu!', 'error');
+                return;
+            }
+
+            setLoading('btnBuy', true, '<i class="fas fa-shopping-cart me-2"></i> Beli Sekarang');
+
+            try {
+                const response = await fetch(API_PROXY_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: new URLSearchParams({
+                        action: 'buy_nokos',
+                        service_id: serviceId,
+                        country_id: countryId
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data && data.status === true) {
+                    currentOrderId = data.data.order_id;
+                    document.getElementById('order_id_display').value = currentOrderId;
+                    
+                    // Transisi UI
+                    document.getElementById('order-section').classList.add('d-none');
+                    document.getElementById('status-section').classList.remove('d-none');
+                    document.getElementById('status-section').classList.add('fade-in');
+                    
+                    showToast('Pesanan berhasil dibuat!', 'success');
+                    startPolling();
+                } else {
+                    showToast('Gagal membeli: ' + (data.message || 'Error tidak diketahui'), 'error');
+                }
+            } catch (error) {
+                console.error("Error buying number:", error);
+                showToast('Terjadi kesalahan koneksi ke server lokal.', 'error');
+            } finally {
+                setLoading('btnBuy', false, '<i class="fas fa-shopping-cart me-2"></i> Beli Sekarang');
+            }
+        }
+
+        // ==========================================
+        // FUNGSI 3: CEK STATUS & OTP
+        // ==========================================
+        async function cekStatus(isAuto = false) {
+            if (!currentOrderId) return;
+
+            if (!isAuto) setLoading('btnCheck', true, '<i class="fas fa-sync-alt me-2"></i> Cek Status / OTP');
+
+            const statusBadge = document.getElementById('status_badge');
+            const otpDisplay = document.getElementById('otp_display');
+
+            try {
+                const response = await fetch(API_PROXY_URL, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: new URLSearchParams({
+                        action: 'check_status',
+                        order_id: currentOrderId
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data && data.data) {
+                    const status = data.data.status;
+                    
+                    if (status === 'success' || status === 'completed' || status === 'received') {
+                        statusBadge.className = 'badge bg-success px-3 py-2 rounded-pill';
+                        statusBadge.innerHTML = '<i class="fas fa-check-circle me-1"></i> SUKSES';
+                        otpDisplay.innerText = data.data.otp || data.data.sms || 'Tidak ada OTP';
+                        stopPolling();
+                        if(!isAuto) showToast('OTP berhasil diterima!', 'success');
+                    } else if (status === 'pending' || status === 'waiting') {
+                        statusBadge.className = 'badge bg-warning text-dark px-3 py-2 rounded-pill';
+                        statusBadge.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> MENUNGGU OTP';
+                    } else {
+                        statusBadge.className = 'badge bg-danger px-3 py-2 rounded-pill';
+                        statusBadge.innerHTML = '<i class="fas fa-times-circle me-1"></i> GAGAL';
+                    }
+                }
+            } catch (error) {
+                console.error("Error checking status:", error);
+                if(!isAuto) showToast('Gagal mengecek status.', 'error');
+            } finally {
+                if (!isAuto) setLoading('btnCheck', false, '<i class="fas fa-sync-alt me-2"></i> Cek Status / OTP');
+            }
+        }
+
+        // ==========================================
+        // FUNGSI BANTU (POLLING & RESET)
+        // ==========================================
+        function startPolling() {
+            if (pollingInterval) clearInterval(pollingInterval);
+            cekStatus(true); 
+            pollingInterval = setInterval(() => cekStatus(true), 5000); 
+        }
+
+        function stopPolling() {
+            if (pollingInterval) {
+                clearInterval(pollingInterval);
+                pollingInterval = null;
+            }
+        }
+
+        function resetForm() {
+            stopPolling();
+            currentOrderId = null;
+            document.getElementById('order_id_display').value = '';
+            document.getElementById('otp_display').innerText = '- - - -';
+            
+            const statusBadge = document.getElementById('status_badge');
+            statusBadge.className = 'badge bg-warning text-dark px-3 py-2 rounded-pill';
+            statusBadge.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Menunggu...';
+            
+            document.getElementById('status-section').classList.add('d-none');
+            document.getElementById('order-section').classList.remove('d-none');
+            document.getElementById('order-section').classList.add('fade-in');
+        }
+
+        // Jalankan loadServices saat halaman pertama kali dibuka
+        window.onload = loadServices;
+
+    </script>
+</body>
+</html>        .logo span { color: var(--primary); }
 
         /* MAIN CONTENT */
         main { padding: 20px; max-width: 1200px; margin: 0 auto; }
