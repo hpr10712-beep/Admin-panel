@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Pengaturan - ChatingYuk</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0a0e1a;--bg-2:#0f1524;--surface:#141a2c;--surface-2:#1a2238;--surface-3:#212b47;--border:#232c47;--text:#e8ecf5;--text-2:#8b93ab;--text-3:#5a6480;--primary:#6366f1;--primary-soft:rgba(99,102,241,.15);--success:#10b981;--danger:#ef4444;--warning:#f59e0b;--grad:linear-gradient(135deg,#6366f1,#8b5cf6 60%,#ec4899);--shadow:0 10px 30px rgba(0,0,0,.35)}
+[data-theme=light]{--bg:#f4f6fb;--bg-2:#eef1f8;--surface:#fff;--surface-2:#f7f9fc;--surface-3:#eef2f9;--border:#e2e8f0;--text:#0f172a;--text-2:#64748b;--text-3:#94a3b8;--primary-soft:rgba(99,102,241,.1)}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Inter',Roboto,sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;min-height:100vh}
+button,input,textarea,select{font:inherit;color:inherit}
+button{cursor:pointer;border:none;background:none}
+a{color:inherit;text-decoration:none}
+.hidden{display:none!important}
+.muted{color:var(--text-2)}.small{font-size:13px}.tiny{font-size:11.5px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:11px 18px;border-radius:10px;font-weight:600;font-size:14px;transition:.2s;white-space:nowrap}
+.btn-primary{background:var(--grad);color:#fff;box-shadow:0 4px 16px rgba(99,102,241,.3)}
+.btn-primary:hover{transform:translateY(-1px)}
+.btn-ghost{background:transparent;color:var(--text);border:1px solid var(--border)}
+.btn-ghost:hover{background:var(--surface-2)}
+.btn-danger{background:var(--danger);color:#fff}
+.btn-block{width:100%}
+.btn[disabled]{opacity:.5;pointer-events:none}
+.icon-btn{width:38px;height:38px;border-radius:10px;display:inline-flex;align-items:center;justify-content:center;color:var(--text-2);transition:.2s}
+.icon-btn:hover{background:var(--surface-2);color:var(--text)}
+.container{max-width:680px;margin:0 auto;padding:20px}
+.top{display:flex;align-items:center;gap:12px;padding:14px 0 20px}
+.top h1{font-size:22px;font-weight:800;letter-spacing:-.02em}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:20px;margin-bottom:16px}
+.section-title{font-size:12px;font-weight:700;color:var(--text-3);letter-spacing:.06em;text-transform:uppercase;margin-bottom:14px}
+.field{margin-bottom:14px;display:flex;flex-direction:column;gap:6px}
+.field label{font-size:13px;font-weight:600;color:var(--text-2)}
+.field:last-child{margin-bottom:0}
+.input{width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:10px;background:var(--surface);color:var(--text);font-size:14px;transition:.2s;outline:none}
+.input:focus{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-soft)}
+.hint{font-size:11.5px;color:var(--text-3)}
+.row{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:14px 0;border-bottom:1px solid var(--border)}
+.row:last-child{border-bottom:none}
+.row-info{flex:1;min-width:0}
+.row-info .title{font-size:14px;font-weight:600;margin-bottom:2px}
+.row-info .desc{font-size:12px;color:var(--text-2);line-height:1.4}
+.switch{position:relative;width:44px;height:26px;flex-shrink:0}
+.switch input{opacity:0;width:0;height:0}
+.slider{position:absolute;inset:0;background:var(--surface-3);border-radius:999px;cursor:pointer;transition:.3s}
+.slider::before{content:'';position:absolute;left:3px;top:3px;width:20px;height:20px;background:#fff;border-radius:50%;transition:.3s}
+.switch input:checked + .slider{background:var(--primary)}
+.switch input:checked + .slider::before{transform:translateX(18px)}
+.seg{display:inline-flex;background:var(--surface-2);border:1px solid var(--border);border-radius:12px;padding:4px;gap:2px;flex-shrink:0}
+.seg button{padding:8px 14px;border-radius:9px;font-size:13px;font-weight:600;color:var(--text-2);transition:.2s}
+.seg button.active{background:var(--surface);color:var(--primary);box-shadow:0 2px 6px rgba(0,0,0,.15)}
+.seg-sm button{padding:6px 10px;font-size:12px}
+.alert{padding:12px 14px;border-radius:10px;font-size:13px;margin-bottom:14px}
+.alert.error{background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.3);color:#fecaca}
+.alert.success{background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.3);color:#a7f3d0}
+.spinner{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--primary);border-radius:50%;animation:spin .8s linear infinite;margin:60px auto}
+@keyframes spin{to{transform:rotate(360deg)}}
+#toast-root{position:fixed;top:16px;right:16px;z-index:200;display:flex;flex-direction:column;gap:10px;pointer-events:none;max-width:calc(100vw - 32px)}
+.toast{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px 16px;box-shadow:var(--shadow);display:flex;gap:10px;align-items:center;pointer-events:auto;min-width:240px;font-size:13.5px;animation:slidein .3s}
+.toast .t-ico{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;color:#fff;font-size:11px;font-weight:700;flex-shrink:0;background:var(--success)}
+.toast.error .t-ico{background:var(--danger)}
+@keyframes slidein{from{opacity:0;transform:translateX(20px)}}
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,.6);backdrop-filter:blur(6px);z-index:100;display:flex;align-items:center;justify-content:center;padding:20px}
+.modal{background:var(--surface);border-radius:18px;width:100%;max-width:400px;padding:24px;box-shadow:var(--shadow)}
+.modal h3{font-size:17px;font-weight:700;margin-bottom:8px}
+.modal p{color:var(--text-2);font-size:14px;line-height:1.5;margin-bottom:20px}
+.modal-foot{display:flex;gap:10px;justify-content:flex-end}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <div class="top">
+    <button class="icon-btn" onclick="location.href='chat.html'" aria-label="Kembali">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+    </button>
+    <h1>Pengaturan</h1>
+  </div>
+
+  <div id="content"><div class="spinner"></div></div>
+</div>
+
+<div id="toast-root"></div>
+<div id="modal-root"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import {
+  getAuth, onAuthStateChanged, signOut, updatePassword,
+  EmailAuthProvider, reauthenticateWithCredential
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { getDatabase, ref, get, update, remove } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+
+const app = initializeApp({
+  apiKey: "AIzaSyCHr0eemIkfHNFDUkSaFDklp_c1OgmSnl8",
+  authDomain: "mybro-9ba5f.firebaseapp.com",
+  databaseURL: "https://mybro-9ba5f-default-rtdb.firebaseio.com/",
+  projectId: "mybro-9ba5f",
+  storageBucket: "mybro-9ba5f.appspot.com"
+});
+const auth = getAuth(app);
+const db = getDatabase(app);
+
+const esc = s => s == null ? '' : String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+
+const Toast = {
+  show(msg, type='success') {
+    const root = document.getElementById('toast-root');
+    const el = document.createElement('div');
+    el.className = 'toast ' + (type === 'error' ? 'error' : '');
+    el.innerHTML = `<div class="t-ico">${type === 'error' ? '!' : 'OK'}</div><div>${esc(msg)}</div>`;
+    root.appendChild(el);
+    setTimeout(() => { el.style.opacity='0'; setTimeout(() => el.remove(), 300); }, 2800);
+  },
+  error: m => Toast.show(m, 'error'),
+  success: m => Toast.show(m, 'success')
+};
+
+const Modal = {
+  confirm({ title, message, confirmText = 'Hapus', danger = true, onConfirm }) {
+    const root = document.getElementById('modal-root');
+    root.innerHTML = `
+      <div class="modal-bg" id="mb">
+        <div class="modal">
+          <h3>${esc(title)}</h3>
+          <p>${esc(message)}</p>
+          <div class="modal-foot">
+            <button class="btn btn-ghost" id="mc">Batal</button>
+            <button class="btn ${danger ? 'btn-danger' : 'btn-primary'}" id="mo">${esc(confirmText)}</button>
+          </div>
+        </div>
+      </div>`;
+    const close = () => root.innerHTML = '';
+    document.getElementById('mc').onclick = close;
+    document.getElementById('mb').onclick = e => e.target.id === 'mb' && close();
+    document.getElementById('mo').onclick = () => { close(); onConfirm && onConfirm(); };
+  }
+};
+
+const defaultSettings = {
+  theme: 'dark',
+  enterToSend: true,
+  fontSize: 'md',
+  notifMessages: true,
+  notifGroups: true,
+  notifFriendReq: true,
+  notifSound: true,
+  privacyLastSeen: 'everyone',
+  privacyPhoto: 'everyone',
+  privacyBio: 'everyone',
+  privacyReadReceipt: true
+};
+
+let currentUser = null;
+let settings = { ...defaultSettings };
+
+onAuthStateChanged(auth, async (user) => {
+  if (!user) { location.href = 'login.html'; return; }
+  currentUser = user;
+  const snap = await get(ref(db, 'settings/' + user.uid));
+  if (snap.exists()) settings = { ...defaultSettings, ...snap.val() };
+  render();
+});
+
+async function saveSettings(patch) {
+  Object.assign(settings, patch);
+  try {
+    await update(ref(db, 'settings/' + currentUser.uid), patch);
+  } catch (e) {
+    console.error(e);
+    Toast.error('Gagal menyimpan pengaturan.');
+  }
+}
+
+function render() {
+  const content = document.getElementById('content');
+  content.innerHTML = `
+    <div class="card">
+      <div class="section-title">Tampilan</div>
+      <div class="row">
+        <div class="row-info">
+          <div class="title">Tema Aplikasi</div>
+          <div class="desc">Pilih tampilan gelap, terang, atau ikuti sistem.</div>
+        </div>
+        <div class="seg" id="theme-seg">
+          <button data-theme-set="dark" class="${settings.theme === 'dark' ? 'active' : ''}">Gelap</button>
+          <button data-theme-set="light" class="${settings.theme === 'light' ? 'active' : ''}">Terang</button>
+          <button data-theme-set="system" class="${settings.theme === 'system' ? 'active' : ''}">Sistem</button>
+        </div>
+      </div>
+      <div class="row">
+        <div class="row-info">
+          <div class="title">Ukuran Font Pesan</div>
+          <div class="desc">Sesuaikan ukuran teks percakapan.</div>
+        </div>
+        <div class="seg seg-sm" id="font-seg">
+          <button data-font="sm" class="${settings.fontSize === 'sm' ? 'active' : ''}">Kecil</button>
+          <button data-font="md" class="${settings.fontSize === 'md' ? 'active' : ''}">Sedang</button>
+          <button data-font="lg" class="${settings.fontSize === 'lg' ? 'active' : ''}">Besar</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">Chat</div>
+      <div class="row">
+        <div class="row-info">
+          <div class="title">Enter untuk Kirim</div>
+          <div class="desc">Tekan Enter untuk mengirim, Shift+Enter baris baru.</div>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="set-enter" ${settings.enterToSend ? 'checked' : ''}>
+          <span class="slider"></span>
+        </label>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">Notifikasi</div>
+      <div class="row">
+        <div class="row-info">
+          <div class="title">Notifikasi Pesan</div>
+          <div class="desc">Terima pemberitahuan pesan baru.</div>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="set-notif-msg" ${settings.notifMessages ? 'checked' : ''}>
+          <span class="slider"></span>
+        </label>
+      </div>
+      <div class="row">
+        <div class="row-info">
+          <div class="title">Notifikasi Grup</div>
+          <div class="desc">Pemberitahuan dari grup.</div>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="set-notif-grp" ${settings.notifGroups ? 'checked' : ''}>
+          <span class="slider"></span>
+        </label>
+      </div>
+      <div class="row">
+        <div class="row-info">
+          <div class="title">Permintaan Pertemanan</div>
+          <div class="desc">Notifikasi saat ada yang menambahkanmu.</div>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="set-notif-req" ${settings.notifFriendReq ? 'checked' : ''}>
+          <span class="slider"></span>
+        </label>
+      </div>
+      <div class="row">
+        <div class="row-info">
+          <div class="title">Suara Notifikasi</div>
+          <div class="desc">Bunyikan suara saat ada notifikasi.</div>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="set-notif-sound" ${settings.notifSound ? 'checked' : ''}>
+          <span class="slider"></span>
+        </label>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">Privasi</div>
+      <div class="row">
+        <div class="row-info">
+          <div class="title">Terakhir Dilihat</div>
+          <div class="desc">Siapa yang bisa melihat kapan kamu terakhir online.</div>
+        </div>
+        <select class="input" style="width:auto;padding:8px 12px" id="priv-lastseen">
+          ${['everyone','friends','nobody'].map(v => `<option value="${v}" ${settings.privacyLastSeen===v?'selected':''}>${v === 'everyone' ? 'Semua' : v === 'friends' ? 'Teman' : 'Tidak Ada'}</option>`).join('')}
+        </select>
+      </div>
+      <div class="row">
+        <div class="row-info">
+          <div class="title">Foto Profil</div>
+          <div class="desc">Siapa yang bisa melihat foto profilmu.</div>
+        </div>
+        <select class="input" style="width:auto;padding:8px 12px" id="priv-photo">
+          ${['everyone','friends','nobody'].map(v => `<option value="${v}" ${settings.privacyPhoto===v?'selected':''}>${v === 'everyone' ? 'Semua' : v === 'friends' ? 'Teman' : 'Tidak Ada'}</option>`).join('')}
+        </select>
+      </div>
+      <div class="row">
+        <div class="row-info">
+          <div class="title">Bio</div>
+          <div class="desc">Siapa yang bisa melihat bio profilmu.</div>
+        </div>
+        <select class="input" style="width:auto;padding:8px 12px" id="priv-bio">
+          ${['everyone','friends','nobody'].map(v => `<option value="${v}" ${settings.privacyBio===v?'selected':''}>${v === 'everyone' ? 'Semua' : v === 'friends' ? 'Teman' : 'Tidak Ada'}</option>`).join('')}
+        </select>
+      </div>
+      <div class="row">
+        <div class="row-info">
+          <div class="title">Konfirmasi Dibaca</div>
+          <div class="desc">Kirim tanda centang saat kamu membaca pesan.</div>
+        </div>
+        <label class="switch">
+          <input type="checkbox" id="priv-receipt" ${settings.privacyReadReceipt ? 'checked' : ''}>
+          <span class="slider"></span>
+        </label>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">Keamanan</div>
+      <div id="pw-msg"></div>
+      <div class="field">
+        <label for="pw-current">Password Saat Ini</label>
+        <input type="password" class="input" id="pw-current" placeholder="Password lama">
+      </div>
+      <div class="field">
+        <label for="pw-new">Password Baru</label>
+        <input type="password" class="input" id="pw-new" placeholder="Minimal 8 karakter">
+      </div>
+      <div class="field">
+        <label for="pw-confirm">Konfirmasi Password Baru</label>
+        <input type="password" class="input" id="pw-confirm" placeholder="Ulangi password baru">
+      </div>
+      <button class="btn btn-primary btn-block" id="change-pw">Ubah Password</button>
+    </div>
+
+    <div class="card">
+      <div class="section-title">Akun</div>
+      <button class="btn btn-ghost btn-block" onclick="location.href='profil.html'" style="margin-bottom:10px">Buka Profil Saya</button>
+      <button class="btn btn-ghost btn-block" id="logout-btn" style="margin-bottom:10px">Keluar dari Akun</button>
+      <button class="btn btn-danger btn-block" id="delete-btn">Hapus Akun Permanen</button>
+    </div>
+
+    <div class="card" style="text-align:center;padding:24px 20px">
+      <div style="font-weight:700;font-size:15px;margin-bottom:4px">ChatingYuk</div>
+      <div class="small muted">Versi 1.0</div>
+      <div class="tiny muted" style="margin-top:8px">Ngobrol Tanpa Batas.</div>
+    </div>
+  `;
+
+  bindEvents();
+}
+
+function bindEvents() {
+  // Theme
+  document.querySelectorAll('[data-theme-set]').forEach(b => b.onclick = () => {
+    const t = b.dataset.themeSet;
+    let actual = t;
+    if (t === 'system') actual = matchMedia('(prefers-color-scheme:dark)').matches ? 'dark' : 'light';
+    document.documentElement.setAttribute('data-theme', actual);
+    localStorage.setItem('cy_theme', actual);
+    document.querySelectorAll('[data-theme-set]').forEach(x => x.classList.toggle('active', x === b));
+    saveSettings({ theme: t });
+    Toast.success('Tema diperbarui');
+  });
+
+  // Font
+  document.querySelectorAll('[data-font]').forEach(b => b.onclick = () => {
+    const v = b.dataset.font;
+    document.querySelectorAll('[data-font]').forEach(x => x.classList.toggle('active', x === b));
+    saveSettings({ fontSize: v });
+    Toast.success('Ukuran font diperbarui');
+  });
+
+  // Switches
+  document.getElementById('set-enter').onchange = e => saveSettings({ enterToSend: e.target.checked });
+  document.getElementById('set-notif-msg').onchange = e => saveSettings({ notifMessages: e.target.checked });
+  document.getElementById('set-notif-grp').onchange = e => saveSettings({ notifGroups: e.target.checked });
+  document.getElementById('set-notif-req').onchange = e => saveSettings({ notifFriendReq: e.target.checked });
+  document.getElementById('set-notif-sound').onchange = e => saveSettings({ notifSound: e.target.checked });
+  document.getElementById('priv-receipt').onchange = e => saveSettings({ privacyReadReceipt: e.target.checked });
+
+  // Privacy selects
+  document.getElementById('priv-lastseen').onchange = e => saveSettings({ privacyLastSeen: e.target.value });
+  document.getElementById('priv-photo').onchange = e => saveSettings({ privacyPhoto: e.target.value });
+  document.getElementById('priv-bio').onchange = e => saveSettings({ privacyBio: e.target.value });
+
+  // Change password
+  document.getElementById('change-pw').onclick = async () => {
+    const cur = document.getElementById('pw-current').value;
+    const nw = document.getElementById('pw-new').value;
+    const cf = document.getElementById('pw-confirm').value;
+    const box = document.getElementById('pw-msg');
+    box.innerHTML = '';
+    if (!cur || !nw || !cf) return Toast.error('Lengkapi semua field password.');
+    if (nw.length < 8) return Toast.error('Password baru minimal 8 karakter.');
+    if (nw !== cf) return Toast.error('Konfirmasi password tidak cocok.');
+    try {
+      const cred = EmailAuthProvider.credential(currentUser.email, cur);
+      await reauthenticateWithCredential(currentUser, cred);
+      await updatePassword(currentUser, nw);
+      box.innerHTML = `<div class="alert success">Password berhasil diubah.</div>`;
+      Toast.success('Password diubah');
+      document.getElementById('pw-current').value = '';
+      document.getElementById('pw-new').value = '';
+      document.getElementById('pw-confirm').value = '';
+      setTimeout(() => box.innerHTML = '', 2500);
+    } catch (e) {
+      console.error(e);
+      const msg = e.code === 'auth/wrong-password' ? 'Password saat ini salah.' : 'Gagal mengubah password.';
+      box.innerHTML = `<div class="alert error">${msg}</div>`;
+    }
+  };
+
+  // Logout
+  document.getElementById('logout-btn').onclick = () => {
+    Modal.confirm({
+      title: 'Keluar dari akun?',
+      message: 'Kamu perlu login lagi untuk melanjutkan.',
+      confirmText: 'Keluar',
+      onConfirm: async () => {
+        try { await signOut(auth); location.href = 'login.html'; }
+        catch { Toast.error('Gagal keluar.'); }
+      }
+    });
+  };
+
+  // Delete account
+  document.getElementById('delete-btn').onclick = () => {
+    Modal.confirm({
+      title: 'Hapus akun permanen?',
+      message: 'Semua data profil dan pengaturanmu akan dihapus. Tindakan ini tidak bisa dibatalkan.',
+      confirmText: 'Hapus Akun',
+      onConfirm: async () => {
+        try {
+          const uid = currentUser.uid;
+          const profile = (await get(ref(db, 'users/' + uid))).val();
+          if (profile?.username) await remove(ref(db, 'usernames/' + profile.username));
+          await remove(ref(db, 'users/' + uid));
+          await remove(ref(db, 'settings/' + uid));
+          await remove(ref(db, 'userChats/' + uid));
+          await currentUser.delete();
+          location.href = 'login.html';
+        } catch (e) {
+          console.error(e);
+          Toast.error('Gagal menghapus akun. Login ulang dan coba lagi.');
+        }
+      }
+    });
+  };
+}
+</script>
+</body>
+</html>
