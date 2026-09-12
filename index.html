@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ChatingYuk - Ngobrol Tanpa Batas</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0a0e1a;--bg-2:#0f1524;--surface:#141a2c;--surface-2:#1a2238;--border:#232c47;--text:#e8ecf5;--text-2:#8b93ab;--text-3:#5a6480;--primary:#6366f1;--primary-soft:rgba(99,102,241,.15);--grad:linear-gradient(135deg,#6366f1,#8b5cf6 60%,#ec4899);--shadow:0 10px 30px rgba(0,0,0,.35);--r:14px}
+[data-theme=light]{--bg:#f4f6fb;--bg-2:#eef1f8;--surface:#fff;--surface-2:#f7f9fc;--border:#e2e8f0;--text:#0f172a;--text-2:#64748b;--text-3:#94a3b8;--primary-soft:rgba(99,102,241,.1)}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Inter',Roboto,sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+button{font:inherit;cursor:pointer;border:none;background:none;color:inherit}
+a{color:inherit;text-decoration:none}
+.muted{color:var(--text-2)}.small{font-size:13px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:10px 18px;border-radius:10px;font-weight:600;font-size:14px;transition:.2s}
+.btn-primary{background:var(--grad);color:#fff;box-shadow:0 4px 16px rgba(99,102,241,.3)}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 20px rgba(99,102,241,.5)}
+.btn-ghost{background:transparent;color:var(--text);border:1px solid var(--border)}
+.btn-ghost:hover{background:var(--surface-2)}
+.btn-sm{padding:8px 14px;font-size:13px}
+.btn-lg{padding:14px 26px;font-size:15px}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;font-size:19px;letter-spacing:-.02em}
+.brand-logo{width:36px;height:36px;border-radius:11px;background:var(--grad);display:grid;place-items:center;color:#fff}
+.brand-name{background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.nav{position:sticky;top:0;z-index:50;background:rgba(10,14,26,.85);backdrop-filter:blur(16px);border-bottom:1px solid var(--border)}
+[data-theme=light] .nav{background:rgba(255,255,255,.85)}
+.nav-inner{max-width:1200px;margin:0 auto;padding:14px 22px;display:flex;align-items:center;gap:20px}
+.nav-links{display:flex;gap:6px;margin-left:auto}
+.nav-links a{padding:8px 14px;font-size:14px;color:var(--text-2);border-radius:8px;transition:.2s}
+.nav-links a:hover{color:var(--text);background:var(--surface-2)}
+.nav-actions{display:flex;gap:8px}
+@media(max-width:768px){.nav-links{display:none}}
+.hero{position:relative;padding:80px 22px 60px;text-align:center;overflow:hidden}
+.hero-bg{position:absolute;inset:0;background:radial-gradient(circle at 30% 20%,rgba(99,102,241,.15),transparent 50%),radial-gradient(circle at 70% 60%,rgba(236,72,153,.12),transparent 50%);pointer-events:none}
+.hero-inner{position:relative;max-width:900px;margin:0 auto}
+.hero-badge{display:inline-block;padding:8px 16px;border-radius:999px;background:var(--primary-soft);color:var(--primary);font-size:13px;font-weight:600;margin-bottom:20px}
+.hero-title{font-size:clamp(38px,7vw,68px);font-weight:800;letter-spacing:-.03em;line-height:1.05;margin-bottom:20px}
+.grad{background:var(--grad);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.hero-sub{font-size:17px;color:var(--text-2);max-width:600px;margin:0 auto 32px;line-height:1.6}
+.hero-cta{display:flex;gap:12px;justify-content:center;flex-wrap:wrap;margin-bottom:60px}
+.hero-mock{max-width:800px;margin:0 auto}
+.mock-window{background:var(--surface);border-radius:18px;overflow:hidden;border:1px solid var(--border);box-shadow:var(--shadow)}
+.mock-bar{display:flex;gap:6px;padding:14px 18px;border-bottom:1px solid var(--border)}
+.mock-bar span{width:11px;height:11px;border-radius:50%;background:var(--border)}
+.mock-bar span:nth-child(1){background:#ef4444}.mock-bar span:nth-child(2){background:#f59e0b}.mock-bar span:nth-child(3){background:#10b981}
+.mock-body{display:grid;grid-template-columns:220px 1fr;height:340px}
+.mock-side{border-right:1px solid var(--border);padding:12px}
+.mock-chat{display:flex;gap:10px;padding:10px;border-radius:10px;margin-bottom:6px}
+.mock-chat.active{background:var(--primary-soft)}
+.mock-av{width:34px;height:34px;border-radius:50%;background:var(--grad);flex-shrink:0}
+.mock-chat b{font-size:13px;display:block}
+.mock-chat small{font-size:11px;color:var(--text-3)}
+.mock-main{padding:20px;display:flex;flex-direction:column;gap:10px;justify-content:flex-end}
+.bubble{max-width:70%;padding:10px 14px;border-radius:16px;font-size:13.5px;line-height:1.5}
+.bubble.left{background:var(--surface-2);align-self:flex-start;border-bottom-left-radius:4px}
+.bubble.right{background:var(--primary);color:#fff;align-self:flex-end;border-bottom-right-radius:4px}
+@media(max-width:600px){.mock-body{grid-template-columns:1fr}.mock-side{display:none}}
+.section{padding:70px 22px}
+.section.alt{background:var(--bg-2)}
+.section-inner{max-width:1100px;margin:0 auto}
+.section-head{text-align:center;margin-bottom:50px}
+.eyebrow{display:inline-block;padding:6px 14px;border-radius:999px;background:var(--primary-soft);color:var(--primary);font-size:12px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;margin-bottom:14px}
+.section-head h2{font-size:clamp(26px,4vw,40px);font-weight:800;letter-spacing:-.02em;margin-bottom:12px}
+.section-head p{color:var(--text-2);max-width:520px;margin:0 auto}
+.feat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:18px}
+.feat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r);padding:24px;transition:.2s}
+.feat-card:hover{transform:translateY(-4px);box-shadow:var(--shadow);border-color:transparent}
+.feat-ico{width:48px;height:48px;border-radius:12px;display:grid;place-items:center;background:var(--primary-soft);color:var(--primary);margin-bottom:14px}
+.feat-card h3{font-size:17px;font-weight:700;margin-bottom:8px}
+.feat-card p{color:var(--text-2);font-size:14px;line-height:1.6}
+.cta-box{text-align:center;padding:60px 30px;background:var(--grad);border-radius:20px;color:#fff}
+.cta-box h2{font-size:32px;font-weight:800;margin-bottom:12px}
+.cta-box p{opacity:.9;margin-bottom:24px}
+.cta-box .btn-primary{background:#fff;color:var(--primary);box-shadow:0 8px 24px rgba(0,0,0,.2)}
+.footer{border-top:1px solid var(--border);padding:40px 22px;background:var(--bg-2)}
+.footer-inner{max-width:1100px;margin:0 auto;display:flex;flex-wrap:wrap;gap:20px;align-items:center;justify-content:space-between}
+svg.i{width:22px;height:22px}
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <div class="nav-inner">
+    <a href="index.html" class="brand">
+      <div class="brand-logo">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+      </div>
+      <span class="brand-name">ChatingYuk</span>
+    </a>
+    <div class="nav-links">
+      <a href="#features">Fitur</a>
+      <a href="#about">Tentang</a>
+    </div>
+    <div class="nav-actions">
+      <a href="login.html" class="btn btn-ghost btn-sm">Masuk</a>
+      <a href="register.html" class="btn btn-primary btn-sm">Daftar</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-inner">
+    <div class="hero-badge">Realtime - Gratis - Modern</div>
+    <h1 class="hero-title">Ngobrol <span class="grad">Tanpa Batas.</span></h1>
+    <p class="hero-sub">Chat realtime dengan teman, keluarga, dan komunitas. Private chat, grup, media sharing, semua jadi satu.</p>
+    <div class="hero-cta">
+      <a href="register.html" class="btn btn-primary btn-lg">Mulai Chatting</a>
+      <a href="login.html" class="btn btn-ghost btn-lg">Masuk</a>
+    </div>
+    <div class="hero-mock">
+      <div class="mock-window">
+        <div class="mock-bar"><span></span><span></span><span></span></div>
+        <div class="mock-body">
+          <div class="mock-side">
+            <div class="mock-chat active"><div class="mock-av"></div><div><b>Radit</b><small>Halo!</small></div></div>
+            <div class="mock-chat"><div class="mock-av"></div><div><b>Grup Dev</b><small>Nice work</small></div></div>
+            <div class="mock-chat"><div class="mock-av"></div><div><b>Sinta</b><small>See you</small></div></div>
+          </div>
+          <div class="mock-main">
+            <div class="bubble left">Halo, gimana kabar?</div>
+            <div class="bubble right">Baik, baru selesai proyek baru</div>
+            <div class="bubble left">Keren! Cerita dong</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<section id="features" class="section">
+  <div class="section-inner">
+    <div class="section-head">
+      <div class="eyebrow">Fitur</div>
+      <h2>Semua yang kamu butuhkan</h2>
+      <p>Pengalaman chatting modern yang cepat dan nyaman.</p>
+    </div>
+    <div class="feat-grid">
+      <div class="feat-card">
+        <div class="feat-ico"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg></div>
+        <h3>Realtime Chat</h3>
+        <p>Pesan muncul instan tanpa refresh menggunakan Firebase.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-ico"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg></div>
+        <h3>Group Chat</h3>
+        <p>Buat grup dengan teman, keluarga, atau tim.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-ico"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.44 11.05l-9.19 9.19a6 6 0 0 1-8.49-8.49l9.19-9.19a4 4 0 0 1 5.66 5.66l-9.2 9.19a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg></div>
+        <h3>Media Sharing</h3>
+        <p>Kirim gambar, video, audio, dan dokumen.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-ico"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg></div>
+        <h3>Reaksi Pesan</h3>
+        <p>React, reply, edit, dan pin pesan penting.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-ico"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4" fill="currentColor"/></svg></div>
+        <h3>Online Status</h3>
+        <p>Lihat siapa online dan typing indicator realtime.</p>
+      </div>
+      <div class="feat-card">
+        <div class="feat-ico"><svg class="i" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg></div>
+        <h3>Secure Account</h3>
+        <p>Firebase Auth dan Security Rules melindungi akunmu.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="about" class="section alt">
+  <div class="section-inner">
+    <div class="cta-box">
+      <h2>Siap mulai?</h2>
+      <p>Gabung bersama ribuan pengguna ChatingYuk hari ini.</p>
+      <a href="register.html" class="btn btn-primary btn-lg">Buat Akun Gratis</a>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="footer-inner">
+    <div class="brand">
+      <div class="brand-logo">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+      </div>
+      <span class="brand-name">ChatingYuk</span>
+    </div>
+    <div class="muted small">&copy; 2026 ChatingYuk. Ngobrol Tanpa Batas.</div>
+  </div>
+</footer>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+
+const app = initializeApp({
+  apiKey: "AIzaSyCHr0eemIkfHNFDUkSaFDklp_c1OgmSnl8",
+  authDomain: "mybro-9ba5f.firebaseapp.com",
+  databaseURL: "https://mybro-9ba5f-default-rtdb.firebaseio.com/",
+  projectId: "mybro-9ba5f",
+  storageBucket: "mybro-9ba5f.appspot.com"
+});
+const auth = getAuth(app);
+
+onAuthStateChanged(auth, (u) => { if (u) location.href = 'chat.html'; });
+document.documentElement.setAttribute('data-theme', localStorage.getItem('cy_theme') || 'dark');
+</script>
+</body>
+</html>
