@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+<title>NEOCHAT</title>
+<meta name="theme-color" content="#0a0e1a">
+<link rel="manifest" href="manifest.json">
+<link rel="stylesheet" href="css/main.css">
+</head>
+<body class="app-body">
+
+<!-- SIDEBAR -->
+<aside class="sidebar" id="sidebar">
+  <div class="sb-head">
+    <div class="brand">
+      <div class="brand-logo">N</div>
+      <span class="brand-name">NEOCHAT</span>
+    </div>
+    <div class="sb-actions">
+      <button class="icon-btn" id="theme-toggle" aria-label="Toggle theme">🌙</button>
+      <button class="icon-btn" id="new-chat-btn" aria-label="New chat">✏️</button>
+    </div>
+  </div>
+
+  <div class="sb-search">
+    <input type="text" id="search-input" class="input" placeholder="Cari chat atau user...">
+  </div>
+
+  <div class="sb-tabs">
+    <button class="sb-tab active" data-tab="chats">Chats</button>
+    <button class="sb-tab" data-tab="requests">Requests <span class="badge hidden" id="req-badge">0</span></button>
+    <button class="sb-tab" data-tab="people">People</button>
+  </div>
+
+  <div class="sb-list" id="sb-list">
+    <div class="skeleton-list">
+      <div class="skel-item"></div><div class="skel-item"></div><div class="skel-item"></div>
+    </div>
+  </div>
+
+  <div class="sb-user" id="sb-user">
+    <div class="avatar avatar-sm" id="sb-user-avatar">?</div>
+    <div class="sb-user-info">
+      <div class="sb-user-name" id="sb-user-name">Loading...</div>
+      <div class="sb-user-status" id="sb-user-status">online</div>
+    </div>
+    <button class="icon-btn" id="settings-btn" aria-label="Settings">⚙️</button>
+    <button class="icon-btn" id="logout-btn" aria-label="Logout">↪</button>
+  </div>
+</aside>
+
+<!-- CHAT MAIN -->
+<main class="chat-main" id="chat-main">
+  <div class="chat-empty" id="chat-empty">
+    <div class="ce-ico">💬</div>
+    <h2>Belum ada percakapan</h2>
+    <p class="muted">Pilih chat dari sidebar atau mulai chat baru.</p>
+    <button class="btn btn-primary" id="start-chat-empty">Mulai Chat</button>
+  </div>
+
+  <div class="chat-room hidden" id="chat-room">
+    <header class="chat-head">
+      <button class="icon-btn back-btn" id="back-btn" aria-label="Back">←</button>
+      <div class="chat-head-info" id="chat-head-info">
+        <div class="avatar avatar-sm" id="chat-head-avatar">?</div>
+        <div>
+          <div class="chat-head-name" id="chat-head-name">—</div>
+          <div class="chat-head-status" id="chat-head-status">—</div>
+        </div>
+      </div>
+      <div class="chat-head-actions">
+        <button class="icon-btn" id="pin-view-btn" aria-label="Pinned">📌</button>
+        <button class="icon-btn" id="info-btn" aria-label="Info">ℹ️</button>
+        <button class="icon-btn" id="chat-menu-btn" aria-label="Menu">⋮</button>
+      </div>
+    </header>
+
+    <div class="pin-bar hidden" id="pin-bar"></div>
+
+    <div class="messages" id="messages" aria-live="polite"></div>
+
+    <div class="typing-bar hidden" id="typing-bar"></div>
+
+    <div class="reply-preview hidden" id="reply-preview">
+      <div class="rp-bar"></div>
+      <div class="rp-body">
+        <div class="rp-name" id="rp-name">—</div>
+        <div class="rp-text" id="rp-text">—</div>
+      </div>
+      <button class="icon-btn" id="rp-close">✕</button>
+    </div>
+
+    <div class="composer" id="composer">
+      <button class="icon-btn" id="attach-btn" aria-label="Attach">📎</button>
+      <input type="file" id="file-input" hidden>
+      <button class="icon-btn" id="emoji-btn" aria-label="Emoji">😀</button>
+      <textarea id="msg-input" class="msg-input" placeholder="Tulis pesan..." rows="1"></textarea>
+      <button class="icon-btn" id="voice-btn" aria-label="Voice">🎤</button>
+      <button class="btn-send" id="send-btn" aria-label="Send">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+      </button>
+    </div>
+  </div>
+</main>
+
+<!-- INFO PANEL -->
+<aside class="info-panel hidden" id="info-panel">
+  <div class="info-head">
+    <h3>Info</h3>
+    <button class="icon-btn" id="info-close">✕</button>
+  </div>
+  <div class="info-body" id="info-body"></div>
+</aside>
+
+<!-- BOTTOM NAV MOBILE -->
+<nav class="bottom-nav" id="bottom-nav">
+  <button class="bn-item active" data-nav="chats"><span>💬</span><small>Chats</small></button>
+  <button class="bn-item" data-nav="people"><span>👥</span><small>People</small></button>
+  <button class="bn-item" data-nav="notif"><span>🔔</span><small>Notif</small><span class="badge hidden" id="notif-badge">0</span></button>
+  <button class="bn-item" data-nav="settings"><span>⚙️</span><small>Settings</small></button>
+</nav>
+
+<!-- MODAL ROOT -->
+<div id="modal-root"></div>
+<div id="toast-root"></div>
+<div id="emoji-picker" class="emoji-picker hidden"></div>
+<div id="context-menu" class="context-menu hidden"></div>
+
+<!-- LOGIN GATE -->
+<div id="loading-gate" class="loading-gate">
+  <div class="spinner"></div>
+  <div>Memuat NEOCHAT...</div>
+</div>
+
+<script type="module" src="js/app.js"></script>
+</body>
+</html>
