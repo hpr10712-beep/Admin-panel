@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="id" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Profil - ChatingYuk</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{--bg:#0a0e1a;--bg-2:#0f1524;--surface:#141a2c;--surface-2:#1a2238;--surface-3:#212b47;--border:#232c47;--text:#e8ecf5;--text-2:#8b93ab;--text-3:#5a6480;--primary:#6366f1;--primary-soft:rgba(99,102,241,.15);--success:#10b981;--danger:#ef4444;--grad:linear-gradient(135deg,#6366f1,#8b5cf6 60%,#ec4899);--shadow:0 10px 30px rgba(0,0,0,.35)}
+[data-theme=light]{--bg:#f4f6fb;--bg-2:#eef1f8;--surface:#fff;--surface-2:#f7f9fc;--surface-3:#eef2f9;--border:#e2e8f0;--text:#0f172a;--text-2:#64748b;--text-3:#94a3b8;--primary-soft:rgba(99,102,241,.1)}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','Inter',Roboto,sans-serif;background:var(--bg);color:var(--text);-webkit-font-smoothing:antialiased;min-height:100vh}
+button,input,textarea,select{font:inherit;color:inherit}
+button{cursor:pointer;border:none;background:none}
+a{color:inherit;text-decoration:none}
+.hidden{display:none!important}
+.muted{color:var(--text-2)}.small{font-size:13px}.tiny{font-size:11.5px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:11px 18px;border-radius:10px;font-weight:600;font-size:14px;transition:.2s;white-space:nowrap}
+.btn-primary{background:var(--grad);color:#fff;box-shadow:0 4px 16px rgba(99,102,241,.3)}
+.btn-primary:hover{transform:translateY(-1px)}
+.btn-ghost{background:transparent;color:var(--text);border:1px solid var(--border)}
+.btn-ghost:hover{background:var(--surface-2)}
+.btn-danger{background:var(--danger);color:#fff}
+.btn-block{width:100%}
+.btn[disabled]{opacity:.5;pointer-events:none}
+.icon-btn{width:38px;height:38px;border-radius:10px;display:inline-flex;align-items:center;justify-content:center;color:var(--text-2);transition:.2s}
+.icon-btn:hover{background:var(--surface-2);color:var(--text)}
+.avatar{width:96px;height:96px;border-radius:50%;background:var(--grad);color:#fff;display:grid;place-items:center;font-weight:700;font-size:34px;overflow:hidden;position:relative}
+.avatar img{width:100%;height:100%;object-fit:cover}
+.container{max-width:680px;margin:0 auto;padding:20px}
+.top{display:flex;align-items:center;gap:12px;padding:14px 0 20px}
+.top h1{font-size:22px;font-weight:800;letter-spacing:-.02em}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:20px;margin-bottom:16px}
+.avatar-block{display:flex;flex-direction:column;align-items:center;gap:12px;padding:24px 0}
+.avatar-wrap{position:relative}
+.avatar-edit{position:absolute;bottom:0;right:0;width:32px;height:32px;border-radius:50%;background:var(--primary);color:#fff;display:grid;place-items:center;border:3px solid var(--surface);cursor:pointer}
+.field{margin-bottom:16px;display:flex;flex-direction:column;gap:6px}
+.field label{font-size:13px;font-weight:600;color:var(--text-2)}
+.input{width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:10px;background:var(--surface);color:var(--text);font-size:14px;transition:.2s;outline:none}
+.input:focus{border-color:var(--primary);box-shadow:0 0 0 3px var(--primary-soft)}
+.input:disabled{opacity:.6;cursor:not-allowed}
+textarea.input{resize:vertical;min-height:80px;font-family:inherit}
+.hint{font-size:11.5px;color:var(--text-3)}
+.row-between{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:8px}
+.stat{background:var(--surface-2);border-radius:12px;padding:14px;text-align:center}
+.stat .num{font-size:22px;font-weight:800;letter-spacing:-.02em}
+.stat .lbl{font-size:11.5px;color:var(--text-3);margin-top:4px;text-transform:uppercase;letter-spacing:.05em;font-weight:600}
+.alert{padding:12px 14px;border-radius:10px;font-size:13px;margin-bottom:16px}
+.alert.error{background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.3);color:#fecaca}
+.alert.success{background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.3);color:#a7f3d0}
+.section-title{font-size:12px;font-weight:700;color:var(--text-3);letter-spacing:.06em;text-transform:uppercase;margin-bottom:14px}
+.spinner{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--primary);border-radius:50%;animation:spin .8s linear infinite;margin:60px auto}
+@keyframes spin{to{transform:rotate(360deg)}}
+#toast-root{position:fixed;top:16px;right:16px;z-index:200;display:flex;flex-direction:column;gap:10px;pointer-events:none;max-width:calc(100vw - 32px)}
+.toast{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px 16px;box-shadow:var(--shadow);display:flex;gap:10px;align-items:center;pointer-events:auto;min-width:240px;font-size:13.5px;animation:slidein .3s}
+.toast .t-ico{width:22px;height:22px;border-radius:50%;display:grid;place-items:center;color:#fff;font-size:12px;font-weight:700;flex-shrink:0;background:var(--success)}
+.toast.error .t-ico{background:var(--danger)}
+@keyframes slidein{from{opacity:0;transform:translateX(20px)}}
+.ic{display:inline-flex;flex-shrink:0}
+</style>
+</head>
+<body>
+
+<div class="container" id="app">
+  <div class="top">
+    <button class="icon-btn" onclick="location.href='chat.html'" aria-label="Kembali">
+      <svg class="ic" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="19" y1="12" x2="5" y2="12"/><polyline points="12 19 5 12 12 5"/></svg>
+    </button>
+    <h1>Profil Saya</h1>
+  </div>
+
+  <div id="content"><div class="spinner"></div></div>
+</div>
+
+<div id="toast-root"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import { getDatabase, ref, get, update } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+import { getStorage, ref as sRef, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
+
+const app = initializeApp({
+  apiKey: "AIzaSyCHr0eemIkfHNFDUkSaFDklp_c1OgmSnl8",
+  authDomain: "mybro-9ba5f.firebaseapp.com",
+  databaseURL: "https://mybro-9ba5f-default-rtdb.firebaseio.com/",
+  projectId: "mybro-9ba5f",
+  storageBucket: "mybro-9ba5f.appspot.com"
+});
+const auth = getAuth(app);
+const db = getDatabase(app);
+const storage = getStorage(app);
+
+document.documentElement.setAttribute('data-theme', localStorage.getItem('cy_theme') || 'dark');
+
+const esc = s => s == null ? '' : String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const initials = n => !n ? '?' : n.split(' ').map(x => x[0]).slice(0, 2).join('').toUpperCase();
+
+const Toast = {
+  show(msg, type='success') {
+    const root = document.getElementById('toast-root');
+    const el = document.createElement('div');
+    el.className = 'toast ' + (type === 'error' ? 'error' : '');
+    el.innerHTML = `<div class="t-ico">${type === 'error' ? '!' : 'OK'}</div><div>${esc(msg)}</div>`;
+    root.appendChild(el);
+    setTimeout(() => { el.style.opacity='0'; setTimeout(() => el.remove(), 300); }, 2800);
+  },
+  error: m => Toast.show(m, 'error'),
+  success: m => Toast.show(m, 'success')
+};
+
+let currentUser = null;
+let avatarFile = null;
+let stats = { chats: 0, messages: 0 };
+
+onAuthStateChanged(auth, async (user) => {
+  if (!user) { location.href = 'login.html'; return; }
+  currentUser = user;
+  const snap = await get(ref(db, 'users/' + user.uid));
+  if (!snap.exists()) { location.href = 'chat.html'; return; }
+  const profile = snap.val();
+
+  // Load stats: hitung chat user
+  try {
+    const chatsSnap = await get(ref(db, 'userChats/' + user.uid));
+    stats.chats = chatsSnap.exists() ? Object.keys(chatsSnap.val()).length : 0;
+  } catch {}
+
+  render(profile);
+});
+
+function render(p) {
+  const content = document.getElementById('content');
+  content.innerHTML = `
+    <div class="card">
+      <div class="avatar-block">
+        <div class="avatar-wrap">
+          <div class="avatar" id="avatar">${p.photoURL ? `<img src="${esc(p.photoURL)}" alt="">` : initials(p.displayName)}</div>
+          <label for="avatar-input" class="avatar-edit">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg>
+          </label>
+          <input type="file" id="avatar-input" accept="image/*" hidden>
+        </div>
+        <div style="font-weight:700;font-size:18px">${esc(p.displayName)}</div>
+        <div class="muted small">@${esc(p.username)}</div>
+      </div>
+      <div class="stats">
+        <div class="stat"><div class="num">${stats.chats}</div><div class="lbl">Obrolan</div></div>
+        <div class="stat"><div class="num">${p.status || 'Available'}</div><div class="lbl">Status</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="section-title">Informasi Akun</div>
+      <div id="msg"></div>
+
+      <div class="field">
+        <label for="displayName">Nama Tampilan</label>
+        <input class="input" id="displayName" value="${esc(p.displayName || '')}" maxlength="40">
+      </div>
+      <div class="field">
+        <label for="username">Username</label>
+        <input class="input" id="username" value="${esc(p.username || '')}" disabled>
+        <span class="hint">Username tidak dapat diubah.</span>
+      </div>
+      <div class="field">
+        <label for="email">Email</label>
+        <input class="input" id="email" value="${esc(p.email || '')}" disabled>
+      </div>
+      <div class="field">
+        <label for="bio">Bio</label>
+        <textarea class="input" id="bio" maxlength="200" placeholder="Ceritakan sedikit tentang kamu...">${esc(p.bio || '')}</textarea>
+        <span class="hint"><span id="bio-count">${(p.bio || '').length}</span>/200</span>
+      </div>
+      <div class="field">
+        <label for="status">Status</label>
+        <select class="input" id="status">
+          ${['Available','Busy','Away','Offline'].map(x => `<option ${p.status === x ? 'selected' : ''}>${x}</option>`).join('')}
+        </select>
+      </div>
+
+      <button class="btn btn-primary btn-block" id="save-btn">Simpan Perubahan</button>
+    </div>
+
+    <div class="card">
+      <div class="section-title">Lainnya</div>
+      <button class="btn btn-ghost btn-block" onclick="location.href='pengaturan.html'" style="margin-bottom:10px">Pengaturan</button>
+      <button class="btn btn-ghost btn-block" onclick="location.href='chat.html'">Kembali ke Chat</button>
+    </div>
+  `;
+
+  // Avatar upload
+  document.getElementById('avatar-input').onchange = e => {
+    const f = e.target.files[0];
+    if (!f) return;
+    if (!f.type.startsWith('image/')) return Toast.error('File harus gambar.');
+    if (f.size > 5 * 1024 * 1024) return Toast.error('Maksimal 5MB.');
+    avatarFile = f;
+    const r = new FileReader();
+    r.onload = ev => {
+      document.getElementById('avatar').innerHTML = `<img src="${ev.target.result}" alt="">`;
+    };
+    r.readAsDataURL(f);
+  };
+
+  // Bio counter
+  document.getElementById('bio').oninput = e => {
+    document.getElementById('bio-count').textContent = e.target.value.length;
+  };
+
+  // Save
+  document.getElementById('save-btn').onclick = async () => {
+    const btn = document.getElementById('save-btn');
+    const msg = document.getElementById('msg');
+    msg.innerHTML = '';
+    const displayName = document.getElementById('displayName').value.trim();
+    const bio = document.getElementById('bio').value.trim();
+    const status = document.getElementById('status').value;
+    if (!displayName) return Toast.error('Nama tampilan wajib diisi.');
+
+    btn.disabled = true;
+    btn.textContent = 'Menyimpan...';
+    try {
+      let photoURL = p.photoURL || '';
+      if (avatarFile) {
+        const path = `avatars/${currentUser.uid}/${Date.now()}_${avatarFile.name}`;
+        const r = sRef(storage, path);
+        await uploadBytesResumable(r, avatarFile);
+        photoURL = await getDownloadURL(r);
+      }
+      await update(ref(db, 'users/' + currentUser.uid), { displayName, bio, status, photoURL });
+      p.displayName = displayName; p.bio = bio; p.status = status; p.photoURL = photoURL;
+      avatarFile = null;
+      msg.innerHTML = `<div class="alert success">Perubahan berhasil disimpan.</div>`;
+      Toast.success('Profil diperbarui');
+      setTimeout(() => msg.innerHTML = '', 2500);
+    } catch (e) {
+      console.error(e);
+      Toast.error('Gagal menyimpan perubahan.');
+    } finally {
+      btn.disabled = false;
+      btn.textContent = 'Simpan Perubahan';
+    }
+  };
+}
+</script>
+</body>
+</html>
