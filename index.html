@@ -3,139 +3,193 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NexusSMM - Beli Nokos OTP</title>
+    <title>NexusNokos - Beli Nomor OTP</title>
     
     <!-- Bootstrap 5 CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <!-- FontAwesome untuk Ikon -->
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
     <!-- Google Fonts: Poppins -->
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    
+
     <style>
         :root {
-            --primary-color: #6366f1;
-            --primary-hover: #4f46e5;
-            --bg-color: #0f172a;
-            --card-bg: #1e293b;
-            --text-color: #f8fafc;
+            --bg-dark: #0f172a;
+            --bg-card: rgba(30, 41, 59, 0.8);
+            --accent-primary: #6366f1;
+            --accent-secondary: #8b5cf6;
+            --text-main: #f8fafc;
             --text-muted: #94a3b8;
+            --border-color: rgba(255, 255, 255, 0.1);
         }
 
         body {
             font-family: 'Poppins', sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
+            background: radial-gradient(circle at top right, #1e1b4b, #0f172a);
+            color: var(--text-main);
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 20px;
+            margin: 0;
+            padding: 20px 0;
         }
 
-        .card-custom {
-            background-color: var(--card-bg);
-            border: 1px solid #334155;
-            border-radius: 20px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-            width: 100%;
-            max-width: 500px;
+        /* Card Glassmorphism Effect */
+        .glass-card {
+            background: var(--bg-card);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--border-color);
+            border-radius: 24px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            padding: 40px;
+            transition: all 0.3s ease;
+            position: relative;
             overflow: hidden;
         }
 
-        .card-header-custom {
-            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
-            padding: 20px;
-            text-align: center;
-            border-bottom: none;
+        .glass-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: 0; right: 0; height: 4px;
+            background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
         }
 
-        .card-header-custom h3 {
-            margin: 0;
-            font-weight: 600;
-            letter-spacing: 1px;
+        .brand-title {
+            font-weight: 700;
+            font-size: 1.8rem;
+            background: linear-gradient(90deg, #a78bfa, #ec4899);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 5px;
         }
 
-        .form-control, .form-select {
-            background-color: #0f172a;
-            border: 1px solid #334155;
-            color: var(--text-color);
-            border-radius: 10px;
-            padding: 12px 15px;
-            transition: all 0.3s;
-        }
-
-        .form-control:focus, .form-select:focus {
-            background-color: #0f172a;
-            border-color: var(--primary-color);
-            box-shadow: 0 0 0 0.25rem rgba(99, 102, 241, 0.25);
-            color: var(--text-color);
-        }
-
-        .form-control::placeholder {
+        .brand-subtitle {
             color: var(--text-muted);
+            font-size: 0.9rem;
+            margin-bottom: 30px;
         }
 
-        .btn-primary-custom {
-            background: linear-gradient(135deg, #6366f1 0%, #8b5cf6 100%);
+        /* Form Controls */
+        .form-label {
+            font-size: 0.85rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .form-select, .form-control {
+            background-color: rgba(15, 23, 42, 0.6);
+            border: 1px solid #334155;
+            color: var(--text-main);
+            border-radius: 12px;
+            padding: 12px 15px;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        .form-select:focus, .form-control:focus {
+            background-color: rgba(15, 23, 42, 0.9);
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.2);
+            color: var(--text-main);
+        }
+
+        .form-select option {
+            background-color: #1e293b;
+            color: #fff;
+        }
+
+        /* Buttons */
+        .btn-gradient {
+            background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
             border: none;
-            border-radius: 10px;
-            padding: 12px;
+            border-radius: 12px;
+            color: white;
             font-weight: 600;
+            padding: 14px;
             letter-spacing: 0.5px;
-            transition: transform 0.2s, box-shadow 0.2s;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
         }
 
-        .btn-primary-custom:hover {
+        .btn-gradient:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(99, 102, 241, 0.4);
-            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            box-shadow: 0 8px 25px rgba(99, 102, 241, 0.5);
+            color: white;
         }
 
-        .btn-primary-custom:disabled {
-            background: #475569;
-            transform: none;
-            box-shadow: none;
+        .btn-outline-custom {
+            border: 1px solid #334155;
+            color: var(--text-muted);
+            border-radius: 12px;
+            font-weight: 500;
+            transition: all 0.3s ease;
         }
 
+        .btn-outline-custom:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+            color: white;
+            border-color: #64748b;
+        }
+
+        /* OTP Box */
         .otp-box {
-            background-color: #0f172a;
-            border: 2px dashed #6366f1;
-            border-radius: 15px;
-            padding: 20px;
+            background: linear-gradient(135deg, rgba(30, 41, 59, 0.8), rgba(15, 23, 42, 0.9));
+            border: 1px dashed var(--accent-primary);
+            border-radius: 16px;
+            padding: 25px;
             text-align: center;
             position: relative;
+            margin: 20px 0;
+            box-shadow: inset 0 0 20px rgba(99, 102, 241, 0.1);
         }
 
         .otp-code {
-            font-family: 'Courier New', monospace;
             font-size: 2.5rem;
             font-weight: 700;
-            color: #a5b4fc;
+            color: #a78bfa;
             letter-spacing: 8px;
+            text-shadow: 0 0 15px rgba(167, 139, 250, 0.6);
             margin: 0;
+            word-break: break-all;
         }
 
         .copy-btn {
             position: absolute;
-            top: 10px;
-            right: 10px;
-            background: #334155;
+            top: 15px;
+            right: 15px;
+            background: rgba(255, 255, 255, 0.1);
             border: none;
-            color: #94a3b8;
+            color: var(--text-muted);
             border-radius: 8px;
             padding: 5px 10px;
+            cursor: pointer;
             transition: all 0.2s;
         }
 
         .copy-btn:hover {
-            background: #6366f1;
+            background: var(--accent-primary);
             color: white;
         }
 
-        /* Animasi Transisi */
+        /* Status Badge */
+        .status-badge {
+            padding: 8px 16px;
+            border-radius: 30px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            display: inline-block;
+        }
+        
+        .status-waiting { background: rgba(234, 179, 8, 0.2); color: #fde047; border: 1px solid rgba(234, 179, 8, 0.3); }
+        .status-success { background: rgba(34, 197, 94, 0.2); color: #86efac; border: 1px solid rgba(34, 197, 94, 0.3); }
+        .status-failed { background: rgba(239, 68, 68, 0.2); color: #fca5a5; border: 1px solid rgba(239, 68, 68, 0.3); }
+
+        /* Animations */
         .fade-in {
-            animation: fadeIn 0.5s ease-in-out;
+            animation: fadeIn 0.5s ease forwards;
         }
 
         @keyframes fadeIn {
@@ -143,602 +197,299 @@
             to { opacity: 1; transform: translateY(0); }
         }
 
-        .toast-container {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 9999;
+        /* Alert Security */
+        .alert-security {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+            color: #fca5a5;
+            border-radius: 12px;
+            font-size: 0.8rem;
         }
     </style>
 </head>
 <body>
 
-    <!-- Toast untuk Notifikasi -->
-    <div class="toast-container" id="toastContainer"></div>
-
-    <div class="card card-custom fade-in">
-        <!-- Header -->
-        <div class="card-header-custom">
-            <h3><i class="fas fa-mobile-alt me-2"></i>NexusSMM</h3>
-            <p class="mb-0 text-white-50 text-sm">Layanan Beli Nomor OTP (Nokos)</p>
-        </div>
-
-        <!-- Body -->
-        <div class="card-body p-4">
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6 col-lg-5">
             
-            <!-- Section 1: Form Pemesanan -->
-            <div id="order-section">
-                <div class="mb-4">
-                    <label class="form-label text-muted small fw-bold">PILIH LAYANAN</label>
-                    <select id="service_id" class="form-select">
-                        <option value="">Memuat layanan...</option>
-                    </select>
-                </div>
+            <!-- Card Utama -->
+            <div class="glass-card">
                 
-                <div class="mb-4">
-                    <label class="form-label text-muted small fw-bold">PILIH NEGARA</label>
-                    <select id="country_id" class="form-select">
-                        <option value="1">🇮🇩 Indonesia</option>
-                        <option value="2">🇲🇾 Malaysia</option>
-                        <option value="3">🇻🇳 Vietnam</option>
-                        <option value="4">🇵🇭 Filipina</option>
-                        <!-- Sesuaikan dengan kode negara dari dokumentasi NexusSMM -->
-                    </select>
+                <!-- Header -->
+                <div class="text-center">
+                    <h1 class="brand-title">NexusNokos</h1>
+                    <p class="brand-subtitle">Layanan Nomor Virtual OTP Cepat & Aman</p>
                 </div>
 
-                <button onclick="beliNokos()" id="btnBuy" class="btn btn-primary-custom w-100 text-white">
-                    <i class="fas fa-shopping-cart me-2"></i> Beli Sekarang
-                </button>
-            </div>
+                <!-- Peringatan Keamanan (Bisa dihapus jika sudah pakai backend) -->
+                <div class="alert alert-security d-flex align-items-center mb-4" role="alert">
+                    <i class="bi bi-shield-lock-fill me-2 fs-5"></i>
+                    <div>Pastikan API Key Anda sudah diamankan di backend (config.php).</div>
+                </div>
 
-            <!-- Section 2: Status dan OTP (Tersembunyi) -->
-            <div id="status-section" class="d-none">
-                <div class="text-center mb-4">
-                    <div id="status_badge" class="badge bg-warning text-dark px-3 py-2 rounded-pill">
-                        <i class="fas fa-spinner fa-spin me-1"></i> Menunggu...
+                <!-- SECTION 1: FORM PEMESANAN -->
+                <div id="order-section" class="fade-in">
+                    <div class="mb-4">
+                        <label class="form-label"><i class="bi bi-grid-fill me-1"></i> Pilih Layanan</label>
+                        <select id="service_id" class="form-select">
+                            <option value="">Memuat layanan...</option>
+                        </select>
                     </div>
-                </div>
-
-                <div class="mb-3">
-                    <label class="form-label text-muted small fw-bold">ORDER ID</label>
-                    <div class="input-group">
-                        <input type="text" id="order_id_display" class="form-control" readonly>
-                        <button class="btn btn-outline-secondary" onclick="copyText('order_id_display')" title="Salin Order ID">
-                            <i class="fas fa-copy"></i>
-                        </button>
+                    
+                    <div class="mb-4">
+                        <label class="form-label"><i class="bi bi-globe2 me-1"></i> Pilih Negara</label>
+                        <select id="country_id" class="form-select">
+                            <option value="1">🇮🇩 Indonesia</option>
+                            <option value="2">🇲🇾 Malaysia</option>
+                            <option value="3">🇻🇳 Vietnam</option>
+                            <!-- Sesuaikan dengan kode negara dari dokumentasi NexusSMM -->
+                        </select>
                     </div>
-                </div>
-
-                <div class="otp-box mb-4">
-                    <small class="text-muted d-block mb-2">KODE OTP / SMS</small>
-                    <div class="d-flex justify-content-center align-items-center">
-                        <span id="otp_display" class="otp-code">- - - -</span>
-                        <button class="copy-btn" onclick="copyText('otp_display')" title="Salin OTP">
-                            <i class="fas fa-copy"></i>
-                        </button>
-                    </div>
-                </div>
-
-                <div class="d-grid gap-2">
-                    <button onclick="cekStatus()" id="btnCheck" class="btn btn-success py-2 fw-bold">
-                        <i class="fas fa-sync-alt me-2"></i> Cek Status / OTP
-                    </button>
-                    <button onclick="resetForm()" class="btn btn-outline-secondary py-2">
-                        <i class="fas fa-arrow-left me-2"></i> Beli Lagi
+                    
+                    <button onclick="beliNokos()" id="btn-buy" class="btn btn-gradient w-100">
+                        <i class="bi bi-cart-plus-fill me-2"></i> Beli Sekarang
                     </button>
                 </div>
-            </div>
 
+                <!-- SECTION 2: STATUS & OTP (Tersembunyi awalnya) -->
+                <div id="status-section" class="d-none fade-in">
+                    <div class="d-flex justify-content-between align-items-center mb-4">
+                        <span class="text-muted small">Order ID:</span>
+                        <span id="order_id_display" class="fw-bold text-white small bg-dark px-3 py-1 rounded">-</span>
+                    </div>
+
+                    <div class="text-center mb-2">
+                        <div id="status_badge" class="status-badge status-waiting">
+                            <i class="bi bi-hourglass-split me-1"></i> Menunggu...
+                        </div>
+                    </div>
+
+                    <!-- Kotak OTP -->
+                    <div class="otp-box">
+                        <button class="copy-btn" onclick="copyOTP()" title="Salin OTP">
+                            <i class="bi bi-clipboard"></i>
+                        </button>
+                        <small class="text-muted d-block mb-2">Kode OTP / SMS:</small>
+                        <h2 id="otp_display" class="otp-code">-</h2>
+                    </div>
+
+                    <button onclick="cekStatus()" id="btn-check" class="btn btn-gradient w-100 mb-3">
+                        <i class="bi bi-arrow-repeat me-2"></i> Cek Status / OTP
+                    </button>
+                    
+                    <button onclick="resetForm()" class="btn btn-outline-custom w-100">
+                        <i class="bi bi-arrow-left me-2"></i> Kembali
+                    </button>
+                </div>
+            </div>
+            
+            <p class="text-center text-muted mt-4 small">
+                &copy; 2026 NexusNokos. Powered by NexusSMM API.
+            </p>
         </div>
     </div>
+</div>
 
-    <!-- Script JS -->
-    <script>
-        // ==========================================
-        // KONFIGURASI API PROXY (PHP)
-        // ==========================================
-        const API_PROXY_URL = 'api.php'; 
+<script>
+    // ==========================================
+    // KONFIGURASI API PROXY (Lokal)
+    // ==========================================
+    const API_PROXY_URL = 'api.php'; 
 
-        let currentOrderId = null;
-        let pollingInterval = null;
+    let currentOrderId = null;
+    let pollingInterval = null;
 
-        // ==========================================
-        // FUNGSI NOTIFIKASI (TOAST)
-        // ==========================================
-        function showToast(message, type = 'info') {
-            const toastContainer = document.getElementById('toastContainer');
-            const bgClass = type === 'success' ? 'bg-success' : type === 'error' ? 'bg-danger' : 'bg-primary';
-            const icon = type === 'success' ? 'fa-check-circle' : type === 'error' ? 'fa-exclamation-circle' : 'fa-info-circle';
-
-            const toastHTML = `
-                <div class="toast align-items-center text-white ${bgClass} border-0 show" role="alert" aria-live="assertive" aria-atomic="true">
-                    <div class="d-flex">
-                        <div class="toast-body">
-                            <i class="fas ${icon} me-2"></i> ${message}
-                        </div>
-                        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-                    </div>
-                </div>
-            `;
+    // ==========================================
+    // FUNGSI 1: MENGAMBIL DAFTAR LAYANAN
+    // ==========================================
+    async function loadServices() {
+        const select = document.getElementById('service_id');
+        
+        try {
+            const response = await fetch(API_PROXY_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: new URLSearchParams({ action: 'get_services' })
+            });
             
-            toastContainer.insertAdjacentHTML('beforeend', toastHTML);
+            const data = await response.json();
             
-            // Hapus otomatis setelah 4 detik
-            setTimeout(() => {
-                const toast = toastContainer.lastElementChild;
-                if(toast) toast.remove();
-            }, 4000);
-        }
-
-        // ==========================================
-        // FUNGSI COPY TEXT
-        // ==========================================
-        function copyText(elementId) {
-            const text = document.getElementById(elementId).value || document.getElementById(elementId).innerText;
-            if (text && text !== '-') {
-                navigator.clipboard.writeText(text).then(() => {
-                    showToast('Berhasil disalin!', 'success');
-                }).catch(err => {
-                    showToast('Gagal menyalin teks.', 'error');
+            select.innerHTML = '<option value="">-- Pilih Layanan --</option>';
+            
+            // Sesuaikan struktur JSON dengan respons asli NexusSMM
+            if (data && data.data) {
+                data.data.forEach(svc => {
+                    select.innerHTML += `<option value="${svc.id}">${svc.name}</option>`;
                 });
-            }
-        }
-
-        // ==========================================
-        // FUNGSI LOADING BUTTON
-        // ==========================================
-        function setLoading(buttonId, isLoading, originalText) {
-            const btn = document.getElementById(buttonId);
-            if (isLoading) {
-                btn.disabled = true;
-                btn.innerHTML = `<i class="fas fa-spinner fa-spin me-2"></i> Memproses...`;
             } else {
-                btn.disabled = false;
-                btn.innerHTML = originalText;
+                select.innerHTML = '<option value="">Gagal memuat layanan</option>';
             }
+        } catch (error) {
+            console.error("Error loading services:", error);
+            select.innerHTML = '<option value="">Error koneksi ke server</option>';
         }
+    }
 
-        // ==========================================
-        // FUNGSI 1: MENGAMBIL DAFTAR LAYANAN
-        // ==========================================
-        async function loadServices() {
-            const select = document.getElementById('service_id');
-            
-            try {
-                const response = await fetch(API_PROXY_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: new URLSearchParams({ action: 'get_services' })
-                });
-                
-                const data = await response.json();
-                
-                select.innerHTML = '<option value="">-- Pilih Layanan --</option>';
-                
-                if (data && data.data) {
-                    data.data.forEach(svc => {
-                        select.innerHTML += `<option value="${svc.id}">${svc.name}</option>`;
-                    });
-                } else {
-                    select.innerHTML = '<option value="">Gagal memuat layanan</option>';
-                    showToast('Gagal memuat daftar layanan.', 'error');
-                }
-            } catch (error) {
-                console.error("Error loading services:", error);
-                select.innerHTML = '<option value="">Error koneksi ke server</option>';
-                showToast('Terjadi kesalahan koneksi ke server.', 'error');
-            }
-        }
-
-        // ==========================================
-        // FUNGSI 2: MEMBELI NOKOS
-        // ==========================================
-        async function beliNokos() {
-            const serviceId = document.getElementById('service_id').value;
-            const countryId = document.getElementById('country_id').value;
-            
-            if (!serviceId) {
-                showToast('Silakan pilih layanan terlebih dahulu!', 'error');
-                return;
-            }
-
-            setLoading('btnBuy', true, '<i class="fas fa-shopping-cart me-2"></i> Beli Sekarang');
-
-            try {
-                const response = await fetch(API_PROXY_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: new URLSearchParams({
-                        action: 'buy_nokos',
-                        service_id: serviceId,
-                        country_id: countryId
-                    })
-                });
-
-                const data = await response.json();
-
-                if (data && data.status === true) {
-                    currentOrderId = data.data.order_id;
-                    document.getElementById('order_id_display').value = currentOrderId;
-                    
-                    // Transisi UI
-                    document.getElementById('order-section').classList.add('d-none');
-                    document.getElementById('status-section').classList.remove('d-none');
-                    document.getElementById('status-section').classList.add('fade-in');
-                    
-                    showToast('Pesanan berhasil dibuat!', 'success');
-                    startPolling();
-                } else {
-                    showToast('Gagal membeli: ' + (data.message || 'Error tidak diketahui'), 'error');
-                }
-            } catch (error) {
-                console.error("Error buying number:", error);
-                showToast('Terjadi kesalahan koneksi ke server lokal.', 'error');
-            } finally {
-                setLoading('btnBuy', false, '<i class="fas fa-shopping-cart me-2"></i> Beli Sekarang');
-            }
-        }
-
-        // ==========================================
-        // FUNGSI 3: CEK STATUS & OTP
-        // ==========================================
-        async function cekStatus(isAuto = false) {
-            if (!currentOrderId) return;
-
-            if (!isAuto) setLoading('btnCheck', true, '<i class="fas fa-sync-alt me-2"></i> Cek Status / OTP');
-
-            const statusBadge = document.getElementById('status_badge');
-            const otpDisplay = document.getElementById('otp_display');
-
-            try {
-                const response = await fetch(API_PROXY_URL, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-                    body: new URLSearchParams({
-                        action: 'check_status',
-                        order_id: currentOrderId
-                    })
-                });
-
-                const data = await response.json();
-
-                if (data && data.data) {
-                    const status = data.data.status;
-                    
-                    if (status === 'success' || status === 'completed' || status === 'received') {
-                        statusBadge.className = 'badge bg-success px-3 py-2 rounded-pill';
-                        statusBadge.innerHTML = '<i class="fas fa-check-circle me-1"></i> SUKSES';
-                        otpDisplay.innerText = data.data.otp || data.data.sms || 'Tidak ada OTP';
-                        stopPolling();
-                        if(!isAuto) showToast('OTP berhasil diterima!', 'success');
-                    } else if (status === 'pending' || status === 'waiting') {
-                        statusBadge.className = 'badge bg-warning text-dark px-3 py-2 rounded-pill';
-                        statusBadge.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> MENUNGGU OTP';
-                    } else {
-                        statusBadge.className = 'badge bg-danger px-3 py-2 rounded-pill';
-                        statusBadge.innerHTML = '<i class="fas fa-times-circle me-1"></i> GAGAL';
-                    }
-                }
-            } catch (error) {
-                console.error("Error checking status:", error);
-                if(!isAuto) showToast('Gagal mengecek status.', 'error');
-            } finally {
-                if (!isAuto) setLoading('btnCheck', false, '<i class="fas fa-sync-alt me-2"></i> Cek Status / OTP');
-            }
-        }
-
-        // ==========================================
-        // FUNGSI BANTU (POLLING & RESET)
-        // ==========================================
-        function startPolling() {
-            if (pollingInterval) clearInterval(pollingInterval);
-            cekStatus(true); 
-            pollingInterval = setInterval(() => cekStatus(true), 5000); 
-        }
-
-        function stopPolling() {
-            if (pollingInterval) {
-                clearInterval(pollingInterval);
-                pollingInterval = null;
-            }
-        }
-
-        function resetForm() {
-            stopPolling();
-            currentOrderId = null;
-            document.getElementById('order_id_display').value = '';
-            document.getElementById('otp_display').innerText = '- - - -';
-            
-            const statusBadge = document.getElementById('status_badge');
-            statusBadge.className = 'badge bg-warning text-dark px-3 py-2 rounded-pill';
-            statusBadge.innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i> Menunggu...';
-            
-            document.getElementById('status-section').classList.add('d-none');
-            document.getElementById('order-section').classList.remove('d-none');
-            document.getElementById('order-section').classList.add('fade-in');
-        }
-
-        // Jalankan loadServices saat halaman pertama kali dibuka
-        window.onload = loadServices;
-
-    </script>
-</body>
-</html>        .logo span { color: var(--primary); }
-
-        /* MAIN CONTENT */
-        main { padding: 20px; max-width: 1200px; margin: 0 auto; }
-
-        /* STATS (Horizontal Scroll on Mobile) */
-        .stats-row { 
-            display: flex; gap: 15px; overflow-x: auto; padding-bottom: 15px;
-            scrollbar-width: none; -ms-overflow-style: none;
-        }
-        .stats-row::-webkit-scrollbar { display: none; }
+    // ==========================================
+    // FUNGSI 2: MEMBELI NOKOS
+    // ==========================================
+    async function beliNokos() {
+        const serviceId = document.getElementById('service_id').value;
+        const countryId = document.getElementById('country_id').value;
         
-        .stat-card {
-            min-width: 160px; flex: 1; background: var(--panel); 
-            padding: 20px; border-radius: 24px; border: 1px solid var(--border);
-            backdrop-filter: blur(10px);
-        }
-        .stat-card p { font-size: 0.7rem; font-weight: 700; color: var(--text-dim); text-transform: uppercase; margin: 0; }
-        .stat-card h2 { font-size: 1.5rem; margin: 8px 0 0; }
-
-        /* SEARCH BAR */
-        .search-box {
-            position: relative; margin: 20px 0;
-        }
-        .search-box input {
-            width: 100%; background: var(--panel); border: 1px solid var(--border);
-            padding: 15px 15px 15px 45px; border-radius: 16px; color: #fff; outline: none;
-            font-size: 1rem; transition: 0.3s;
-        }
-        .search-box input:focus { border-color: var(--primary); box-shadow: 0 0 15px rgba(59,130,246,0.2); }
-        .search-box i { position: absolute; left: 18px; top: 18px; color: var(--text-dim); }
-
-        /* USER LIST (Responsive Grid) */
-        .user-grid {
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(100%, 1fr)); gap: 15px;
-        }
-        @media (min-width: 768px) { .user-grid { grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); } }
-
-        .user-card {
-            background: var(--panel); border-radius: 28px; padding: 20px;
-            border: 1px solid var(--border); position: relative; overflow: hidden;
-            transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        if (!serviceId) {
+            alert('Silakan pilih layanan terlebih dahulu!');
+            return;
         }
 
-        .u-header { display: flex; align-items: center; gap: 15px; margin-bottom: 15px; }
-        .u-pfp { width: 55px; height: 55px; border-radius: 18px; object-fit: cover; border: 1px solid var(--border); }
-        .u-info h4 { margin: 0; font-size: 1rem; display: flex; align-items: center; gap: 5px; }
-        
-        /* Premium Verified Icon */
-        .verified-glow { 
-            color: #3b82f6; font-size: 0.9rem; 
-            filter: drop-shadow(0 0 5px rgba(59, 130, 246, 0.6));
-        }
+        const btn = document.getElementById('btn-buy');
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Memproses...';
+        btn.disabled = true;
 
-        .u-id { font-size: 0.7rem; color: var(--text-dim); background: rgba(255,255,255,0.05); padding: 3px 8px; border-radius: 6px; }
-
-        .u-bio { font-size: 0.85rem; color: var(--text-dim); line-height: 1.4; margin-bottom: 15px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-
-        /* ACTIONS */
-        .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-        .btn {
-            padding: 12px; border-radius: 14px; border: none; font-size: 0.8rem;
-            font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px;
-            transition: 0.2s;
-        }
-        .btn-v { background: rgba(59, 130, 246, 0.15); color: #60a5fa; }
-        .btn-v.active { background: #3b82f6; color: #fff; }
-        .btn-b { background: rgba(245, 158, 11, 0.15); color: #fbbf24; }
-        .btn-b.active { background: var(--warning); color: #fff; }
-        .btn-info { background: rgba(16, 185, 129, 0.15); color: var(--accent); grid-column: span 1; }
-        .btn-d { background: rgba(239, 68, 68, 0.1); color: var(--danger); grid-column: span 1; }
-
-        .appeal-box {
-            background: rgba(245, 158, 11, 0.1); border-left: 3px solid var(--warning);
-            padding: 12px; border-radius: 10px; margin-bottom: 15px; font-size: 0.8rem; color: #fcd34d;
-        }
-
-        .status-pill {
-            position: absolute; top: 15px; right: 15px; font-size: 0.6rem;
-            padding: 4px 10px; border-radius: 20px; font-weight: 800; background: var(--danger);
-        }
-
-        /* MODAL STYLES */
-        .modal-overlay {
-            display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.8); backdrop-filter: blur(5px); z-index: 999;
-            justify-content: center; align-items: center; padding: 20px;
-        }
-        .modal-content {
-            background: #0f172a; width: 100%; max-width: 400px; border-radius: 24px;
-            padding: 25px; border: 1px solid var(--border); position: relative;
-        }
-        .modal-close {
-            position: absolute; top: 15px; right: 15px; background: transparent;
-            border: none; color: var(--text-dim); font-size: 1.2rem; cursor: pointer;
-        }
-        .modal-body { text-align: center; }
-        .modal-body img { width: 80px; height: 80px; border-radius: 20px; margin-bottom: 15px; object-fit: cover; }
-        .modal-body h3 { margin: 0 0 5px; font-size: 1.3rem; }
-        .modal-body p { font-size: 0.9rem; color: var(--text-dim); margin-bottom: 15px; }
-        .modal-detail-list { text-align: left; background: rgba(0,0,0,0.3); padding: 15px; border-radius: 15px; margin-top: 15px; }
-        .modal-detail-list p { margin: 5px 0; font-size: 0.85rem; color: var(--text); border-bottom: 1px solid var(--border); padding-bottom: 5px; }
-        .modal-detail-list span { color: var(--text-dim); display: inline-block; width: 80px; }
-
-    </style>
-</head>
-<body>
-
-    <header>
-        <div class="logo"><i class="fas fa-shield-halved"></i> My<span>Bro</span> Admin</div>
-        <button onclick="location.reload()" style="background:none; border:none; color:white; font-size:1.2rem; cursor:pointer;"><i class="fas fa-rotate"></i></button>
-    </header>
-
-    <main>
-        <div class="stats-row">
-            <div class="stat-card"><p>Total User</p><h2 id="s-total">0</h2></div>
-            <div class="stat-card"><p>Centang Biru</p><h2 id="s-verified" style="color:var(--primary)">0</h2></div>
-            <div class="stat-card"><p>Diblokir</p><h2 id="s-banned" style="color:var(--warning)">0</h2></div>
-        </div>
-
-        <div class="search-box">
-            <i class="fas fa-search"></i>
-            <input type="text" id="search" placeholder="Cari Nama atau ID User..." oninput="filter()">
-        </div>
-
-        <div class="user-grid" id="userContainer">
-            </div>
-    </main>
-
-    <div class="modal-overlay" id="userModal">
-        <div class="modal-content">
-            <button class="modal-close" onclick="closeModal()"><i class="fas fa-times"></i></button>
-            <div class="modal-body" id="modalBody">
-                </div>
-        </div>
-    </div>
-
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-        import { getDatabase, ref, onValue, update, set } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
-
-        // Ganti dengan Config Firebase kamu
-        const firebaseConfig = {
-            apiKey: "AIzaSyCHr0eemIkfHNFDUkSaFDklp_c1OgmSnl8",
-            authDomain: "mybro-9ba5f.firebaseapp.com",
-            databaseURL: "https://mybro-9ba5f-default-rtdb.firebaseio.com/",
-            projectId: "mybro-9ba5f"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
-
-        // Menyimpan data users global agar bisa dibaca oleh Modal
-        window.allUsersData = {};
-
-        onValue(ref(db, 'users'), (snap) => {
-            const container = document.getElementById('userContainer');
-            container.innerHTML = "";
-            if(!snap.exists()) return;
-
-            const users = snap.val();
-            window.allUsersData = users; // Simpan ke variabel global
-            
-            let countTotal = 0, countBanned = 0, countVerified = 0;
-
-            Object.keys(users).forEach(uid => {
-                const u = users[uid];
-                const p = u.profile || { name: "New User", bio: "Belum ada bio", pfp: "" };
-                const isB = u.isBanned || false;
-                const isV = u.isVerified || false;
-                const appeal = u.appealMessage || "";
-
-                countTotal++;
-                if(isB) countBanned++;
-                if(isV) countVerified++;
-
-                const pfpImg = p.pfp || 'https://ui-avatars.com/api/?name='+p.name+'&background=random';
-
-                const card = document.createElement('div');
-                card.className = 'user-card';
-                card.dataset.search = (p.name + uid).toLowerCase();
-                
-                card.innerHTML = `
-                    ${isB ? '<div class="status-pill">TERBLOKIR</div>' : ''}
-                    <div class="u-header">
-                        <img src="${pfpImg}" class="u-pfp">
-                        <div class="u-info">
-                            <h4>${p.name} ${isV ? '<i class="fas fa-check-circle verified-glow" title="Verified"></i>' : ''}</h4>
-                            <span class="u-id">ID: ${uid.substring(0,8)}...</span>
-                        </div>
-                    </div>
-                    <div class="u-bio">${p.bio}</div>
-                    
-                    ${isB && appeal ? `<div class="appeal-box"><b>Banding:</b> "${appeal}"</div>` : ''}
-
-                    <div class="actions">
-                        <button class="btn btn-v ${isV ? 'active' : ''}" onclick="manage('${uid}', 'isVerified', ${isV})">
-                            <i class="fas fa-check"></i> ${isV ? 'Verified' : 'Verify'}
-                        </button>
-                        <button class="btn btn-b ${isB ? 'active' : ''}" onclick="manage('${uid}', 'isBanned', ${isB})">
-                            <i class="fas fa-ban"></i> ${isB ? 'Unban' : 'Ban'}
-                        </button>
-                        <button class="btn btn-info" onclick="viewDetail('${uid}')">
-                            <i class="fas fa-eye"></i> Detail
-                        </button>
-                        <button class="btn btn-d" onclick="del('${uid}')">
-                            <i class="fas fa-trash"></i> Hapus
-                        </button>
-                    </div>
-                `;
-                container.appendChild(card);
+        try {
+            const response = await fetch(API_PROXY_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: new URLSearchParams({
+                    action: 'buy_nokos',
+                    service_id: serviceId,
+                    country_id: countryId
+                })
             });
 
-            document.getElementById('s-total').innerText = countTotal;
-            document.getElementById('s-verified').innerText = countVerified;
-            document.getElementById('s-banned').innerText = countBanned;
-        });
+            const data = await response.json();
 
-        // FUNGSI TOGGLE VERIFY & BAN
-        window.manage = (uid, type, val) => {
-            const data = {};
-            data[type] = !val;
-            if(type === 'isBanned' && val === true) data['appealMessage'] = null; // hapus banding jika unban
-            update(ref(db, `users/${uid}`), data);
-        };
-
-        // FUNGSI HAPUS USER
-        window.del = (uid) => {
-            if(confirm("Apakah kamu yakin ingin menghapus user ini secara permanen?")) {
-                set(ref(db, `users/${uid}`), null);
-            }
-        };
-
-        // FUNGSI PENCARIAN
-        window.filter = () => {
-            const q = document.getElementById('search').value.toLowerCase();
-            document.querySelectorAll('.user-card').forEach(c => {
-                c.style.display = c.dataset.search.includes(q) ? 'block' : 'none';
-            });
-        };
-
-        // FUNGSI LIHAT DETAIL (MODAL)
-        window.viewDetail = (uid) => {
-            const user = window.allUsersData[uid];
-            if(!user) return;
-
-            const p = user.profile || { name: "New User", bio: "-", pfp: "" };
-            const pfpImg = p.pfp || 'https://ui-avatars.com/api/?name='+p.name+'&background=random';
-            const isV = user.isVerified ? '<i class="fas fa-check-circle verified-glow"></i>' : '';
-            const status = user.isBanned ? '<span style="color:var(--danger)">Terblokir</span>' : '<span style="color:var(--accent)">Aktif</span>';
-
-            const modalBody = document.getElementById('modalBody');
-            modalBody.innerHTML = `
-                <img src="${pfpImg}" alt="Profile">
-                <h3>${p.name} ${isV}</h3>
-                <p>ID: ${uid}</p>
+            if (data && data.status === true) {
+                currentOrderId = data.data.order_id;
+                document.getElementById('order_id_display').innerText = currentOrderId;
                 
-                <div class="modal-detail-list">
-                    <p><span>Bio</span> : ${p.bio || '-'}</p>
-                    <p><span>Status</span> : ${status}</p>
-                    <p><span>Banding</span> : ${user.appealMessage || '-'}</p>
-                </div>
-            `;
-            
-            document.getElementById('userModal').style.display = 'flex';
-        };
+                document.getElementById('order-section').classList.add('d-none');
+                document.getElementById('status-section').classList.remove('d-none');
+                document.getElementById('status-section').classList.add('fade-in');
+                
+                updateStatusUI('waiting');
+                startPolling();
+            } else {
+                alert('Gagal membeli: ' + (data.message || 'Error tidak diketahui'));
+            }
+        } catch (error) {
+            console.error("Error buying number:", error);
+            alert('Terjadi kesalahan koneksi ke server lokal.');
+        } finally {
+            btn.innerHTML = originalText;
+            btn.disabled = false;
+        }
+    }
 
-        // FUNGSI TUTUP MODAL
-        window.closeModal = () => {
-            document.getElementById('userModal').style.display = 'none';
-        };
+    // ==========================================
+    // FUNGSI 3: CEK STATUS & OTP
+    // ==========================================
+    async function cekStatus() {
+        if (!currentOrderId) return;
 
-        // Tutup modal jika klik di luar box
-        document.getElementById('userModal').addEventListener('click', function(e) {
-            if (e.target === this) closeModal();
-        });
-    </script>
+        const btnCheck = document.getElementById('btn-check');
+        const originalText = btnCheck.innerHTML;
+        
+        // Animasi loading pada tombol cek
+        btnCheck.innerHTML = '<span class="spinner-border spinner-border-sm me-2"></span> Memeriksa...';
+        btnCheck.disabled = true;
+
+        try {
+            const response = await fetch(API_PROXY_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: new URLSearchParams({
+                    action: 'check_status',
+                    order_id: currentOrderId
+                })
+            });
+
+            const data = await response.json();
+
+            if (data && data.data) {
+                const status = data.data.status;
+                
+                if (status === 'success' || status === 'completed' || status === 'received') {
+                    updateStatusUI('success');
+                    document.getElementById('otp_display').innerText = data.data.otp || data.data.sms || 'Tidak ada OTP';
+                    stopPolling();
+                } else if (status === 'pending' || status === 'waiting') {
+                    updateStatusUI('waiting');
+                } else {
+                    updateStatusUI('failed');
+                    stopPolling();
+                }
+            }
+        } catch (error) {
+            console.error("Error checking status:", error);
+        } finally {
+            btnCheck.innerHTML = originalText;
+            btnCheck.disabled = false;
+        }
+    }
+
+    // ==========================================
+    // FUNGSI BANTU (UI, POLLING, COPY, RESET)
+    // ==========================================
+    
+    // Update tampilan badge status
+    function updateStatusUI(status) {
+        const badge = document.getElementById('status_badge');
+        if (status === 'success') {
+            badge.className = 'status-badge status-success';
+            badge.innerHTML = '<i class="bi bi-check-circle-fill me-1"></i> Berhasil';
+        } else if (status === 'waiting') {
+            badge.className = 'status-badge status-waiting';
+            badge.innerHTML = '<i class="bi bi-hourglass-split me-1"></i> Menunggu SMS...';
+        } else {
+            badge.className = 'status-badge status-failed';
+            badge.innerHTML = '<i class="bi bi-x-circle-fill me-1"></i> Gagal / Kadaluarsa';
+        }
+    }
+
+    // Salin OTP ke clipboard
+    function copyOTP() {
+        const otpText = document.getElementById('otp_display').innerText;
+        if (otpText && otpText !== '-') {
+            navigator.clipboard.writeText(otpText).then(() => {
+                const btn = document.querySelector('.copy-btn');
+                const originalIcon = btn.innerHTML;
+                btn.innerHTML = '<i class="bi bi-check-lg text-success"></i>';
+                setTimeout(() => { btn.innerHTML = originalIcon; }, 2000);
+            });
+        }
+    }
+
+    function startPolling() {
+        if (pollingInterval) clearInterval(pollingInterval);
+        cekStatus(); 
+        pollingInterval = setInterval(cekStatus, 5000); // Cek tiap 5 detik
+    }
+
+    function stopPolling() {
+        if (pollingInterval) {
+            clearInterval(pollingInterval);
+            pollingInterval = null;
+        }
+    }
+
+    function resetForm() {
+        stopPolling();
+        currentOrderId = null;
+        document.getElementById('order_id_display').innerText = '-';
+        document.getElementById('otp_display').innerText = '-';
+        updateStatusUI('waiting');
+        
+        document.getElementById('status-section').classList.add('d-none');
+        document.getElementById('order-section').classList.remove('d-none');
+        document.getElementById('order-section').classList.add('fade-in');
+    }
+
+    // Jalankan loadServices saat halaman pertama kali dibuka
+    window.onload = loadServices;
+
+</script>
 </body>
 </html>
