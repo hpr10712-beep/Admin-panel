@@ -1,0 +1,2953 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=1,user-scalable=no" />
+<meta name="theme-color" content="#4f46e5" />
+<title>SapaAja — Ngobrol lebih dekat, kapan saja.</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='16' fill='%234f46e5'/%3E%3Cpath d='M20 24h24M20 32h18M20 40h12' stroke='white' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E" />
+<style>
+/* ============ Design System ============ */
+:root{
+  --brand:#4f46e5; --brand-600:#4338ca; --brand-100:#e0e7ff;
+  --bg:#f5f6fa; --bg-2:#ffffff; --bg-3:#eef0f6;
+  --fg:#0f172a; --fg-2:#475569; --fg-3:#94a3b8;
+  --line:#e5e7eb; --line-2:#e2e8f0;
+  --danger:#dc2626; --success:#16a34a; --warn:#d97706; --info:#0284c7;
+  --bubble-in:#ffffff; --bubble-out:#dbeafe; --bubble-out-fg:#0f172a;
+  --shadow-sm:0 1px 2px rgba(15,23,42,.06);
+  --shadow:0 4px 16px rgba(15,23,42,.08);
+  --shadow-lg:0 12px 32px rgba(15,23,42,.12);
+  --r-sm:8px; --r:12px; --r-lg:16px; --r-xl:22px;
+  --pad:12px; --dur:.18s;
+  --fs:15px;
+  --safe-b: env(safe-area-inset-bottom,0px);
+  --safe-t: env(safe-area-inset-top,0px);
+}
+[data-theme="dark"]{
+  --bg:#0b1220; --bg-2:#111a2e; --bg-3:#182238;
+  --fg:#e5edf7; --fg-2:#9aa8bf; --fg-3:#64748b;
+  --line:#1e2a44; --line-2:#1e2a44;
+  --bubble-in:#1a2540; --bubble-out:#4f46e5; --bubble-out-fg:#ffffff;
+  --brand-100:#1e1b4b;
+  --shadow-sm:0 1px 2px rgba(0,0,0,.4);
+  --shadow:0 4px 16px rgba(0,0,0,.45);
+  --shadow-lg:0 12px 32px rgba(0,0,0,.55);
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{height:100%;margin:0}
+body{
+  font-family:'Inter',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  font-size:var(--fs);color:var(--fg);background:var(--bg);
+  overscroll-behavior:none;-webkit-font-smoothing:antialiased;
+}
+button,input,textarea,select{font:inherit;color:inherit}
+button{background:none;border:0;cursor:pointer;padding:0}
+input,textarea{background:none;border:0;outline:none;width:100%}
+a{color:var(--brand);text-decoration:none}
+[hidden]{display:none !important}
+::-webkit-scrollbar{width:8px;height:8px}
+::-webkit-scrollbar-thumb{background:var(--line);border-radius:8px}
+
+/* ============ Layout ============ */
+#app{display:flex;flex-direction:column;height:100dvh;height:100vh;overflow:hidden}
+.page{position:absolute;inset:0;display:none;flex-direction:column;background:var(--bg)}
+.page.active{display:flex}
+.scroll{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
+
+/* ============ Splash ============ */
+#splash{
+  position:fixed;inset:0;background:linear-gradient(160deg,#4f46e5,#7c3aed);
+  display:flex;align-items:center;justify-content:center;flex-direction:column;gap:16px;
+  z-index:5000;color:#fff;transition:opacity .35s ease
+}
+#splash.hide{opacity:0;pointer-events:none}
+.splash-logo{width:88px;height:88px;border-radius:24px;background:rgba(255,255,255,.18);
+  display:grid;place-items:center;backdrop-filter:blur(8px);box-shadow:0 12px 40px rgba(0,0,0,.25)}
+.splash-title{font-size:26px;font-weight:800;letter-spacing:-.5px}
+.splash-tag{font-size:13px;opacity:.85}
+.spinner{width:22px;height:22px;border:2.5px solid rgba(255,255,255,.35);border-top-color:#fff;border-radius:50%;animation:spin .8s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ============ Auth ============ */
+.auth-wrap{max-width:420px;width:100%;margin:auto;padding:32px 20px calc(32px + var(--safe-b))}
+.auth-card{background:var(--bg-2);border-radius:var(--r-xl);padding:28px 22px;box-shadow:var(--shadow)}
+.auth-brand{display:flex;align-items:center;gap:10px;margin-bottom:20px}
+.auth-brand .logo{width:40px;height:40px;border-radius:12px;background:var(--brand);display:grid;place-items:center;color:#fff}
+.auth-brand h1{font-size:20px;margin:0;font-weight:800}
+.auth-title{font-size:22px;font-weight:800;margin:0 0 6px}
+.auth-sub{color:var(--fg-2);font-size:13.5px;margin:0 0 20px}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:12.5px;font-weight:600;color:var(--fg-2);margin-bottom:6px}
+.input-box{display:flex;align-items:center;gap:8px;background:var(--bg-3);border:1px solid transparent;border-radius:var(--r);padding:11px 12px;transition:border-color var(--dur),background var(--dur)}
+.input-box:focus-within{border-color:var(--brand);background:var(--bg-2)}
+.input-box .ico{color:var(--fg-3);flex-shrink:0}
+.input-box input{padding:0}
+.pwd-toggle{color:var(--fg-3);padding:4px}
+.err-text{font-size:12.5px;color:var(--danger);margin-top:6px;min-height:16px}
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  background:var(--brand);color:#fff;border-radius:var(--r);
+  padding:12px 18px;font-weight:600;transition:transform .1s,background var(--dur);
+  width:100%;min-height:46px
+}
+.btn:active{transform:scale(.98)}
+.btn:disabled{opacity:.6;cursor:not-allowed}
+.btn.ghost{background:var(--bg-3);color:var(--fg)}
+.btn.danger{background:var(--danger)}
+.btn.outline{background:transparent;color:var(--brand);border:1.5px solid var(--brand)}
+.btn.sm{padding:8px 12px;min-height:auto;width:auto;font-size:13.5px;border-radius:10px}
+.btn-block{width:100%}
+.link-btn{color:var(--brand);font-weight:600;cursor:pointer;font-size:13.5px}
+.auth-switch{text-align:center;margin-top:16px;font-size:13.5px;color:var(--fg-2)}
+.avatar-picker{width:86px;height:86px;border-radius:50%;background:var(--bg-3);display:grid;place-items:center;margin:0 auto 12px;overflow:hidden;position:relative;cursor:pointer;border:2px dashed var(--line)}
+.avatar-picker img{width:100%;height:100%;object-fit:cover}
+.avatar-picker input{display:none}
+.avatar-picker .ico{color:var(--fg-3)}
+
+/* ============ App shell ============ */
+.topbar{
+  display:flex;align-items:center;gap:10px;padding:calc(10px + var(--safe-t)) 12px 10px;
+  background:var(--bg-2);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:20
+}
+.topbar h2{font-size:17px;margin:0;font-weight:800;flex:1;letter-spacing:-.2px}
+.icon-btn{
+  width:38px;height:38px;border-radius:50%;display:grid;place-items:center;color:var(--fg-2);
+  transition:background var(--dur);flex-shrink:0;position:relative
+}
+.icon-btn:hover{background:var(--bg-3)}
+.icon-btn .badge{
+  position:absolute;top:4px;right:4px;background:var(--danger);color:#fff;font-size:10px;
+  font-weight:700;padding:1px 5px;border-radius:10px;min-width:16px;text-align:center;line-height:14px
+}
+.avatar{width:44px;height:44px;border-radius:50%;background:var(--brand);color:#fff;display:grid;place-items:center;font-weight:700;flex-shrink:0;overflow:hidden;font-size:15px}
+.avatar img{width:100%;height:100%;object-fit:cover}
+.avatar.sm{width:36px;height:36px;font-size:13px}
+.avatar.lg{width:96px;height:96px;font-size:32px}
+.avatar.xl{width:128px;height:128px;font-size:44px}
+
+/* ============ Chat list ============ */
+.chat-item{display:flex;gap:12px;padding:10px 12px;align-items:center;cursor:pointer;transition:background var(--dur);position:relative}
+.chat-item:hover{background:var(--bg-3)}
+.chat-item-main{flex:1;min-width:0}
+.chat-item-top{display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+.chat-item-name{font-weight:600;font-size:14.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chat-item-time{font-size:11.5px;color:var(--fg-3);flex-shrink:0}
+.chat-item-bottom{display:flex;justify-content:space-between;gap:8px;align-items:center;margin-top:3px}
+.chat-item-last{font-size:13px;color:var(--fg-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;flex:1}
+.chat-item-last .prefix{color:var(--fg-3)}
+.unread-badge{background:var(--brand);color:#fff;font-size:11px;font-weight:700;border-radius:12px;padding:1px 7px;min-width:20px;text-align:center}
+.pin-dot,.mute-dot{color:var(--fg-3);display:inline-flex}
+.online-dot{width:11px;height:11px;background:#22c55e;border-radius:50%;border:2px solid var(--bg-2);position:absolute;bottom:0;right:0}
+.avatar-wrap{position:relative;flex-shrink:0}
+
+/* ============ Chat view ============ */
+.chat-header{display:flex;align-items:center;gap:10px;padding:calc(8px + var(--safe-t)) 10px 8px;background:var(--bg-2);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:20}
+.chat-header .info{flex:1;min-width:0;cursor:pointer}
+.chat-header .info h3{font-size:15px;margin:0;font-weight:700;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.chat-header .info small{font-size:12px;color:var(--fg-3)}
+.chat-header .info small.online{color:var(--success)}
+
+#messages{flex:1;overflow-y:auto;padding:14px 12px 8px;display:flex;flex-direction:column;gap:3px;background:var(--bg)}
+.msg-row{display:flex;gap:6px;max-width:100%;align-items:flex-end}
+.msg-row.mine{justify-content:flex-end}
+.bubble{
+  max-width:min(78%,540px);background:var(--bubble-in);border-radius:16px;padding:8px 12px 6px;
+  box-shadow:var(--shadow-sm);position:relative;word-wrap:break-word;overflow-wrap:anywhere;
+  animation:pop .18s ease
+}
+@keyframes pop{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+.msg-row.mine .bubble{background:var(--bubble-out);color:var(--bubble-out-fg);border-bottom-right-radius:6px}
+.msg-row:not(.mine) .bubble{border-bottom-left-radius:6px}
+.bubble .msg-text{font-size:14.5px;line-height:1.4;white-space:pre-wrap}
+.bubble .msg-text a{color:inherit;text-decoration:underline;opacity:.9}
+.bubble .meta{display:flex;align-items:center;gap:4px;font-size:11px;opacity:.75;justify-content:flex-end;margin-top:3px}
+.msg-row.mine .bubble .meta{color:rgba(255,255,255,.85)}
+[data-theme="dark"] .msg-row.mine .bubble .meta{color:rgba(255,255,255,.85)}
+.bubble .reply-preview{
+  border-left:3px solid currentColor;padding:3px 8px;border-radius:4px;background:rgba(0,0,0,.05);
+  margin-bottom:5px;font-size:12.5px;cursor:pointer;opacity:.85;max-width:100%
+}
+[data-theme="dark"] .bubble .reply-preview{background:rgba(255,255,255,.08)}
+.reply-preview .who{font-weight:700;display:block;font-size:11.5px}
+.forwarded-tag{font-size:11px;font-style:italic;opacity:.75;display:flex;align-items:center;gap:4px;margin-bottom:2px}
+.bubble.deleted .msg-text{font-style:italic;opacity:.7}
+.bubble .edited-tag{font-size:10.5px;opacity:.7;margin-left:2px}
+.reactions{display:flex;gap:4px;margin-top:4px;flex-wrap:wrap}
+.reaction-chip{background:rgba(0,0,0,.08);border-radius:10px;padding:1px 6px;font-size:12.5px;display:flex;align-items:center;gap:3px;cursor:pointer}
+[data-theme="dark"] .reaction-chip{background:rgba(255,255,255,.1)}
+.reaction-chip.mine{background:var(--brand);color:#fff}
+.chat-day-sep{text-align:center;margin:12px 0 6px;font-size:11.5px;color:var(--fg-3);font-weight:600}
+.chat-day-sep span{background:var(--bg-3);padding:3px 10px;border-radius:10px}
+
+/* Reply bar / Edit bar */
+.reply-bar,.edit-bar{display:none;align-items:center;gap:8px;padding:8px 12px;background:var(--bg-2);border-top:1px solid var(--line)}
+.reply-bar.active,.edit-bar.active{display:flex}
+.reply-bar .content{flex:1;border-left:3px solid var(--brand);padding-left:8px;font-size:12.5px;min-width:0}
+.reply-bar .content .who{font-weight:700;color:var(--brand);display:block}
+.reply-bar .content .txt{color:var(--fg-2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;display:block}
+
+/* Composer */
+.composer{display:flex;align-items:flex-end;gap:6px;padding:8px 8px calc(8px + var(--safe-b));background:var(--bg-2);border-top:1px solid var(--line)}
+.composer .field-area{flex:1;display:flex;align-items:flex-end;background:var(--bg-3);border-radius:22px;padding:6px 12px;gap:6px}
+.composer textarea{resize:none;max-height:120px;min-height:24px;padding:5px 0;font-size:15px;line-height:1.35}
+.composer .send-btn{width:44px;height:44px;border-radius:50%;background:var(--brand);color:#fff;display:grid;place-items:center;flex-shrink:0;transition:transform .1s}
+.composer .send-btn:active{transform:scale(.94)}
+.composer .attach-btn{width:40px;height:40px;color:var(--fg-2);display:grid;place-items:center;flex-shrink:0}
+
+/* ============ Bottom nav ============ */
+.bottom-nav{display:flex;background:var(--bg-2);border-top:1px solid var(--line);padding-bottom:var(--safe-b);z-index:20}
+.bottom-nav button{flex:1;display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 0 6px;color:var(--fg-3);font-size:11px;font-weight:600;position:relative}
+.bottom-nav button.active{color:var(--brand)}
+.bottom-nav .badge{position:absolute;top:4px;right:calc(50% - 20px);background:var(--danger);color:#fff;font-size:10px;font-weight:700;padding:1px 5px;border-radius:10px;min-width:16px;text-align:center}
+
+/* ============ Generic list item ============ */
+.list-item{display:flex;align-items:center;gap:12px;padding:14px 16px;cursor:pointer;border-bottom:1px solid var(--line);transition:background var(--dur)}
+.list-item:hover{background:var(--bg-3)}
+.list-item .li-main{flex:1;min-width:0}
+.list-item .li-main .t{font-weight:600;font-size:14.5px}
+.list-item .li-main .s{font-size:12.5px;color:var(--fg-2);margin-top:2px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.list-item .chev{color:var(--fg-3)}
+.list-section{padding:10px 16px 6px;font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--fg-3);background:var(--bg)}
+.settings-block{background:var(--bg-2);border-radius:var(--r);margin:8px 12px;overflow:hidden;box-shadow:var(--shadow-sm)}
+.settings-row{display:flex;align-items:center;gap:12px;padding:13px 14px;border-bottom:1px solid var(--line)}
+.settings-row:last-child{border-bottom:0}
+.settings-row .lbl{flex:1;font-size:14.5px}
+.settings-row .lbl small{display:block;color:var(--fg-2);font-size:12px;margin-top:2px}
+.settings-row .val{color:var(--fg-2);font-size:13.5px}
+.switch{width:44px;height:26px;background:var(--line);border-radius:14px;position:relative;transition:background var(--dur);flex-shrink:0;cursor:pointer}
+.switch::after{content:'';position:absolute;top:3px;left:3px;width:20px;height:20px;background:#fff;border-radius:50%;transition:transform var(--dur);box-shadow:var(--shadow-sm)}
+.switch.on{background:var(--brand)}
+.switch.on::after{transform:translateX(18px)}
+
+/* ============ Search bar ============ */
+.search-wrap{padding:8px 12px;background:var(--bg-2);border-bottom:1px solid var(--line)}
+.search-input{display:flex;align-items:center;gap:8px;background:var(--bg-3);border-radius:20px;padding:8px 14px}
+.search-input input{font-size:14.5px}
+
+/* ============ Empty / loading ============ */
+.empty{padding:60px 24px;text-align:center;color:var(--fg-2)}
+.empty svg{color:var(--fg-3);margin-bottom:10px}
+.empty h4{margin:0 0 6px;color:var(--fg);font-size:16px}
+.empty p{margin:0;font-size:13.5px}
+.skeleton{padding:12px;display:flex;gap:12px;align-items:center}
+.skel-circle{width:44px;height:44px;border-radius:50%;background:var(--bg-3);animation:pulse 1.4s ease infinite}
+.skel-lines{flex:1}
+.skel-line{height:11px;background:var(--bg-3);border-radius:6px;margin-bottom:8px;animation:pulse 1.4s ease infinite}
+.skel-line.short{width:55%}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.45}}
+
+/* ============ Toast ============ */
+#toasts{position:fixed;left:50%;bottom:calc(20px + var(--safe-b));transform:translateX(-50%);z-index:9000;display:flex;flex-direction:column;gap:8px;pointer-events:none;max-width:92vw}
+.toast{background:var(--fg);color:var(--bg-2);padding:10px 14px;border-radius:12px;box-shadow:var(--shadow-lg);font-size:13.5px;display:flex;align-items:center;gap:8px;pointer-events:auto;animation:toastIn .2s ease}
+[data-theme="dark"] .toast{background:#1f2937;color:#fff}
+.toast.success{background:var(--success);color:#fff}
+.toast.error{background:var(--danger);color:#fff}
+.toast.warn{background:var(--warn);color:#fff}
+.toast.info{background:var(--info);color:#fff}
+@keyframes toastIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* ============ Modal & Sheet ============ */
+.backdrop{position:fixed;inset:0;background:rgba(15,23,42,.5);z-index:8000;display:none;align-items:center;justify-content:center;padding:16px;animation:fade .15s ease}
+.backdrop.show{display:flex}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+.modal{background:var(--bg-2);border-radius:var(--r-xl);width:100%;max-width:420px;max-height:88vh;overflow:auto;padding:20px;box-shadow:var(--shadow-lg);animation:modalIn .22s ease}
+@keyframes modalIn{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:none}}
+.modal h3{margin:0 0 8px;font-size:17px}
+.modal p{margin:0 0 16px;color:var(--fg-2);font-size:14px;line-height:1.5}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;margin-top:16px;flex-wrap:wrap}
+.modal-actions .btn{width:auto;min-width:100px}
+
+.sheet-backdrop{position:fixed;inset:0;background:rgba(15,23,42,.5);z-index:8000;display:none}
+.sheet-backdrop.show{display:block}
+.sheet{position:fixed;left:0;right:0;bottom:0;background:var(--bg-2);border-radius:20px 20px 0 0;z-index:8001;padding:8px 0 calc(8px + var(--safe-b));transform:translateY(100%);transition:transform .25s cubic-bezier(.3,.9,.5,1);max-height:80vh;overflow:auto}
+.sheet.show{transform:translateY(0)}
+.sheet .grabber{width:36px;height:4px;background:var(--line);border-radius:2px;margin:6px auto 8px}
+.sheet .sheet-title{padding:8px 20px 6px;font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--fg-3)}
+.sheet-item{display:flex;align-items:center;gap:14px;padding:14px 20px;font-size:15px;cursor:pointer}
+.sheet-item:hover{background:var(--bg-3)}
+.sheet-item.danger{color:var(--danger)}
+.sheet-item svg{flex-shrink:0;color:var(--fg-2)}
+.sheet-item.danger svg{color:var(--danger)}
+
+/* Connection banner */
+#conn-banner{position:fixed;top:0;left:0;right:0;z-index:8500;background:var(--warn);color:#fff;text-align:center;padding:6px 12px;font-size:12.5px;font-weight:600;transform:translateY(-100%);transition:transform .3s;padding-top:calc(6px + var(--safe-t))}
+#conn-banner.show{transform:translateY(0)}
+#conn-banner.offline{background:var(--danger)}
+
+/* Profile header */
+.profile-hero{display:flex;flex-direction:column;align-items:center;padding:24px 16px 18px;text-align:center}
+.profile-hero h2{margin:12px 0 2px;font-size:20px;font-weight:800}
+.profile-hero .uname{color:var(--fg-2);font-size:14px}
+.profile-hero .bio{margin-top:10px;color:var(--fg-2);font-size:13.5px;max-width:420px;line-height:1.5}
+
+/* Upload progress */
+.upload-item{display:flex;align-items:center;gap:10px;padding:10px 12px;background:var(--bg-2);border-top:1px solid var(--line)}
+.upload-item .bar{flex:1;height:6px;background:var(--bg-3);border-radius:3px;overflow:hidden}
+.upload-item .bar > div{height:100%;background:var(--brand);width:0%;transition:width .15s}
+
+/* Image in bubble */
+.bubble img.att{max-width:260px;max-height:320px;border-radius:10px;display:block;margin-bottom:4px;cursor:pointer}
+
+/* Misc */
+.divider{height:1px;background:var(--line);margin:6px 0}
+.hidden{display:none !important}
+.center{text-align:center}
+.flex{display:flex;align-items:center;gap:8px}
+.muted{color:var(--fg-2);font-size:13px}
+.tag-pill{background:var(--bg-3);font-size:11px;padding:3px 8px;border-radius:8px;font-weight:600;color:var(--fg-2)}
+
+/* Media queries */
+@media (min-width:768px){
+  .chat-item{padding:12px 16px}
+  #messages{padding:16px 24px}
+  .auth-wrap{padding:40px 24px}
+}
+@media (min-width:1024px){
+  .page.settings-page .scroll{max-width:720px;margin:0 auto;width:100%}
+}
+</style>
+</head>
+<body>
+
+<!-- Splash -->
+<div id="splash">
+  <div class="splash-logo">
+    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
+    </svg>
+  </div>
+  <div class="splash-title">SapaAja</div>
+  <div class="splash-tag">Ngobrol lebih dekat, kapan saja.</div>
+  <div class="spinner" style="margin-top:20px"></div>
+</div>
+
+<!-- Connection banner -->
+<div id="conn-banner" role="status" aria-live="polite">Menghubungkan…</div>
+
+<!-- App -->
+<div id="app">
+
+  <!-- ============ AUTH PAGE ============ -->
+  <section id="page-auth" class="page active">
+    <div class="scroll">
+      <div class="auth-wrap">
+        <div class="auth-brand">
+          <div class="logo">
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          </div>
+          <h1>SapaAja</h1>
+        </div>
+
+        <!-- LOGIN -->
+        <div id="view-login" class="auth-card">
+          <h2 class="auth-title">Masuk</h2>
+          <p class="auth-sub">Selamat datang kembali. Lanjutkan percakapan Anda.</p>
+          <form id="login-form" novalidate>
+            <div class="field">
+              <label for="login-email">Email</label>
+              <div class="input-box">
+                <svg class="ico" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16v16H4z"/><path d="m4 7 8 6 8-6"/></svg>
+                <input id="login-email" type="email" autocomplete="email" placeholder="nama@email.com" required />
+              </div>
+            </div>
+            <div class="field">
+              <label for="login-pass">Password</label>
+              <div class="input-box">
+                <svg class="ico" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 1 1 8 0v4"/></svg>
+                <input id="login-pass" type="password" autocomplete="current-password" placeholder="••••••••" required />
+                <button type="button" class="pwd-toggle" data-target="login-pass" aria-label="Tampilkan password"></button>
+              </div>
+            </div>
+            <div class="err-text" id="login-err"></div>
+            <button type="submit" class="btn" id="login-submit">
+              <span>Masuk</span>
+            </button>
+            <div class="center" style="margin-top:12px">
+              <span class="link-btn" data-go="forgot">Lupa password?</span>
+            </div>
+          </form>
+          <div class="auth-switch">
+            Belum punya akun? <span class="link-btn" data-go="register">Daftar</span>
+          </div>
+        </div>
+
+        <!-- REGISTER -->
+        <div id="view-register" class="auth-card" hidden>
+          <h2 class="auth-title">Daftar</h2>
+          <p class="auth-sub">Buat akun baru untuk mulai mengobrol.</p>
+          <form id="register-form" novalidate>
+            <div class="avatar-picker" id="reg-avatar-pick" role="button" tabindex="0" aria-label="Pilih foto profil">
+              <svg class="ico" width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+              <input id="reg-avatar" type="file" accept="image/*" />
+            </div>
+            <div class="field">
+              <label for="reg-name">Nama lengkap</label>
+              <div class="input-box"><input id="reg-name" type="text" placeholder="Nama Anda" required /></div>
+            </div>
+            <div class="field">
+              <label for="reg-username">Username</label>
+              <div class="input-box">
+                <span class="ico" style="font-weight:700">@</span>
+                <input id="reg-username" type="text" placeholder="username" autocomplete="off" required />
+              </div>
+              <div class="err-text" id="reg-username-err"></div>
+            </div>
+            <div class="field">
+              <label for="reg-email">Email</label>
+              <div class="input-box"><input id="reg-email" type="email" placeholder="nama@email.com" autocomplete="email" required /></div>
+            </div>
+            <div class="field">
+              <label for="reg-pass">Password</label>
+              <div class="input-box">
+                <input id="reg-pass" type="password" placeholder="Minimal 6 karakter" autocomplete="new-password" required />
+                <button type="button" class="pwd-toggle" data-target="reg-pass" aria-label="Tampilkan password"></button>
+              </div>
+            </div>
+            <div class="field">
+              <label for="reg-pass2">Konfirmasi password</label>
+              <div class="input-box"><input id="reg-pass2" type="password" placeholder="Ulangi password" autocomplete="new-password" required /></div>
+            </div>
+            <div class="err-text" id="reg-err"></div>
+            <button type="submit" class="btn" id="reg-submit"><span>Daftar</span></button>
+          </form>
+          <div class="auth-switch">Sudah punya akun? <span class="link-btn" data-go="login">Masuk</span></div>
+        </div>
+
+        <!-- FORGOT -->
+        <div id="view-forgot" class="auth-card" hidden>
+          <h2 class="auth-title">Reset Password</h2>
+          <p class="auth-sub">Kami akan mengirim tautan reset ke email Anda.</p>
+          <form id="forgot-form" novalidate>
+            <div class="field">
+              <label for="forgot-email">Email</label>
+              <div class="input-box"><input id="forgot-email" type="email" placeholder="nama@email.com" required /></div>
+            </div>
+            <div class="err-text" id="forgot-err"></div>
+            <button type="submit" class="btn" id="forgot-submit"><span>Kirim tautan reset</span></button>
+          </form>
+          <div class="auth-switch"><span class="link-btn" data-go="login">Kembali ke masuk</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============ HOME ============ -->
+  <section id="page-home" class="page">
+    <header class="topbar">
+      <div class="avatar sm" id="home-avatar" aria-label="Profil"></div>
+      <h2>SapaAja</h2>
+      <button class="icon-btn" id="home-search" aria-label="Cari">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+      </button>
+      <button class="icon-btn" id="home-new" aria-label="Chat baru">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></svg>
+      </button>
+      <button class="icon-btn" id="home-menu" aria-label="Menu">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="12" cy="19" r="1.5"/></svg>
+      </button>
+    </header>
+    <div class="scroll" id="chat-list-scroll">
+      <div id="chat-list"></div>
+    </div>
+    <nav class="bottom-nav">
+      <button data-nav="home" class="active">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        Chat
+      </button>
+      <button data-nav="search">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+        Cari
+      </button>
+      <button data-nav="notifications">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg>
+        <span id="nav-notif-badge" class="badge" hidden></span>
+        Notifikasi
+      </button>
+      <button data-nav="settings">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06A1.65 1.65 0 0 0 15 19.4a1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+        Pengaturan
+      </button>
+    </nav>
+  </section>
+
+  <!-- ============ CHAT ============ -->
+  <section id="page-chat" class="page">
+    <header class="chat-header">
+      <button class="icon-btn" id="chat-back" aria-label="Kembali">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+      </button>
+      <div class="avatar sm" id="chat-avatar"></div>
+      <div class="info" id="chat-info">
+        <h3 id="chat-name">—</h3>
+        <small id="chat-status"></small>
+      </div>
+      <button class="icon-btn" id="chat-menu" aria-label="Menu chat">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="5" r="1.5"/><circle cx="12" cy="12" r="1.5"/><circle cx="12" cy="19" r="1.5"/></svg>
+      </button>
+    </header>
+    <div id="messages" class="scroll"></div>
+    <div class="reply-bar" id="reply-bar">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 14 4 9l5-5"/><path d="M20 20v-7a4 4 0 0 0-4-4H4"/></svg>
+      <div class="content">
+        <span class="who" id="reply-who">—</span>
+        <span class="txt" id="reply-txt">—</span>
+      </div>
+      <button class="icon-btn" id="reply-close" aria-label="Batal balas">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="edit-bar" id="edit-bar">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>
+      <div class="content">
+        <span class="who">Edit pesan</span>
+        <span class="txt" id="edit-txt">—</span>
+      </div>
+      <button class="icon-btn" id="edit-close" aria-label="Batal edit">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></svg>
+      </button>
+    </div>
+    <div class="composer">
+      <button class="attach-btn" id="attach-btn" aria-label="Lampirkan">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m21.44 11.05-9.19 9.19a6 6 0 0 1-8.49-8.49l8.57-8.57A4 4 0 1 1 18 8.84l-8.59 8.57a2 2 0 0 1-2.83-2.83l8.49-8.48"/></svg>
+      </button>
+      <div class="field-area">
+        <textarea id="msg-input" placeholder="Tulis pesan…" rows="1" aria-label="Tulis pesan"></textarea>
+      </div>
+      <button class="send-btn" id="send-btn" aria-label="Kirim">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 2-7 20-4-9-9-4z"/><path d="M22 2 11 13"/></svg>
+      </button>
+    </div>
+    <input type="file" id="file-input" hidden />
+  </section>
+
+  <!-- ============ SEARCH ============ -->
+  <section id="page-search" class="page">
+    <header class="topbar">
+      <h2>Cari</h2>
+    </header>
+    <div class="search-wrap">
+      <div class="search-input">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--fg-3)"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+        <input id="search-input" placeholder="Cari pengguna, chat, pesan…" />
+      </div>
+    </div>
+    <div class="scroll"><div id="search-results"></div></div>
+    <nav class="bottom-nav">
+      <button data-nav="home"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Chat</button>
+      <button data-nav="search" class="active"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>Cari</button>
+      <button data-nav="notifications"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><span id="nav-notif-badge2" class="badge" hidden></span>Notifikasi</button>
+      <button data-nav="settings"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06A1.65 1.65 0 0 0 15 19.4a1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Pengaturan</button>
+    </nav>
+  </section>
+
+  <!-- ============ NOTIFICATIONS ============ -->
+  <section id="page-notifications" class="page">
+    <header class="topbar">
+      <h2>Notifikasi</h2>
+      <button class="icon-btn" id="notif-read-all" aria-label="Tandai semua dibaca">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12h5l2 3h6l2-3h5"/><path d="m22 6-6 6-2-2-3 3"/></svg>
+      </button>
+    </header>
+    <div class="scroll"><div id="notif-list"></div></div>
+    <nav class="bottom-nav">
+      <button data-nav="home"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Chat</button>
+      <button data-nav="search"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>Cari</button>
+      <button data-nav="notifications" class="active"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><span id="nav-notif-badge3" class="badge" hidden></span>Notifikasi</button>
+      <button data-nav="settings"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06A1.65 1.65 0 0 0 15 19.4a1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Pengaturan</button>
+    </nav>
+  </section>
+
+  <!-- ============ SETTINGS (and sub pages) ============ -->
+  <section id="page-settings" class="page settings-page">
+    <header class="topbar">
+      <button class="icon-btn back-btn" aria-label="Kembali" hidden>
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+      </button>
+      <h2 id="settings-title">Pengaturan</h2>
+    </header>
+    <div class="scroll" id="settings-scroll"></div>
+    <nav class="bottom-nav" id="settings-nav">
+      <button data-nav="home"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>Chat</button>
+      <button data-nav="search"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>Cari</button>
+      <button data-nav="notifications"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg><span id="nav-notif-badge4" class="badge" hidden></span>Notifikasi</button>
+      <button data-nav="settings" class="active"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06A1.65 1.65 0 0 0 15 19.4a1.65 1.65 0 0 0-1 1.51V21a2 2 0 1 1-4 0v-.09a1.65 1.65 0 0 0-1-1.51 1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.6 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 1 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.6a1.65 1.65 0 0 0 1-1.51V3a2 2 0 1 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 1 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>Pengaturan</button>
+    </nav>
+  </section>
+
+  <!-- ============ PROFILE (public user profile) ============ -->
+  <section id="page-profile" class="page">
+    <header class="topbar">
+      <button class="icon-btn" id="profile-back" aria-label="Kembali">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6"/></svg>
+      </button>
+      <h2>Profil</h2>
+    </header>
+    <div class="scroll">
+      <div id="profile-content"></div>
+    </div>
+  </section>
+
+  <!-- ============ IMAGE VIEWER ============ -->
+  <div id="img-viewer" class="backdrop" style="background:rgba(0,0,0,.92)">
+    <img id="img-viewer-img" style="max-width:100%;max-height:90vh;object-fit:contain" alt="Pratinjau"/>
+  </div>
+
+</div>
+
+<div id="toasts" aria-live="polite" aria-atomic="true"></div>
+<div class="backdrop" id="modal-backdrop">
+  <div class="modal" id="modal-box" role="dialog" aria-modal="true"></div>
+</div>
+<div class="sheet-backdrop" id="sheet-backdrop"></div>
+<div class="sheet" id="sheet" role="dialog" aria-modal="true"></div>
+
+<!-- Firebase -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+import {
+  getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut,
+  onAuthStateChanged, sendPasswordResetEmail, updateProfile, sendEmailVerification,
+  updatePassword, EmailAuthProvider, reauthenticateWithCredential
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+import {
+  getDatabase, ref, set, push, onValue, get, update, serverTimestamp,
+  onDisconnect, remove, query, orderByChild, limitToLast, endAt, startAt, off, child
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+import {
+  getStorage, ref as sRef, uploadBytesResumable, getDownloadURL, deleteObject
+} from "https://www.gstatic.com/firebasejs/10.7.1/firebase-storage.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyCHr0eemIkfHNFDUkSaFDklp_c1OgmSnl8",
+  authDomain: "mybro-9ba5f.firebaseapp.com",
+  databaseURL: "https://mybro-9ba5f-default-rtdb.firebaseio.com/",
+  projectId: "mybro-9ba5f",
+  storageBucket: "mybro-9ba5f.appspot.com"
+};
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getDatabase(app);
+const storage = getStorage(app);
+
+/* =========================================================
+   STATE
+   ========================================================= */
+const State = {
+  user: null,                 // Firebase Auth user
+  profile: null,              // user data from RTDB
+  settings: {},
+  route: 'auth',
+  currentChatId: null,
+  currentChat: null,
+  other: null,                // other user profile in 1-on-1 chat
+  chats: {},                  // chats/{chatId}
+  userChats: {},              // userChats/{uid}/{chatId}
+  messages: {},               // messages/{chatId}
+  listeners: {},              // active onValue listeners
+  replyTo: null,
+  editing: null,
+  selectedChatForMenu: null,
+  onlineUsers: {},
+  typingTimer: null,
+  currentPageScroll: {},
+  lastLoadTs: null,
+  allLoaded: false,
+  notifUnread: 0,
+};
+window.__sapa = State;
+
+/* =========================================================
+   UTILITIES
+   ========================================================= */
+const $ = (s, r=document) => r.querySelector(s);
+const $$ = (s, r=document) => [...r.querySelectorAll(s)];
+const esc = (s) => (s==null?'':String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])));
+const el = (tag, attrs={}, ...kids) => {
+  const n = document.createElement(tag);
+  for (const k in attrs) {
+    if (k === 'class') n.className = attrs[k];
+    else if (k === 'html') n.innerHTML = attrs[k];
+    else if (k.startsWith('on')) n.addEventListener(k.slice(2).toLowerCase(), attrs[k]);
+    else if (attrs[k] != null && attrs[k] !== false) n.setAttribute(k, attrs[k]);
+  }
+  for (const kid of kids) if (kid != null && kid !== false) n.append(kid.nodeType ? kid : document.createTextNode(kid));
+  return n;
+};
+const initials = (name='') => (name.trim()[0] || '?').toUpperCase();
+const avatarHTML = (u, size='') => {
+  if (!u) return `<div class="avatar ${size}"></div>`;
+  if (u.photoURL) return `<div class="avatar ${size}"><img src="${esc(u.photoURL)}" alt="" loading="lazy"/></div>`;
+  return `<div class="avatar ${size}">${esc(initials(u.displayName || u.username))}</div>`;
+};
+const tsToDate = (ts) => ts ? new Date(ts) : null;
+const fmtTime = (ts) => { const d = tsToDate(ts); return d ? d.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'}) : ''; };
+const fmtDate = (ts) => { const d = tsToDate(ts); return d ? d.toLocaleDateString('id-ID',{day:'2-digit',month:'short',year:'numeric'}) : ''; };
+const fmtWhen = (ts) => {
+  const d = tsToDate(ts); if (!d) return '';
+  const now = new Date(); const diff = (now - d) / 1000;
+  if (diff < 60) return 'baru saja';
+  if (diff < 3600) return Math.floor(diff/60) + ' mnt';
+  if (diff < 86400) return d.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'});
+  if (diff < 604800) return d.toLocaleDateString('id-ID',{weekday:'short'});
+  return d.toLocaleDateString('id-ID',{day:'2-digit',month:'2-digit',year:'2-digit'});
+};
+const fmtDay = (ts) => {
+  const d = tsToDate(ts); if (!d) return '';
+  const today = new Date(); const yest = new Date(); yest.setDate(today.getDate()-1);
+  const same = (a,b) => a.toDateString() === b.toDateString();
+  if (same(d,today)) return 'Hari ini';
+  if (same(d,yest)) return 'Kemarin';
+  return d.toLocaleDateString('id-ID',{day:'2-digit',month:'long',year:'numeric'});
+};
+const unixNow = () => Date.now();
+const debounce = (fn, ms=250) => { let t; return (...a) => { clearTimeout(t); t = setTimeout(()=>fn(...a), ms); }; };
+const escapeRegex = (s) => s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+const linkify = (text) => {
+  const safe = esc(text);
+  const urlRe = /(https?:\/\/[^\s<]+)/g;
+  return safe.replace(urlRe, (u) => `<a href="${u}" target="_blank" rel="noopener noreferrer">${u}</a>`);
+};
+const emailValid = (v) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
+const usernameValid = (v) => /^[a-z0-9._]{3,20}$/.test(v);
+
+/* =========================================================
+   TOASTS
+   ========================================================= */
+function toast(msg, kind='info', duration=3000) {
+  const t = el('div', { class: `toast ${kind}` });
+  const icons = {
+    success: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>',
+    error: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M15 9l-6 6M9 9l6 6"/></svg>',
+    warn: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M10.3 3.9 1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0Z"/><path d="M12 9v4M12 17h.01"/></svg>',
+    info: '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>'
+  };
+  t.innerHTML = icons[kind] + `<span>${esc(msg)}</span>`;
+  $('#toasts').appendChild(t);
+  setTimeout(() => { t.style.opacity = '0'; t.style.transition = 'opacity .3s'; setTimeout(()=>t.remove(), 320); }, duration);
+}
+
+/* =========================================================
+   MODAL & SHEET
+   ========================================================= */
+function openModal(contentEl) {
+  const box = $('#modal-box');
+  box.replaceChildren(contentEl);
+  $('#modal-backdrop').classList.add('show');
+}
+function closeModal() { $('#modal-backdrop').classList.remove('show'); }
+$('#modal-backdrop').addEventListener('click', (e) => { if (e.target.id === 'modal-backdrop') closeModal(); });
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'Escape') { closeModal(); closeSheet(); }
+});
+
+function confirmDialog({ title='Konfirmasi', message='', confirmText='Lanjutkan', danger=false } = {}) {
+  return new Promise(resolve => {
+    const wrap = el('div');
+    wrap.append(
+      el('h3', {}, title),
+      el('p', {}, message),
+    );
+    const actions = el('div', { class: 'modal-actions' });
+    const cancel = el('button', { class:'btn ghost', onclick: () => { closeModal(); resolve(false); } }, 'Batal');
+    const ok = el('button', { class:`btn ${danger?'danger':''}`, onclick: () => { closeModal(); resolve(true); } }, confirmText);
+    actions.append(cancel, ok);
+    wrap.append(actions);
+    openModal(wrap);
+  });
+}
+
+function openSheet(items, title='') {
+  const s = $('#sheet');
+  s.replaceChildren();
+  s.append(el('div', { class: 'grabber' }));
+  if (title) s.append(el('div', { class: 'sheet-title' }, title));
+  items.forEach(it => {
+    if (it === 'divider') { s.append(el('div', { class:'divider' })); return; }
+    const b = el('div', { class: `sheet-item ${it.danger?'danger':''}`, role:'button', tabindex:'0',
+      onclick: () => { closeSheet(); it.onClick?.(); } });
+    if (it.icon) b.innerHTML = it.icon;
+    b.append(el('span', {}, it.label));
+    s.append(b);
+  });
+  s.classList.add('show');
+  $('#sheet-backdrop').classList.add('show');
+}
+function closeSheet() {
+  $('#sheet').classList.remove('show');
+  $('#sheet-backdrop').classList.remove('show');
+}
+$('#sheet-backdrop').addEventListener('click', closeSheet);
+
+/* =========================================================
+   ROUTER
+   ========================================================= */
+function goto(page, opts = {}) {
+  if (State.route === 'chat' && page !== 'chat') {
+    leaveChat();
+  }
+  $$('.page').forEach(p => p.classList.toggle('active', p.id === 'page-' + page));
+  State.route = page;
+  if (page !== 'chat') {
+    history.replaceState({ page }, '', '#' + page);
+  }
+  if (page === 'home') renderChatList();
+  if (page === 'search') $('#search-input').focus();
+  if (page === 'notifications') renderNotifications();
+  if (page === 'settings') renderSettingsRoot();
+}
+window.addEventListener('popstate', (e) => {
+  const page = (e.state && e.state.page) || 'home';
+  if (State.route === 'chat' && page !== 'chat') leaveChat(true);
+  $$('.page').forEach(p => p.classList.toggle('active', p.id === 'page-' + page));
+  State.route = page;
+  if (page === 'home') renderChatList();
+  if (page === 'settings') renderSettingsRoot();
+  if (page === 'notifications') renderNotifications();
+});
+
+document.addEventListener('click', (e) => {
+  const nav = e.target.closest('[data-nav]');
+  if (nav) { goto(nav.dataset.nav); return; }
+  const go = e.target.closest('[data-go]');
+  if (go) {
+    const t = go.dataset.go;
+    if (t === 'login') showAuthView('login');
+    else if (t === 'register') showAuthView('register');
+    else if (t === 'forgot') showAuthView('forgot');
+  }
+});
+
+/* =========================================================
+   AUTH VIEW
+   ========================================================= */
+function showAuthView(view) {
+  ['login','register','forgot'].forEach(v => $('#view-'+v).hidden = (v !== view));
+  const card = $('#view-'+view);
+  const input = card.querySelector('input');
+  if (input) setTimeout(()=>input.focus(), 60);
+}
+
+document.querySelectorAll('.pwd-toggle').forEach(btn => {
+  btn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg>';
+  btn.addEventListener('click', () => {
+    const inp = document.getElementById(btn.dataset.target);
+    inp.type = inp.type === 'password' ? 'text' : 'password';
+  });
+});
+
+function setBtnLoading(btn, loading, text='Memproses…') {
+  if (loading) {
+    btn.dataset.originalText = btn.querySelector('span') ? btn.querySelector('span').textContent : btn.textContent;
+    btn.disabled = true;
+    btn.innerHTML = `<span class="spinner" style="border-color:rgba(255,255,255,.4);border-top-color:#fff"></span><span>${esc(text)}</span>`;
+  } else {
+    btn.disabled = false;
+    const t = btn.dataset.originalText || 'OK';
+    btn.innerHTML = `<span>${esc(t)}</span>`;
+  }
+}
+
+/* -------- Register -------- */
+$('#reg-avatar-pick').addEventListener('click', () => $('#reg-avatar').click());
+let regAvatarFile = null;
+$('#reg-avatar').addEventListener('change', (e) => {
+  const f = e.target.files[0]; if (!f) return;
+  if (!f.type.startsWith('image/')) { toast('File harus berupa gambar', 'error'); return; }
+  if (f.size > 5*1024*1024) { toast('Ukuran maksimal 5MB', 'error'); return; }
+  regAvatarFile = f;
+  const url = URL.createObjectURL(f);
+  $('#reg-avatar-pick').innerHTML = `<img src="${url}" alt=""/>`;
+  $('#reg-avatar-pick').appendChild($('#reg-avatar'));
+});
+
+$('#reg-username').addEventListener('input', debounce(async (e) => {
+  const v = e.target.value.trim().toLowerCase();
+  const errEl = $('#reg-username-err');
+  if (!v) { errEl.textContent = ''; return; }
+  if (!usernameValid(v)) { errEl.textContent = 'Hanya huruf kecil, angka, titik, underscore (3–20).'; return; }
+  errEl.textContent = 'Memeriksa…';
+  try {
+    const snap = await get(ref(db, 'usernames/' + v));
+    errEl.textContent = snap.exists() ? 'Username sudah dipakai.' : '';
+  } catch { errEl.textContent = ''; }
+}, 350));
+
+$('#register-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const name = $('#reg-name').value.trim();
+  const uname = $('#reg-username').value.trim().toLowerCase();
+  const email = $('#reg-email').value.trim().toLowerCase();
+  const pass = $('#reg-pass').value;
+  const pass2 = $('#reg-pass2').value;
+  const errEl = $('#reg-err');
+  const btn = $('#reg-submit');
+  errEl.textContent = '';
+
+  if (!name) return errEl.textContent = 'Nama lengkap wajib diisi.';
+  if (!usernameValid(uname)) return errEl.textContent = 'Username tidak valid (huruf kecil, angka, . atau _; 3–20 karakter).';
+  if (!emailValid(email)) return errEl.textContent = 'Format email tidak valid.';
+  if (pass.length < 6) return errEl.textContent = 'Password minimal 6 karakter.';
+  if (pass !== pass2) return errEl.textContent = 'Konfirmasi password tidak cocok.';
+
+  setBtnLoading(btn, true, 'Mendaftar…');
+  try {
+    // check username uniqueness again
+    const unameSnap = await get(ref(db, 'usernames/' + uname));
+    if (unameSnap.exists()) {
+      errEl.textContent = 'Username sudah dipakai.';
+      setBtnLoading(btn, false); return;
+    }
+    const cred = await createUserWithEmailAndPassword(auth, email, pass);
+    const uid = cred.user.uid;
+    let photoURL = '';
+    if (regAvatarFile) {
+      try {
+        const sRefPath = sRef(storage, `avatars/${uid}/${Date.now()}_${regAvatarFile.name}`);
+        const task = uploadBytesResumable(sRefPath, regAvatarFile);
+        await new Promise((res, rej) => {
+          task.on('state_changed', null, rej, () => res());
+        });
+        photoURL = await getDownloadURL(task.snapshot.ref);
+      } catch (err) {
+        console.warn('Avatar upload failed', err);
+      }
+    }
+    const now = serverTimestamp();
+    const updates = {};
+    updates['users/' + uid] = {
+      uid, displayName: name, displayNameLower: name.toLowerCase(),
+      username: uname, usernameLower: uname,
+      email, photoURL, bio: '',
+      createdAt: now, updatedAt: now, lastSeen: now, online: true, role: 'user'
+    };
+    updates['usernames/' + uname] = uid;
+    updates['userSettings/' + uid] = {
+      theme: 'system', accent: '#4f46e5', language: 'id', fontSize: 15,
+      enterToSend: true, readReceipts: true, typingIndicator: true,
+      showPreview: true, notifyMessages: true, notifyGroups: true, notifyMentions: true,
+      notifySound: true, notifyVibrate: true, lastSeenPrivacy: 'everyone',
+      onlinePrivacy: 'everyone', photoPrivacy: 'everyone', aboutPrivacy: 'everyone'
+    };
+    await update(ref(db), updates);
+    try { await updateProfile(cred.user, { displayName: name, photoURL }); } catch {}
+    try { await sendEmailVerification(cred.user); } catch {}
+    toast('Akun dibuat. Cek email untuk verifikasi.', 'success');
+    // onAuthStateChanged will handle the rest
+  } catch (err) {
+    console.error(err);
+    let msg = 'Pendaftaran gagal.';
+    if (err.code === 'auth/email-already-in-use') msg = 'Email sudah digunakan.';
+    else if (err.code === 'auth/weak-password') msg = 'Password terlalu lemah.';
+    else if (err.code === 'auth/network-request-failed') msg = 'Koneksi bermasalah. Coba lagi.';
+    else if (err.code === 'auth/invalid-email') msg = 'Email tidak valid.';
+    errEl.textContent = msg;
+    setBtnLoading(btn, false);
+  }
+});
+
+/* -------- Login -------- */
+$('#login-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const email = $('#login-email').value.trim().toLowerCase();
+  const pass = $('#login-pass').value;
+  const errEl = $('#login-err');
+  const btn = $('#login-submit');
+  errEl.textContent = '';
+  if (!emailValid(email)) return errEl.textContent = 'Email tidak valid.';
+  if (!pass) return errEl.textContent = 'Password wajib diisi.';
+  setBtnLoading(btn, true, 'Masuk…');
+  try {
+    await signInWithEmailAndPassword(auth, email, pass);
+    // onAuthStateChanged handles UI
+  } catch (err) {
+    let msg = 'Gagal masuk.';
+    if (err.code === 'auth/user-not-found' || err.code === 'auth/wrong-password' || err.code === 'auth/invalid-credential') msg = 'Email atau password salah.';
+    else if (err.code === 'auth/too-many-requests') msg = 'Terlalu banyak percobaan. Coba lagi nanti.';
+    else if (err.code === 'auth/network-request-failed') msg = 'Tidak ada koneksi internet.';
+    else if (err.code === 'auth/user-disabled') msg = 'Akun dinonaktifkan.';
+    errEl.textContent = msg;
+    setBtnLoading(btn, false);
+  }
+});
+
+/* -------- Forgot -------- */
+$('#forgot-form').addEventListener('submit', async (e) => {
+  e.preventDefault();
+  const email = $('#forgot-email').value.trim().toLowerCase();
+  const errEl = $('#forgot-err');
+  const btn = $('#forgot-submit');
+  errEl.textContent = '';
+  if (!emailValid(email)) return errEl.textContent = 'Email tidak valid.';
+  setBtnLoading(btn, true, 'Mengirim…');
+  try {
+    await sendPasswordResetEmail(auth, email);
+    toast('Tautan reset dikirim ke ' + email, 'success', 5000);
+    errEl.textContent = '';
+    setTimeout(() => showAuthView('login'), 1200);
+  } catch (err) {
+    let msg = 'Gagal mengirim.';
+    if (err.code === 'auth/user-not-found') msg = 'Email tidak terdaftar.';
+    else if (err.code === 'auth/network-request-failed') msg = 'Koneksi bermasalah.';
+    errEl.textContent = msg;
+  } finally { setBtnLoading(btn, false); }
+});
+
+/* =========================================================
+   AUTH STATE
+   ========================================================= */
+let presenceRef = null;
+onAuthStateChanged(auth, async (user) => {
+  if (user) {
+    State.user = user;
+    // Listen profile
+    const uprof = ref(db, 'users/' + user.uid);
+    off(uprof);
+    onValue(uprof, snap => {
+      if (!snap.exists()) return;
+      State.profile = snap.val();
+      applyUserSettings();
+      updateHomeAvatar();
+      if (State.route === 'settings') renderSettingsRoot();
+      if (State.route === 'home') renderChatList();
+    });
+    // Listen settings
+    const setRef = ref(db, 'userSettings/' + user.uid);
+    onValue(setRef, snap => {
+      State.settings = snap.val() || {};
+      applyUserSettings();
+    });
+    // Setup presence
+    setupPresence(user.uid);
+    // Subscribe chats
+    subscribeUserChats(user.uid);
+    subscribeNotifications(user.uid);
+
+    // Go to home
+    if (State.route === 'auth' || State.route === 'login') {
+      goto('home');
+    }
+    // Email verification prompt if not verified
+    if (!user.emailVerified) {
+      setTimeout(() => {
+        if (State.user && !State.user.emailVerified) {
+          toast('Email belum diverifikasi. Buka email untuk memverifikasi.', 'warn', 6000);
+        }
+      }, 1500);
+    }
+  } else {
+    // Logout cleanup
+    teardown();
+    State.user = null;
+    State.profile = null;
+    State.currentChatId = null;
+    State.currentChat = null;
+    State.chats = {};
+    State.userChats = {};
+    State.messages = {};
+    showAuthView('login');
+    goto('auth');
+  }
+  $('#splash').classList.add('hide');
+  setTimeout(()=>{ $('#splash').style.display='none'; }, 500);
+});
+
+function teardown() {
+  Object.values(State.listeners).forEach(({ref: r, cb}) => off(r, 'value', cb));
+  State.listeners = {};
+  if (presenceRef) { try { presenceRef = null; } catch {} }
+}
+
+function updateHomeAvatar() {
+  const p = State.profile;
+  const wrap = $('#home-avatar');
+  if (!wrap) return;
+  wrap.outerHTML = avatarHTML(p, 'sm').replace('class="avatar sm"','class="avatar sm" id="home-avatar"');
+}
+
+/* =========================================================
+   PRESENCE
+   ========================================================= */
+function setupPresence(uid) {
+  const connRef = ref(db, '.info/connected');
+  const userStatusRef = ref(db, 'presence/' + uid);
+  const userRef = ref(db, 'users/' + uid + '/online');
+  const lastSeenRef = ref(db, 'users/' + uid + '/lastSeen');
+  presenceRef = userStatusRef;
+  onValue(connRef, (snap) => {
+    setBanner(snap.val() === true ? 'online' : 'offline');
+    if (snap.val() === true) {
+      onDisconnect(userStatusRef).set({ online: false, lastSeen: serverTimestamp() }).then(() => {
+        onDisconnect(userRef).set(false);
+        onDisconnect(lastSeenRef).set(serverTimestamp());
+        set(userStatusRef, { online: true, lastSeen: serverTimestamp() });
+        update(userRef, true);
+        set(lastSeenRef, serverTimestamp());
+      });
+    }
+  });
+}
+
+function setBanner(state) {
+  const b = $('#conn-banner');
+  if (state === 'online') {
+    b.classList.remove('show');
+    b.classList.remove('offline');
+  } else if (state === 'offline') {
+    b.textContent = 'Tidak ada koneksi';
+    b.classList.add('offline');
+    b.classList.add('show');
+  } else {
+    b.textContent = 'Menghubungkan…';
+    b.classList.remove('offline');
+    b.classList.add('show');
+  }
+}
+
+function subscribePresence(uid, cb) {
+  return onValue(ref(db, 'presence/' + uid), s => cb(s.val()));
+}
+
+/* =========================================================
+   CHAT LIST
+   ========================================================= */
+function subscribeUserChats(uid) {
+  const r = ref(db, 'userChats/' + uid);
+  const cb = (snap) => {
+    State.userChats = snap.val() || {};
+    // Subscribe to each chat's metadata
+    const chatIds = Object.keys(State.userChats);
+    // Unsubscribe removed
+    Object.keys(State.chats).forEach(cid => { if (!chatIds.includes(cid)) delete State.chats[cid]; });
+    chatIds.forEach(cid => {
+      if (!State.chats[cid]) {
+        onValue(ref(db, 'chats/' + cid), s => {
+          if (s.exists()) {
+            State.chats[cid] = s.val();
+            if (State.route === 'home') renderChatList();
+          }
+        });
+      }
+    });
+    if (State.route === 'home') renderChatList();
+    // rebuild order
+  };
+  State.listeners.userChats = { ref: r, cb };
+  onValue(r, cb);
+}
+
+function chatOtherMember(chat) {
+  if (!chat || !chat.members) return null;
+  const uid = State.user.uid;
+  return Object.keys(chat.members).find(k => k !== uid);
+}
+
+function chatDisplay(chat, chatId) {
+  if (!chat) return { name:'—', photoURL:'' };
+  if (chat.type === 'group') return { name: chat.name || 'Grup', photoURL: chat.photoURL || '' };
+  const other = chatOtherMember(chat);
+  const meta = chat.memberMeta && chat.memberMeta[other] ? chat.memberMeta[other] : {};
+  return { name: meta.displayName || meta.username || 'Pengguna', photoURL: meta.photoURL || '', uid: other };
+}
+
+async function renderChatList() {
+  const container = $('#chat-list');
+  if (!container) return;
+  const uc = State.userChats || {};
+  const items = Object.keys(uc).map(cid => {
+    const meta = uc[cid];
+    const chat = State.chats[cid];
+    if (!chat) return null;
+    if (meta.archived && !meta._forceShow) return null; // hide archived from main list
+    return { cid, meta, chat };
+  }).filter(Boolean);
+
+  // Sort: pinned first, then by lastMessage time
+  items.sort((a,b) => {
+    if (!!a.meta.pinned !== !!b.meta.pinned) return a.meta.pinned ? -1 : 1;
+    const ta = a.chat.lastMessage?.createdAt || a.chat.updatedAt || 0;
+    const tb = b.chat.lastMessage?.createdAt || b.chat.updatedAt || 0;
+    return tb - ta;
+  });
+
+  if (items.length === 0) {
+    container.innerHTML = `
+      <div class="empty">
+        <svg width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        <h4>Belum ada chat</h4>
+        <p>Mulai percakapan baru dengan menekan ikon + di atas.</p>
+      </div>`;
+    return;
+  }
+
+  container.replaceChildren();
+  for (const { cid, meta, chat } of items) {
+    const d = chatDisplay(chat, cid);
+    const last = chat.lastMessage || {};
+    let lastText = '';
+    if (last.senderId === State.user.uid) lastText = 'Anda: ';
+    if (last.text) lastText += last.text;
+    else if (last.type === 'image') lastText += 'Gambar';
+    else if (last.type === 'file') lastText += 'File';
+    else lastText += '';
+
+    const unread = computeUnread(cid, meta, last);
+
+    const row = el('div', { class: 'chat-item', 'data-chat': cid });
+    const av = el('div', { class: 'avatar-wrap' });
+    av.innerHTML = avatarHTML(d, '') + (State.onlineUsers[d.uid] ? '<span class="online-dot"></span>' : '');
+    row.append(av);
+    const main = el('div', { class: 'chat-item-main' });
+    const top = el('div', { class: 'chat-item-top' });
+    const nameEl = el('div', { class: 'chat-item-name' });
+    nameEl.textContent = d.name;
+    top.append(nameEl, el('div', { class: 'chat-item-time' }, fmtWhen(last.createdAt || chat.updatedAt)));
+    main.append(top);
+    const bottom = el('div', { class: 'chat-item-bottom' });
+    const lastEl = el('div', { class: 'chat-item-last' });
+    if (meta.draft && meta.draft.text) {
+      lastEl.innerHTML = `<span style="color:var(--danger)">Draft: </span>`;
+      lastEl.append(document.createTextNode(meta.draft.text.slice(0,80)));
+    } else {
+      if (last.senderId === State.user.uid) lastEl.innerHTML = `<span class="prefix">Anda: </span>`;
+      lastEl.append(document.createTextNode((lastText||'').replace(/^Anda: /,'')));
+    }
+    bottom.append(lastEl);
+    const trail = el('div', { class: 'flex', style:'gap:6px;flex-shrink:0' });
+    if (meta.muted) trail.innerHTML += '<span class="mute-dot" title="Dibisukan"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 8a6 6 0 0 0-8.5-5.3M6.3 6.3C6.1 6.8 6 7.4 6 8c0 7-3 9-3 9h14"/><path d="m2 2 20 20"/></svg></span>';
+    if (meta.pinned) trail.innerHTML += '<span class="pin-dot" title="Dipin"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 17v5M9 10.8V4h6v6.8l2 2V15H7v-2.2l2-2Z"/></svg></span>';
+    if (unread > 0 && !meta.muted) trail.append(el('span', { class: 'unread-badge' }, String(unread)));
+    else if (unread > 0 && meta.muted) trail.append(el('span', { class: 'unread-badge', style:'background:var(--fg-3)' }, String(unread)));
+    bottom.append(trail);
+    main.append(bottom);
+    row.append(main);
+
+    row.addEventListener('click', () => openChat(cid));
+    // Long press / context menu
+    attachContext(row, () => openChatMenu(cid, meta, chat));
+    container.append(row);
+  }
+  // subscribe presence for 1-on-1 others
+  items.forEach(({chat}) => {
+    if (chat.type !== 'group') {
+      const other = chatOtherMember(chat);
+      if (other && !State.onlineUsers.hasOwnProperty(other)) {
+        subscribePresence(other, (v) => {
+          State.onlineUsers[other] = !!(v && v.online);
+          if (State.route === 'home') renderChatList();
+          if (State.route === 'chat' && State.currentChat && chatOtherMember(State.currentChat) === other) updateChatHeader();
+        });
+      }
+    }
+  });
+}
+
+function computeUnread(cid, meta, last) {
+  if (!meta.lastRead && meta.unread) return meta.unread;
+  // Approximate: messages after lastRead from other sender
+  const msgs = State.messages[cid];
+  if (!msgs) return meta.unread || 0;
+  const lr = meta.lastRead || 0;
+  let n = 0;
+  for (const mid in msgs) {
+    const m = msgs[mid];
+    if (m.senderId !== State.user.uid && (m.createdAt||0) > lr) n++;
+  }
+  return n;
+}
+
+/* =========================================================
+   CONTEXT MENU (long press + right click)
+   ========================================================= */
+function attachContext(el, cb) {
+  let timer = null;
+  el.addEventListener('contextmenu', (e) => { e.preventDefault(); cb(e); });
+  el.addEventListener('touchstart', (e) => {
+    timer = setTimeout(() => { cb({clientX:e.touches[0].clientX, clientY:e.touches[0].clientY}); timer = null; }, 480);
+  }, { passive: true });
+  const clear = () => { if (timer) { clearTimeout(timer); timer = null; } };
+  el.addEventListener('touchend', clear);
+  el.addEventListener('touchmove', clear);
+  el.addEventListener('touchcancel', clear);
+}
+
+function openChatMenu(cid, meta, chat) {
+  const d = chatDisplay(chat, cid);
+  openSheet([
+    { label: meta.pinned ? 'Lepas pin' : 'Pin chat', icon: svgIcon('pin'), onClick: () => togglePin(cid, !meta.pinned) },
+    { label: meta.archived ? 'Keluarkan dari arsip' : 'Arsipkan', icon: svgIcon('archive'), onClick: () => toggleArchive(cid, !meta.archived) },
+    { label: meta.muted ? 'Bunyikan' : 'Bisukan', icon: svgIcon('bell'), onClick: () => toggleMute(cid, !meta.muted) },
+    { label: 'Tandai sudah dibaca', icon: svgIcon('check'), onClick: () => markRead(cid) },
+    { divider: true },
+    { label: 'Hapus chat', icon: svgIcon('trash'), danger: true, onClick: () => deleteChatConfirm(cid) },
+  ], d.name);
+}
+
+function svgIcon(name) {
+  const paths = {
+    pin: '<path d="M12 17v5M9 10.8V4h6v6.8l2 2V15H7v-2.2l2-2Z"/>',
+    archive: '<rect x="3" y="4" width="18" height="4" rx="1"/><path d="M5 8v11a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8"/><path d="M10 12h4"/>',
+    bell: '<path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/>',
+    check: '<path d="M20 6 9 17l-5-5"/>',
+    trash: '<path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6"/>',
+  };
+  return `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${paths[name]||''}</svg>`;
+}
+
+/* =========================================================
+   CHAT OPERATIONS
+   ========================================================= */
+async function openChat(chatId) {
+  if (!State.user) return;
+  // Ensure chat exists
+  const snap = await get(ref(db, 'chats/' + chatId));
+  if (!snap.exists()) { toast('Chat tidak ditemukan', 'error'); return; }
+  const chat = snap.val();
+  State.currentChatId = chatId;
+  State.currentChat = chat;
+  State.other = null;
+
+  // Ensure userChats entry exists
+  if (!State.userChats[chatId]) {
+    await set(ref(db, `userChats/${State.user.uid}/${chatId}`), { joinedAt: serverTimestamp() });
+  }
+
+  // Subscribe chat metadata (in case not loaded)
+  onValue(ref(db, 'chats/' + chatId), s => {
+    if (s.exists()) {
+      State.currentChat = s.val();
+      if (State.route === 'chat' && State.currentChatId === chatId) {
+        updateChatHeader();
+      }
+    }
+  });
+
+  // Subscribe other user
+  if (chat.type !== 'group') {
+    const other = chatOtherMember(chat);
+    if (other) {
+      onValue(ref(db, 'users/' + other), s => {
+        if (s.exists() && State.route === 'chat' && State.currentChatId === chatId) {
+          State.other = s.val();
+          updateChatHeader();
+        }
+      });
+      subscribePresence(other, () => updateChatHeader());
+      // Read receipts: subscribe to other's lastRead
+      onValue(ref(db, `userChats/${other}/${chatId}/lastRead`), () => {
+        if (State.route === 'chat' && State.currentChatId === chatId) renderMessages();
+      });
+      onValue(ref(db, `userChats/${other}/${chatId}/lastDelivered`), () => {
+        if (State.route === 'chat' && State.currentChatId === chatId) renderMessages();
+      });
+    }
+  }
+
+  // Subscribe messages (last N)
+  subscribeMessages(chatId);
+
+  // Subscribe typing
+  subscribeTyping(chatId);
+
+  // Restore draft
+  const draftSnap = await get(ref(db, `drafts/${State.user.uid}/${chatId}`));
+  if (draftSnap.exists() && draftSnap.val().text) {
+    $('#msg-input').value = draftSnap.val().text;
+    autoGrowInput();
+  } else {
+    $('#msg-input').value = '';
+    autoGrowInput();
+  }
+
+  goto('chat');
+  // history entry
+  history.pushState({ page: 'chat', chatId }, '', '#chat');
+
+  setTimeout(() => {
+    scrollMessagesToBottom(true);
+    $('#msg-input').focus();
+  }, 30);
+
+  // Mark read
+  markRead(chatId);
+  // Notify delivered (only if we are the receiver)
+  markDelivered(chatId, chat);
+}
+
+async function markRead(chatId) {
+  if (!State.user) return;
+  await update(ref(db, `userChats/${State.user.uid}/${chatId}`), {
+    lastRead: serverTimestamp(),
+    unread: 0,
+  });
+}
+
+async function markDelivered(chatId, chat) {
+  if (!State.user) return;
+  const members = chat.members || {};
+  // We're a member. Set lastDelivered for us.
+  await update(ref(db, `userChats/${State.user.uid}/${chatId}`), {
+    lastDelivered: serverTimestamp(),
+  });
+}
+
+function updateChatHeader() {
+  const chat = State.currentChat; if (!chat) return;
+  const d = chatDisplay(chat, State.currentChatId);
+  const av = $('#chat-avatar');
+  av.outerHTML = avatarHTML(d, 'sm').replace('class="avatar sm"','class="avatar sm" id="chat-avatar"');
+  $('#chat-name').textContent = d.name;
+  const status = $('#chat-status');
+  if (chat.type === 'group') {
+    const n = Object.keys(chat.members||{}).length;
+    status.textContent = n + ' anggota';
+    status.classList.remove('online');
+  } else {
+    const other = chatOtherMember(chat);
+    const isOnline = other && State.onlineUsers[other];
+    if (isOnline) { status.textContent = 'Online'; status.classList.add('online'); }
+    else if (other && State.other && State.other.lastSeen) {
+      status.textContent = 'Terakhir dilihat ' + fmtWhen(State.other.lastSeen);
+      status.classList.remove('online');
+    } else { status.textContent = 'Tidak aktif'; status.classList.remove('online'); }
+  }
+}
+
+function autoGrowInput() {
+  const t = $('#msg-input');
+  t.style.height = 'auto';
+  t.style.height = Math.min(t.scrollHeight, 120) + 'px';
+}
+
+/* =========================================================
+   MESSAGES
+   ========================================================= */
+function subscribeMessages(chatId) {
+  // Clean old
+  if (State.msgListener) { off(State.msgListener.ref, 'child_added', State.msgListener.added);
+    off(State.msgListener.ref, 'child_changed', State.msgListener.changed);
+    off(State.msgListener.ref, 'child_removed', State.msgListener.removed);
+    State.msgListener = null;
+  }
+  State.messages[chatId] = State.messages[chatId] || {};
+  State.allLoaded = false;
+  State.lastLoadTs = null;
+
+  const q = query(ref(db, 'messages/' + chatId), orderByChild('createdAt'), limitToLast(30));
+  const added = (snap) => {
+    State.messages[chatId][snap.key] = snap.val();
+    if (State.route === 'chat' && State.currentChatId === chatId) {
+      const wasNearBottom = isNearBottom();
+      renderMessages();
+      if (wasNearBottom) scrollMessagesToBottom();
+    }
+    // Notification if not from me and not on this chat
+    maybeNotify(snap.val(), chatId);
+  };
+  const changed = (snap) => {
+    State.messages[chatId][snap.key] = snap.val();
+    if (State.route === 'chat' && State.currentChatId === chatId) renderMessages();
+  };
+  const removed = (snap) => {
+    delete State.messages[chatId][snap.key];
+    if (State.route === 'chat' && State.currentChatId === chatId) renderMessages();
+  };
+  onValue(q, (snap) => {
+    // Full replace on initial value
+    const arr = [];
+    snap.forEach(s => arr.push({ key: s.key, val: s.val() }));
+    State.messages[chatId] = {};
+    arr.forEach(x => { State.messages[chatId][x.key] = x.val; });
+    if (arr.length > 0) State.lastLoadTs = arr[0].val.createdAt;
+    if (State.route === 'chat' && State.currentChatId === chatId) {
+      renderMessages();
+      scrollMessagesToBottom(true);
+    }
+  });
+  onValue(ref(db, 'messages/' + chatId), () => {}, { onlyOnce: true }); // noop
+  State.msgListener = { ref: q, added, changed, removed };
+  // Use onChildAdded style listeners
+  onChildAddedListener(q, added);
+  onChildChangedListener(q, changed);
+  onChildRemovedListener(q, removed);
+}
+
+// Wrapper helpers, we import onValue fully. Use onValue + update render from value event instead.
+import { onChildAdded, onChildChanged, onChildRemoved } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-database.js";
+function onChildAddedListener(q, cb) { return onChildAdded(q, cb); }
+function onChildChangedListener(q, cb) { return onChildChanged(q, cb); }
+function onChildRemovedListener(q, cb) { return onChildRemoved(q, cb); }
+
+function isNearBottom() {
+  const c = $('#messages');
+  return c.scrollHeight - c.scrollTop - c.clientHeight < 100;
+}
+function scrollMessagesToBottom(instant) {
+  const c = $('#messages');
+  c.scrollTo({ top: c.scrollHeight, behavior: instant ? 'auto' : 'smooth' });
+}
+
+function renderMessages() {
+  const cid = State.currentChatId;
+  const container = $('#messages');
+  if (!cid || !container) return;
+  const msgs = State.messages[cid] || {};
+  const list = Object.entries(msgs).map(([id, m]) => ({ id, ...m }))
+    .sort((a,b) => (a.createdAt||0) - (b.createdAt||0));
+  if (list.length === 0) {
+    container.innerHTML = `<div class="empty"><p>Belum ada pesan. Kirim sapaan pertama Anda.</p></div>`;
+    return;
+  }
+  container.replaceChildren();
+  let lastDay = '';
+  for (const m of list) {
+    const day = fmtDay(m.createdAt);
+    if (day !== lastDay) {
+      container.append(el('div', { class: 'chat-day-sep' }, el('span', {}, day)));
+      lastDay = day;
+    }
+    container.append(renderMessage(m));
+  }
+}
+
+function renderMessage(m) {
+  const mine = m.senderId === State.user.uid;
+  const row = el('div', { class: `msg-row ${mine?'mine':''}`, 'data-mid': m.id });
+  const bubble = el('div', { class: `bubble ${m.deleted?'deleted':''}` });
+  if (m.forwarded) {
+    bubble.append(el('div', { class: 'forwarded-tag', html: '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 17 5-5-5-5"/><path d="M4 18v-2a4 4 0 0 1 4-4h12"/></svg> Diteruskan' }));
+  }
+  if (m.replyTo) {
+    const rp = el('div', { class: 'reply-preview' });
+    const rpWho = el('span', { class: 'who' });
+    const rpText = el('span');
+    if (m.replyTo.deleted) { rpWho.textContent = 'Pesan'; rpText.textContent = 'Pesan sudah dihapus'; }
+    else {
+      const other = m.replyTo.senderId === State.user.uid ? 'Anda' : (State.other?.displayName || 'Pengguna');
+      rpWho.textContent = other;
+      rpText.textContent = (m.replyTo.text || 'Lampiran').slice(0, 90);
+    }
+    rp.append(rpWho, rpText);
+    rp.addEventListener('click', (e) => { e.stopPropagation(); scrollToMessage(m.replyTo.messageId); });
+    bubble.append(rp);
+  }
+  if (m.deleted) {
+    bubble.append(el('div', { class: 'msg-text', html: '<em>Pesan telah dihapus</em>' }));
+  } else if (m.type === 'image') {
+    const img = el('img', { class:'att', src: m.attachment?.url || '', alt: m.attachment?.name || 'Gambar', loading: 'lazy' });
+    img.addEventListener('click', () => openImageViewer(m.attachment?.url));
+    bubble.append(img);
+    if (m.text) bubble.append(el('div', { class:'msg-text', html: linkify(m.text) }));
+  } else if (m.type === 'file') {
+    const f = m.attachment || {};
+    const fileEl = el('div', { class: 'flex', style:'gap:10px;align-items:center;cursor:pointer' });
+    fileEl.innerHTML = '<svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></svg>';
+    const fText = el('div');
+    fText.append(el('div', { style:'font-weight:600;font-size:13.5px' }, f.name || 'File'));
+    fText.append(el('div', { style:'font-size:11.5px;opacity:.75' }, f.size ? (f.size>1024*1024? (f.size/1024/1024).toFixed(1)+' MB' : (f.size/1024).toFixed(0)+' KB') : ''));
+    fileEl.append(fText);
+    fileEl.addEventListener('click', () => { if (f.url) window.open(f.url, '_blank', 'noopener'); });
+    bubble.append(fileEl);
+    if (m.text) bubble.append(el('div', { class:'msg-text', html: linkify(m.text), style:'margin-top:6px' }));
+  } else {
+    bubble.append(el('div', { class: 'msg-text', html: linkify(m.text || '') }));
+  }
+  // reactions
+  if (m.reactions && Object.keys(m.reactions).length) {
+    const map = {};
+    Object.entries(m.reactions).forEach(([uid, r]) => { map[r] = (map[r]||0)+1; });
+    const rx = el('div', { class:'reactions' });
+    Object.entries(map).forEach(([r, n]) => {
+      const chip = el('div', { class: 'reaction-chip' + (m.reactions[State.user.uid] === r ? ' mine' : '') });
+      chip.textContent = r + ' ' + n;
+      chip.addEventListener('click', (e) => { e.stopPropagation(); toggleReaction(m.id, r); });
+      rx.append(chip);
+    });
+    bubble.append(rx);
+  }
+  // meta
+  const meta = el('div', { class: 'meta' });
+  meta.append(el('span', {}, fmtTime(m.createdAt)));
+  if (m.edited && !m.deleted) meta.append(el('span', { class:'edited-tag' }, 'diedit'));
+  if (mine && !m.deleted) {
+    // read/delivered
+    const cid = State.currentChatId;
+    const other = chatOtherMember(State.currentChat);
+    let statusIcon = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></svg>';
+    let title = 'Terkirim';
+    if (other && State.userChats) {
+      const otherUC = State.chatOtherUC || null;
+      // We listen separately; simplified: rely on State.otherUCReadTs
+    }
+    if (State.otherReadTs && m.createdAt && m.createdAt <= State.otherReadTs) {
+      statusIcon = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12l5 5L18 6"/><path d="m9 17 5 5L22 11"/></svg>';
+      title = 'Dibaca';
+    } else if (State.otherDeliveredTs && m.createdAt && m.createdAt <= State.otherDeliveredTs) {
+      statusIcon = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12l5 5L18 6"/><path d="m9 17 5 5L22 11"/></svg>';
+      title = 'Diterima';
+    }
+    const st = el('span', { title, html: statusIcon });
+    meta.append(st);
+  }
+  bubble.append(meta);
+
+  // interactions
+  bubble.addEventListener('click', () => {
+    if (m.deleted) return;
+  });
+  attachContext(bubble, (e) => openMessageActions(m, e, mine));
+
+  row.append(bubble);
+  return row;
+}
+
+function openMessageActions(m, e, mine) {
+  const items = [];
+  items.push({ label: 'Balas', icon: svgIcon('reply'), onClick: () => startReply(m) });
+  // reactions row
+  const reactions = ['👍','❤️','😂','😮','😢','🙏'];
+  reactions.forEach(r => {
+    items.push({
+      label: 'Reaksi ' + r, icon: `<span style="font-size:20px">${r}</span>`,
+      onClick: () => toggleReaction(m.id, r)
+    });
+  });
+  if (!m.deleted) {
+    items.push({ label: 'Salin', icon: svgIcon('copy'), onClick: () => copyMessage(m) });
+    items.push({ label: 'Teruskan', icon: svgIcon('forward'), onClick: () => forwardMessage(m) });
+    items.push({ label: 'Pin', icon: svgIcon('pin'), onClick: () => pinMessage(m.id) });
+  }
+  if (mine && !m.deleted && m.type === 'text') {
+    items.push({ label: 'Edit', icon: svgIcon('edit'), onClick: () => startEdit(m) });
+  }
+  if (mine && !m.deleted) {
+    items.push({ label: 'Hapus untuk semua', icon: svgIcon('trash'), danger: true, onClick: () => deleteMessage(m.id, true) });
+  }
+  items.push({ label: 'Hapus untuk saya', icon: svgIcon('trash'), danger: true, onClick: () => deleteMessage(m.id, false) });
+  openSheet(items, 'Aksi pesan');
+}
+
+/* =========================================================
+   SEND MESSAGE
+   ========================================================= */
+async function sendMessage() {
+  const text = $('#msg-input').value.trim();
+  const cid = State.currentChatId;
+  if (!cid) return;
+  if (State.editing) {
+    // Edit mode
+    if (!text) { toast('Pesan tidak boleh kosong', 'error'); return; }
+    try {
+      await update(ref(db, `messages/${cid}/${State.editing}`), {
+        text, edited: true, updatedAt: serverTimestamp()
+      });
+      cancelEdit();
+      toast('Pesan diedit', 'success');
+    } catch (err) { console.error(err); toast('Gagal mengedit pesan', 'error'); }
+    return;
+  }
+  if (!text) return;
+
+  const input = $('#msg-input');
+  input.value = '';
+  autoGrowInput();
+  const draftPath = `drafts/${State.user.uid}/${cid}`;
+  remove(ref(db, draftPath));
+
+  const msgId = push(child(ref(db), `messages/${cid}`)).key;
+  const msg = {
+    senderId: State.user.uid,
+    type: 'text',
+    text,
+    createdAt: serverTimestamp(),
+    updatedAt: serverTimestamp(),
+  };
+  if (State.replyTo) {
+    msg.replyTo = {
+      messageId: State.replyTo.id,
+      senderId: State.replyTo.senderId,
+      text: State.replyTo.text || '',
+      type: State.replyTo.type || 'text',
+      deleted: !!State.replyTo.deleted,
+    };
+  }
+  try {
+    await set(ref(db, `messages/${cid}/${msgId}`), msg);
+    // update chat metadata
+    const chat = State.currentChat;
+    const lastPreview = text.slice(0, 120);
+    await update(ref(db, 'chats/' + cid), {
+      updatedAt: serverTimestamp(),
+      lastMessage: {
+        text: lastPreview,
+        senderId: State.user.uid,
+        createdAt: serverTimestamp(),
+        type: 'text',
+      }
+    });
+    // ensure userChats for all members
+    const members = Object.keys(chat.members || {});
+    for (const uid of members) {
+      if (uid === State.user.uid) continue;
+      update(ref(db, `userChats/${uid}/${cid}`), { unread: (State.userChats[cid]?.unread||0) + 1 }).catch(()=>{});
+    }
+    cancelReply();
+  } catch (err) {
+    console.error(err);
+    input.value = text; // restore
+    toast('Pesan gagal terkirim. Periksa koneksi.', 'error');
+  }
+}
+
+$('#send-btn').addEventListener('click', sendMessage);
+$('#msg-input').addEventListener('keydown', (e) => {
+  const enterToSend = State.settings.enterToSend !== false;
+  if (e.key === 'Enter' && !e.shiftKey && enterToSend && !e.isComposing) {
+    e.preventDefault();
+    sendMessage();
+  }
+});
+$('#msg-input').addEventListener('input', () => {
+  autoGrowInput();
+  setTyping();
+  saveDraftDebounced();
+});
+
+const saveDraftDebounced = debounce(async () => {
+  const cid = State.currentChatId;
+  if (!cid || !State.user) return;
+  const text = $('#msg-input').value;
+  if (text.trim()) {
+    await set(ref(db, `drafts/${State.user.uid}/${cid}`), { text, updatedAt: serverTimestamp() }).catch(()=>{});
+  } else {
+    await remove(ref(db, `drafts/${State.user.uid}/${cid}`)).catch(()=>{});
+  }
+  // reflect to userChats for chat list indicator
+  await update(ref(db, `userChats/${State.user.uid}/${cid}`), {
+    draft: text.trim() ? { text, updatedAt: Date.now() } : null
+  }).catch(()=>{});
+}, 400);
+
+/* =========================================================
+   TYPING
+   ========================================================= */
+function setTyping() {
+  const cid = State.currentChatId;
+  if (!cid) return;
+  const tref = ref(db, `typing/${cid}/${State.user.uid}`);
+  set(tref, true).catch(()=>{});
+  onDisconnect(tref).remove();
+  clearTimeout(State.typingTimer);
+  State.typingTimer = setTimeout(() => { remove(tref).catch(()=>{}); }, 2500);
+}
+
+function subscribeTyping(chatId) {
+  const r = ref(db, 'typing/' + chatId);
+  onValue(r, (snap) => {
+    const v = snap.val() || {};
+    const uids = Object.keys(v).filter(u => u !== State.user.uid);
+    const el = $('#chat-status');
+    if (uids.length && State.route === 'chat') {
+      el.textContent = 'sedang mengetik…';
+      el.classList.remove('online');
+    } else {
+      updateChatHeader();
+    }
+  });
+}
+
+/* =========================================================
+   REPLY / EDIT
+   ========================================================= */
+function startReply(m) {
+  State.replyTo = m;
+  $('#reply-bar').classList.add('active');
+  $('#edit-bar').classList.remove('active');
+  $('#reply-who').textContent = m.senderId === State.user.uid ? 'Anda' : (State.other?.displayName || 'Pengguna');
+  $('#reply-txt').textContent = (m.text || 'Lampiran').slice(0, 90);
+  $('#msg-input').focus();
+}
+function cancelReply() {
+  State.replyTo = null;
+  $('#reply-bar').classList.remove('active');
+}
+$('#reply-close').addEventListener('click', cancelReply);
+
+function startEdit(m) {
+  State.editing = m.id;
+  $('#edit-bar').classList.add('active');
+  $('#reply-bar').classList.remove('active');
+  $('#edit-txt').textContent = (m.text||'').slice(0,90);
+  $('#msg-input').value = m.text || '';
+  autoGrowInput();
+  $('#msg-input').focus();
+}
+function cancelEdit() {
+  State.editing = null;
+  $('#edit-bar').classList.remove('active');
+  $('#msg-input').value = '';
+  autoGrowInput();
+}
+$('#edit-close').addEventListener('click', cancelEdit);
+
+/* =========================================================
+   DELETE / COPY / FORWARD / PIN / REACTION
+   ========================================================= */
+async function deleteMessage(mid, forEveryone) {
+  const cid = State.currentChatId;
+  if (!cid) return;
+  if (forEveryone) {
+    const ok = await confirmDialog({
+      title: 'Hapus untuk semua?',
+      message: 'Pesan akan dihapus untuk semua peserta.',
+      confirmText: 'Hapus', danger: true
+    });
+    if (!ok) return;
+    try {
+      await update(ref(db, `messages/${cid}/${mid}`), { deleted: true, text: '', type: 'deleted', updatedAt: serverTimestamp() });
+      toast('Pesan dihapus', 'success');
+    } catch (e) { console.error(e); toast('Gagal menghapus', 'error'); }
+  } else {
+    // "delete for me" – we store locally by hiding
+    if (!State.hiddenMsgs) State.hiddenMsgs = {};
+    State.hiddenMsgs[`${cid}/${mid}`] = true;
+    renderMessages();
+    toast('Pesan disembunyikan untuk Anda', 'success');
+  }
+}
+
+function copyMessage(m) {
+  const text = m.text || '';
+  navigator.clipboard.writeText(text).then(() => toast('Pesan disalin', 'success'))
+    .catch(() => toast('Gagal menyalin', 'error'));
+}
+
+async function forwardMessage(m) {
+  // Simple: pick a user, forward into existing/new 1-on-1 chat
+  const users = await searchUsers('');
+  const items = users.filter(u => u.uid !== State.user.uid).slice(0, 30).map(u => ({
+    label: u.displayName || u.username,
+    icon: avatarHTML(u, 'sm'),
+    onClick: async () => { await doForward(m, u.uid); }
+  }));
+  if (items.length === 0) { toast('Tidak ada kontak', 'warn'); return; }
+  openSheet(items, 'Teruskan ke');
+}
+
+async function doForward(m, toUid) {
+  const chatId = privateChatId(State.user.uid, toUid);
+  // ensure chat exists
+  const chatSnap = await get(ref(db, 'chats/' + chatId));
+  if (!chatSnap.exists()) {
+    await createPrivateChat(State.user.uid, toUid, chatId);
+  }
+  const msgId = push(child(ref(db), `messages/${chatId}`)).key;
+  const payload = {
+    senderId: State.user.uid,
+    type: m.type || 'text',
+    text: m.text || '',
+    attachment: m.attachment || null,
+    createdAt: serverTimestamp(),
+    updatedAt: serverTimestamp(),
+    forwarded: true,
+    originalSenderId: m.senderId,
+    originalMessageId: m.id,
+  };
+  await set(ref(db, `messages/${chatId}/${msgId}`), payload);
+  await update(ref(db, 'chats/' + chatId), {
+    updatedAt: serverTimestamp(),
+    lastMessage: { text: (m.text || 'Lampiran').slice(0,120), senderId: State.user.uid, createdAt: serverTimestamp(), type: m.type || 'text' }
+  });
+  toast('Pesan diteruskan', 'success');
+}
+
+async function pinMessage(mid) {
+  const cid = State.currentChatId;
+  await set(ref(db, `chats/${cid}/pinnedMessages/${mid}`), true).catch(()=>{});
+  toast('Pesan dipin', 'success');
+}
+
+async function toggleReaction(mid, reaction) {
+  const cid = State.currentChatId;
+  const cur = State.messages[cid]?.[mid]?.reactions?.[State.user.uid];
+  const rp = ref(db, `messages/${cid}/${mid}/reactions/${State.user.uid}`);
+  if (cur === reaction) {
+    await remove(rp);
+  } else {
+    await set(rp, reaction);
+  }
+}
+
+function scrollToMessage(mid) {
+  const elm = document.querySelector(`[data-mid="${mid}"]`);
+  if (!elm) return;
+  elm.scrollIntoView({ behavior:'smooth', block:'center' });
+  elm.style.transition = 'background .3s';
+  const b = elm.querySelector('.bubble');
+  if (b) { b.style.outline = '2px solid var(--brand)'; setTimeout(()=>b.style.outline='', 1200); }
+}
+
+/* =========================================================
+   ATTACHMENTS
+   ========================================================= */
+$('#attach-btn').addEventListener('click', () => {
+  const fileInput = $('#file-input');
+  fileInput.value = '';
+  fileInput.click();
+});
+$('#file-input').addEventListener('change', (e) => {
+  const f = e.target.files[0];
+  if (f) uploadAttachment(f);
+});
+
+async function uploadAttachment(file) {
+  const cid = State.currentChatId;
+  if (!cid) return;
+  // validate
+  const maxSize = 25 * 1024 * 1024;
+  if (file.size > maxSize) { toast('File terlalu besar (maks 25MB)', 'error'); return; }
+  const isImage = file.type.startsWith('image/');
+  const path = `chatAttachments/${cid}/${Date.now()}_${file.name}`;
+  const ref_ = sRef(storage, path);
+
+  // Show progress toast
+  const progToast = el('div', { class: 'toast' });
+  progToast.innerHTML = `<div style="width:120px;height:6px;background:rgba(255,255,255,.3);border-radius:3px;overflow:hidden"><div style="height:100%;width:0%;background:currentColor"></div></div><span>Mengunggah…</span>`;
+  $('#toasts').appendChild(progToast);
+  const bar = progToast.querySelector('div > div');
+
+  const task = uploadBytesResumable(ref_, file);
+  task.on('state_changed',
+    (snap) => { const p = (snap.bytesTransferred / snap.totalBytes * 100).toFixed(0); bar.style.width = p + '%'; },
+    (err) => { console.error(err); progToast.remove(); toast('Upload gagal: ' + err.message, 'error'); },
+    async () => {
+      try {
+        const url = await getDownloadURL(task.snapshot.ref);
+        progToast.remove();
+        // Send message
+        const msgId = push(child(ref(db), `messages/${cid}`)).key;
+        const msg = {
+          senderId: State.user.uid,
+          type: isImage ? 'image' : 'file',
+          text: '',
+          attachment: { url, name: file.name, size: file.size, mime: file.type, path },
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp(),
+        };
+        await set(ref(db, `messages/${cid}/${msgId}`), msg);
+        await update(ref(db, 'chats/' + cid), {
+          updatedAt: serverTimestamp(),
+          lastMessage: { text: isImage ? 'Gambar' : file.name, senderId: State.user.uid, createdAt: serverTimestamp(), type: msg.type }
+        });
+        toast('Terkirim', 'success');
+      } catch (err) { console.error(err); toast('Gagal mengirim lampiran', 'error'); }
+    }
+  );
+}
+
+/* =========================================================
+   IMAGE VIEWER
+   ========================================================= */
+function openImageViewer(url) {
+  if (!url) return;
+  $('#img-viewer-img').src = url;
+  $('#img-viewer').classList.add('show');
+}
+$('#img-viewer').addEventListener('click', () => $('#img-viewer').classList.remove('show'));
+
+/* =========================================================
+   PRESENCE + USER DATA: getUser
+   ========================================================= */
+const userCache = {};
+async function getUser(uid) {
+  if (userCache[uid]) return userCache[uid];
+  const s = await get(ref(db, 'users/' + uid));
+  if (!s.exists()) return null;
+  userCache[uid] = s.val();
+  return userCache[uid];
+}
+
+/* =========================================================
+   SEARCH
+   ========================================================= */
+const searchInput = $('#search-input');
+searchInput.addEventListener('input', debounce(runSearch, 300));
+
+async function runSearch() {
+  const q = searchInput.value.trim().toLowerCase();
+  const box = $('#search-results');
+  box.replaceChildren();
+  if (!q) {
+    box.innerHTML = `<div class="empty"><p>Ketik untuk mencari pengguna.</p></div>`;
+    return;
+  }
+  box.innerHTML = `<div class="skeleton"><div class="skel-circle"></div><div class="skel-lines"><div class="skel-line"></div><div class="skel-line short"></div></div></div>`;
+  try {
+    // Search by usernameLower exact prefix, or scan limited users (small scale)
+    const usnSnap = await get(ref(db, 'usernames/' + q));
+    const results = [];
+    if (usnSnap.exists()) {
+      const uid = usnSnap.val();
+      if (uid !== State.user.uid) {
+        const u = await getUser(uid);
+        if (u) results.push(u);
+      }
+    }
+    // Also search display name
+    const all = await get(ref(db, 'users'));
+    if (all.exists()) {
+      all.forEach(ch => {
+        const u = ch.val();
+        if (u.uid === State.user.uid) return;
+        if (results.find(x => x.uid === u.uid)) return;
+        const dn = (u.displayName||'').toLowerCase();
+        const un = (u.username||'').toLowerCase();
+        if (dn.includes(q) || un.includes(q)) results.push(u);
+      });
+    }
+    box.replaceChildren();
+    if (results.length === 0) {
+      box.innerHTML = `<div class="empty"><h4>Tidak ada hasil</h4><p>Coba kata kunci lain.</p></div>`;
+      return;
+    }
+    results.slice(0, 50).forEach(u => {
+      const item = el('div', { class:'list-item' });
+      item.innerHTML = avatarHTML(u, '');
+      const main = el('div', { class:'li-main' });
+      main.append(el('div', { class:'t' }, u.displayName || u.username));
+      main.append(el('div', { class:'s' }, '@' + u.username));
+      item.append(main);
+      item.addEventListener('click', () => openProfile(u.uid));
+      box.append(item);
+    });
+  } catch (e) { console.error(e); toast('Pencarian gagal', 'error'); }
+}
+
+async function searchUsers(q) {
+  const all = await get(ref(db, 'users'));
+  const out = [];
+  if (!all.exists()) return out;
+  const ql = (q||'').toLowerCase();
+  all.forEach(ch => {
+    const u = ch.val();
+    if (!ql || (u.displayNameLower||'').includes(ql) || (u.usernameLower||'').includes(ql)) out.push(u);
+  });
+  return out;
+}
+
+/* =========================================================
+   USER PROFILE
+   ========================================================= */
+async function openProfile(uid) {
+  if (uid === State.user.uid) { openOwnProfile(); return; }
+  goto('profile');
+  history.pushState({ page:'profile', uid }, '', '#profile/' + uid);
+  const box = $('#profile-content');
+  box.innerHTML = `<div class="skeleton"><div class="skel-circle"></div><div class="skel-lines"><div class="skel-line"></div><div class="skel-line short"></div></div></div>`;
+  const u = await getUser(uid);
+  if (!u) { box.innerHTML = `<div class="empty"><p>Pengguna tidak ditemukan</p></div>`; return; }
+  const isBlocked = await isUserBlocked(uid);
+  box.replaceChildren();
+  const hero = el('div', { class:'profile-hero' });
+  hero.innerHTML = avatarHTML(u, 'xl');
+  hero.append(el('h2', {}, u.displayName || u.username));
+  hero.append(el('div', { class:'uname' }, '@' + u.username));
+  if (u.bio) hero.append(el('div', { class:'bio' }, u.bio));
+  const status = State.onlineUsers[uid] ? 'Online' : (u.lastSeen ? 'Terakhir dilihat ' + fmtWhen(u.lastSeen) : '');
+  if (status) hero.append(el('div', { class:'muted', style:'margin-top:6px' }, status));
+  box.append(hero);
+
+  const block = el('div', { class:'settings-block' });
+  const msgRow = el('div', { class:'settings-row', role:'button', style:'cursor:pointer' });
+  msgRow.innerHTML = svgIcon('message') + '<div class="lbl">Kirim pesan</div>';
+  msgRow.addEventListener('click', async () => {
+    const chatId = privateChatId(State.user.uid, uid);
+    const s = await get(ref(db, 'chats/' + chatId));
+    if (!s.exists()) await createPrivateChat(State.user.uid, uid, chatId);
+    openChat(chatId);
+  });
+  block.append(msgRow);
+
+  const blockRow = el('div', { class:'settings-row', role:'button', style:'cursor:pointer' });
+  blockRow.innerHTML = (isBlocked ? svgIcon('unlock') : svgIcon('block')) + `<div class="lbl">${isBlocked?'Buka blokir':'Blokir pengguna'}</div>`;
+  blockRow.addEventListener('click', async () => {
+    if (isBlocked) {
+      await remove(ref(db, `blocks/${State.user.uid}/${uid}`));
+      toast('Blokir dibuka', 'success');
+    } else {
+      const ok = await confirmDialog({ title:'Blokir pengguna?', message:'Pengguna ini tidak akan dapat mengirim pesan ke Anda.', confirmText:'Blokir', danger:true });
+      if (!ok) return;
+      await set(ref(db, `blocks/${State.user.uid}/${uid}`), true);
+      toast('Pengguna diblokir', 'success');
+    }
+    openProfile(uid);
+  });
+  block.append(blockRow);
+
+  const reportRow = el('div', { class:'settings-row', role:'button', style:'cursor:pointer' });
+  reportRow.innerHTML = svgIcon('report') + '<div class="lbl">Laporkan</div>';
+  reportRow.addEventListener('click', () => openReportSheet(uid));
+  block.append(reportRow);
+
+  const shareRow = el('div', { class:'settings-row', role:'button', style:'cursor:pointer' });
+  shareRow.innerHTML = svgIcon('share') + '<div class="lbl">Bagikan profil</div>';
+  shareRow.addEventListener('click', async () => {
+    const url = location.origin + location.pathname + '#u/' + u.username;
+    const text = `${u.displayName} (@${u.username}) di SapaAja — ${url}`;
+    if (navigator.share) { try { await navigator.share({ title:'SapaAja', text, url }); } catch {} }
+    else { navigator.clipboard.writeText(text); toast('Tautan profil disalin', 'success'); }
+  });
+  block.append(shareRow);
+
+  box.append(block);
+  $('#profile-back').onclick = () => history.back();
+}
+
+async function isUserBlocked(uid) {
+  const s = await get(ref(db, `blocks/${State.user.uid}/${uid}`));
+  return s.exists();
+}
+
+function svgIconFor(name){ return svgIcon(name); }
+// Extend svgIcon with more names
+const _svgExtra = {
+  message: '<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>',
+  block: '<circle cx="12" cy="12" r="10"/><path d="m4.9 4.9 14.2 14.2"/>',
+  unlock: '<rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 7.5-2"/>',
+  report: '<path d="M4 22V4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v18l-8-4-8 4Z"/>',
+  share: '<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 10.6 6.8-4.2M8.6 13.4l6.8 4.2"/>',
+  reply: '<path d="M9 14 4 9l5-5"/><path d="M20 20v-7a4 4 0 0 0-4-4H4"/>',
+  copy: '<rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/>',
+  forward: '<path d="m15 17 5-5-5-5"/><path d="M4 18v-2a4 4 0 0 1 4-4h12"/>',
+  edit: '<path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4z"/>',
+};
+for (const k in _svgExtra) {
+  const orig = svgIcon;
+  svgIcon = function(name) { return _svgExtra[name] ? `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${_svgExtra[name]}</svg>` : orig(name); };
+}
+// Fix forward references
+var svgIcon = svgIcon;
+
+/* =========================================================
+   PRIVATE CHAT CREATION
+   ========================================================= */
+function privateChatId(a, b) {
+  return [a, b].sort().join('_');
+}
+
+async function createPrivateChat(a, b, chatId) {
+  const now = serverTimestamp();
+  const [u1, u2] = await Promise.all([getUser(a), getUser(b)]);
+  const updates = {};
+  updates['chats/' + chatId] = {
+    type: 'private',
+    createdAt: now,
+    updatedAt: now,
+    createdBy: a,
+    memberMeta: {
+      [a]: { displayName: u1?.displayName||'', username: u1?.username||'', photoURL: u1?.photoURL||'' },
+      [b]: { displayName: u2?.displayName||'', username: u2?.username||'', photoURL: u2?.photoURL||'' },
+    },
+    members: { [a]: { role: 'member', joinedAt: now }, [b]: { role: 'member', joinedAt: now } },
+  };
+  updates['userChats/' + a + '/' + chatId] = { joinedAt: now };
+  updates['userChats/' + b + '/' + chatId] = { joinedAt: now };
+  await update(ref(db), updates);
+}
+
+/* =========================================================
+   CHAT MENU (top right)
+   ========================================================= */
+$('#chat-menu').addEventListener('click', () => {
+  const chat = State.currentChat;
+  if (!chat) return;
+  const cid = State.currentChatId;
+  const meta = State.userChats[cid] || {};
+  openSheet([
+    { label: 'Info chat', icon: svgIcon('info2'), onClick: () => openProfile(chat.type==='group'?cid:chatOtherMember(chat)) },
+    { label: meta.muted?'Bunyikan':'Bisukan', icon: svgIcon('bell'), onClick: () => toggleMute(cid, !meta.muted) },
+    { label: meta.archived?'Keluarkan dari arsip':'Arsipkan', icon: svgIcon('archive'), onClick: () => toggleArchive(cid, !meta.archived) },
+    { divider: true },
+    { label: 'Bersihkan pesan', icon: svgIcon('trash'), danger: true, onClick: () => clearChatConfirm(cid) },
+    { label: 'Hapus chat', icon: svgIcon('trash'), danger: true, onClick: () => deleteChatConfirm(cid) },
+  ], chatDisplay(chat, cid).name);
+});
+
+/* =========================================================
+   CHAT LIST / USERCHAT ACTIONS
+   ========================================================= */
+async function togglePin(cid, pin) {
+  await update(ref(db, `userChats/${State.user.uid}/${cid}`), { pinned: !!pin });
+  toast(pin?'Chat dipin':'Pin dilepas', 'success');
+  renderChatList();
+}
+async function toggleArchive(cid, arch) {
+  await update(ref(db, `userChats/${State.user.uid}/${cid}`), { archived: !!arch });
+  toast(arch?'Chat diarsipkan':'Chat dikeluarkan dari arsip', 'success');
+  renderChatList();
+}
+async function toggleMute(cid, muted) {
+  await update(ref(db, `userChats/${State.user.uid}/${cid}`), { muted: !!muted });
+  toast(muted?'Chat dibisukan':'Chat dibunyikan', 'success');
+  renderChatList();
+}
+async function deleteChatConfirm(cid) {
+  const ok = await confirmDialog({
+    title:'Hapus chat?',
+    message:'Chat akan dihapus dari daftar Anda. Pesan di server tidak dihapus untuk peserta lain.',
+    confirmText:'Hapus', danger:true
+  });
+  if (!ok) return;
+  await remove(ref(db, `userChats/${State.user.uid}/${cid}`));
+  toast('Chat dihapus', 'success');
+  if (State.route === 'chat') goto('home');
+  else renderChatList();
+}
+async function clearChatConfirm(cid) {
+  const ok = await confirmDialog({
+    title:'Bersihkan pesan?',
+    message:'Semua pesan di chat ini akan dihapus untuk semua peserta.',
+    confirmText:'Bersihkan', danger:true
+  });
+  if (!ok) return;
+  await set(ref(db, 'messages/' + cid), null);
+  await update(ref(db, 'chats/' + cid), { lastMessage: null, updatedAt: serverTimestamp() });
+  toast('Pesan dibersihkan', 'success');
+}
+
+/* =========================================================
+   REPORT
+   ========================================================= */
+function openReportSheet(uid, messageId=null) {
+  const reasons = ['Spam','Penipuan','Pelecehan','Konten tidak pantas','Akun palsu','Lainnya'];
+  const items = reasons.map(r => ({
+    label: r,
+    icon: svgIcon('report'),
+    onClick: async () => {
+      const desc = prompt('Jelaskan singkat (opsional):') || '';
+      await push(ref(db, 'reports'), {
+        reporterId: State.user.uid, targetUid: uid, reason: r, description: desc,
+        messageId, createdAt: serverTimestamp(), status: 'open'
+      });
+      toast('Laporan terkirim. Terima kasih.', 'success');
+    }
+  }));
+  openSheet(items, 'Laporkan');
+}
+
+/* =========================================================
+   NOTIFICATIONS CENTER
+   ========================================================= */
+function subscribeNotifications(uid) {
+  const r = ref(db, 'notifications/' + uid);
+  onValue(r, (snap) => {
+    const v = snap.val() || {};
+    const arr = Object.entries(v).map(([id,n])=>({id,...n})).sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
+    State.notifications = arr;
+    const unread = arr.filter(n => !n.read).length;
+    State.notifUnread = unread;
+    ['#nav-notif-badge','#nav-notif-badge2','#nav-notif-badge3','#nav-notif-badge4'].forEach(s => {
+      const b = $(s); if (!b) return;
+      b.hidden = unread === 0; b.textContent = String(unread);
+    });
+    if (State.route === 'notifications') renderNotifications();
+  });
+}
+
+function renderNotifications() {
+  const box = $('#notif-list');
+  const arr = State.notifications || [];
+  if (arr.length === 0) {
+    box.innerHTML = `<div class="empty"><h4>Belum ada notifikasi</h4><p>Notifikasi tentang pesan baru akan muncul di sini.</p></div>`;
+    return;
+  }
+  box.replaceChildren();
+  arr.forEach(n => {
+    const item = el('div', { class:'list-item' });
+    item.innerHTML = `<div class="avatar sm">${svgIcon('bell')}</div>`;
+    const main = el('div', { class:'li-main' });
+    main.append(el('div', { class:'t' }, n.title || 'Notifikasi'));
+    main.append(el('div', { class:'s' }, n.body || ''));
+    item.append(main);
+    item.append(el('div', { class:'muted', style:'font-size:11.5px' }, fmtWhen(n.createdAt)));
+    if (!n.read) item.style.background = 'var(--brand-100)';
+    item.addEventListener('click', () => {
+      update(ref(db, `notifications/${State.user.uid}/${n.id}`), { read: true });
+      if (n.chatId) openChat(n.chatId);
+    });
+    box.append(item);
+  });
+}
+
+$('#notif-read-all').addEventListener('click', async () => {
+  const arr = State.notifications || [];
+  const updates = {};
+  arr.forEach(n => { if (!n.read) updates[`notifications/${State.user.uid}/${n.id}/read`] = true; });
+  if (Object.keys(updates).length === 0) { toast('Semua sudah dibaca', 'info'); return; }
+  await update(ref(db), updates);
+  toast('Semua ditandai dibaca', 'success');
+});
+
+async function maybeNotify(msg, chatId) {
+  if (!msg || msg.senderId === State.user.uid) return;
+  if (State.route === 'chat' && State.currentChatId === chatId) return;
+  if (!State.settings.notifyMessages) return;
+  const chat = State.chats[chatId] || State.currentChat;
+  const d = chat ? chatDisplay(chat, chatId) : { name: 'Pesan baru' };
+  const notif = {
+    title: d.name || 'Pesan baru',
+    body: (msg.text || 'Lampiran').slice(0,100),
+    chatId, createdAt: Date.now(), read: false,
+  };
+  try { await push(ref(db, 'notifications/' + State.user.uid), notif); } catch (e) { console.warn('notif failed', e); }
+}
+
+/* =========================================================
+   SETTINGS
+   ========================================================= */
+function applyUserSettings() {
+  const s = State.settings || {};
+  // Theme
+  let theme = s.theme || 'system';
+  if (theme === 'system') {
+    theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+  }
+  document.documentElement.dataset.theme = theme;
+  // Font size
+  if (s.fontSize) document.documentElement.style.setProperty('--fs', s.fontSize + 'px');
+  // Accent
+  if (s.accent) {
+    document.documentElement.style.setProperty('--brand', s.accent);
+    document.documentElement.style.setProperty('--brand-600', s.accent);
+  }
+}
+
+async function saveSetting(key, value) {
+  if (!State.user) return;
+  await update(ref(db, 'userSettings/' + State.user.uid), { [key]: value });
+}
+
+function renderSettingsRoot() {
+  const box = $('#settings-scroll');
+  if (!box) return;
+  $('#settings-title').textContent = 'Pengaturan';
+  $('.back-btn', $('#page-settings')).hidden = true;
+  $('#settings-nav').hidden = false;
+  box.replaceChildren();
+  const p = State.profile || {};
+  // Profile header card
+  const hero = el('div', { class:'settings-block', style:'display:flex;gap:12px;padding:14px;align-items:center;cursor:pointer' });
+  hero.innerHTML = avatarHTML(p, '') + `<div style="flex:1"><div style="font-weight:700">${esc(p.displayName||'')}</div><div class="muted">@${esc(p.username||'')}</div></div><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--fg-3)"><path d="m9 18 6-6-6-6"/></svg>`;
+  hero.addEventListener('click', openOwnProfile);
+  box.append(hero);
+
+  box.append(section('Akun', [
+    { label:'Profil', sub:'Nama, foto, bio', onClick: openOwnProfile },
+    { label:'Privasi', onClick: () => openPrivacySettings() },
+    { label:'Keamanan', onClick: openSecuritySettings },
+  ]));
+  box.append(section('Preferensi', [
+    { label:'Notifikasi', onClick: openNotificationSettings },
+    { label:'Chat', onClick: openChatSettings },
+    { label:'Tampilan', onClick: openAppearanceSettings },
+    { label:'Bahasa', sub: (State.settings.language === 'en' ? 'English' : 'Bahasa Indonesia'), onClick: openLanguageSettings },
+  ]));
+  box.append(section('Data', [
+    { label:'Penyimpanan', onClick: openStoragePage },
+    { label:'Pengguna diblokir', onClick: openBlockedUsers },
+  ]));
+  box.append(section('Bantuan', [
+    { label:'Bantuan & dukungan', onClick: openHelpPage },
+    { label:'Tentang SapaAja', onClick: openAboutPage },
+  ]));
+
+  const out = el('div', { style:'padding:16px 12px' });
+  const logoutBtn = el('button', { class:'btn ghost', style:'color:var(--danger)' }, 'Keluar');
+  logoutBtn.addEventListener('click', async () => {
+    const ok = await confirmDialog({ title:'Keluar?', message:'Anda akan keluar dari akun ini.', confirmText:'Keluar', danger:true });
+    if (!ok) return;
+    if (State.user) {
+      await update(ref(db, 'users/' + State.user.uid), { online: false, lastSeen: serverTimestamp() }).catch(()=>{});
+    }
+    await signOut(auth);
+  });
+  out.append(logoutBtn);
+  box.append(out);
+}
+
+function section(title, items) {
+  const wrap = el('div');
+  wrap.append(el('div', { class:'list-section' }, title));
+  const block = el('div', { class:'settings-block' });
+  items.forEach((it, i) => {
+    const row = el('div', { class:'settings-row', role:'button', style:'cursor:pointer' });
+    const lbl = el('div', { class:'lbl' }, it.label);
+    if (it.sub) lbl.append(el('small', {}, it.sub));
+    row.append(lbl);
+    row.innerHTML += '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--fg-3)"><path d="m9 18 6-6-6-6"/></svg>';
+    row.addEventListener('click', it.onClick);
+    block.append(row);
+  });
+  wrap.append(block);
+  return wrap;
+}
+
+function setSettingsSubpage(title, contentBuilder) {
+  $('#settings-title').textContent = title;
+  const backBtn = $('.back-btn', $('#page-settings'));
+  backBtn.hidden = false;
+  backBtn.onclick = () => history.back();
+  $('#settings-nav').hidden = true;
+  const box = $('#settings-scroll');
+  box.replaceChildren();
+  contentBuilder(box);
+  history.pushState({ page:'settings', sub:title }, '', '#settings/' + title);
+}
+
+function openOwnProfile() {
+  setSettingsSubpage('Profil Saya', (box) => {
+    const p = State.profile || {};
+    const hero = el('div', { class:'profile-hero' });
+    const avWrap = el('div', { style:'position:relative;cursor:pointer' });
+    avWrap.innerHTML = avatarHTML(p, 'xl');
+    const editChip = el('div', { style:'position:absolute;right:-4px;bottom:-4px;background:var(--brand);color:#fff;width:32px;height:32px;border-radius:50%;display:grid;place-items:center;box-shadow:var(--shadow)', html:'<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>' });
+    avWrap.append(editChip);
+    avWrap.addEventListener('click', pickAvatarAndUpload);
+    hero.append(avWrap);
+    hero.append(el('h2', {}, p.displayName || ''));
+    hero.append(el('div', { class:'uname' }, '@' + (p.username||'')));
+    box.append(hero);
+    const block = el('div', { class:'settings-block' });
+    block.append(settingRow('Nama tampilan', p.displayName || '', () => editField('displayName','Nama tampilan', p.displayName||'', 'text')));
+    block.append(settingRow('Username', '@'+(p.username||''), () => editField('username','Username', p.username||'', 'text')));
+    block.append(settingRow('Bio', p.bio || 'Tambah bio', () => editField('bio','Bio', p.bio||'', 'textarea')));
+    box.append(block);
+
+    const block2 = el('div', { class:'settings-block' });
+    const email = el('div', { class:'settings-row' });
+    email.innerHTML = `<div class="lbl">Email<small>${esc(State.user.email)}</small></div>
+      <div class="tag-pill">${State.user.emailVerified?'Terverifikasi':'Belum terverifikasi'}</div>`;
+    block2.append(email);
+    if (!State.user.emailVerified) {
+      const verify = el('div', { class:'settings-row', role:'button', style:'cursor:pointer' });
+      verify.innerHTML = '<div class="lbl">Kirim email verifikasi ulang</div>';
+      verify.addEventListener('click', async () => {
+        try { await sendEmailVerification(State.user); toast('Email verifikasi terkirim', 'success'); }
+        catch (e) { toast('Gagal mengirim: '+e.message, 'error'); }
+      });
+      block2.append(verify);
+    }
+    box.append(block2);
+  });
+}
+
+function settingRow(label, value, onClick) {
+  const row = el('div', { class:'settings-row', role:'button', style:'cursor:pointer' });
+  const lbl = el('div', { class:'lbl' }, label);
+  const val = el('div', { class:'val' }, value);
+  row.append(lbl, val);
+  row.innerHTML += '<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="color:var(--fg-3)"><path d="m9 18 6-6-6-6"/></svg>';
+  row.addEventListener('click', onClick);
+  return row;
+}
+
+async function editField(key, label, current, type) {
+  const wrap = el('div');
+  wrap.append(el('h3', {}, 'Ubah ' + label));
+  const input = type === 'textarea' ? el('textarea', { style:'width:100%;padding:10px;border-radius:10px;border:1px solid var(--line);background:var(--bg-3);min-height:80px;font-family:inherit', placeholder:label }) : el('input', { style:'width:100%;padding:10px;border-radius:10px;border:1px solid var(--line);background:var(--bg-3)', placeholder:label, type:'text' });
+  input.value = current;
+  wrap.append(input);
+  const actions = el('div', { class:'modal-actions' });
+  actions.append(el('button', { class:'btn ghost', onclick: closeModal }, 'Batal'));
+  actions.append(el('button', { class:'btn', onclick: async () => {
+    const val = input.value.trim();
+    if (key === 'username') {
+      if (!usernameValid(val.toLowerCase())) { toast('Username tidak valid', 'error'); return; }
+      const check = await get(ref(db, 'usernames/' + val.toLowerCase()));
+      if (check.exists() && check.val() !== State.user.uid) { toast('Username sudah dipakai', 'error'); return; }
+    }
+    try {
+      const updates = {};
+      if (key === 'username') {
+        updates['users/' + State.user.uid + '/username'] = val.toLowerCase();
+        updates['users/' + State.user.uid + '/usernameLower'] = val.toLowerCase();
+        updates['usernames/' + val.toLowerCase()] = State.user.uid;
+        if (State.profile?.usernameLower) updates['usernames/' + State.profile.usernameLower] = null;
+      } else if (key === 'displayName') {
+        updates['users/' + State.user.uid + '/displayName'] = val;
+        updates['users/' + State.user.uid + '/displayNameLower'] = val.toLowerCase();
+      } else {
+        updates['users/' + State.user.uid + '/' + key] = val;
+      }
+      updates['users/' + State.user.uid + '/updatedAt'] = serverTimestamp();
+      await update(ref(db), updates);
+      try { if (key==='displayName') await updateProfile(State.user, { displayName: val }); } catch {}
+      toast('Tersimpan', 'success');
+      closeModal();
+      openOwnProfile();
+    } catch (e) { console.error(e); toast('Gagal menyimpan: '+e.message, 'error'); }
+  }}, 'Simpan'));
+  wrap.append(actions);
+  openModal(wrap);
+  setTimeout(()=>input.focus(), 100);
+}
+
+async function pickAvatarAndUpload() {
+  const inp = document.createElement('input');
+  inp.type = 'file'; inp.accept = 'image/*';
+  inp.addEventListener('change', async () => {
+    const f = inp.files[0]; if (!f) return;
+    if (f.size > 5*1024*1024) { toast('Maks 5MB', 'error'); return; }
+    try {
+      const path = `avatars/${State.user.uid}/${Date.now()}_${f.name}`;
+      const task = uploadBytesResumable(sRef(storage, path), f);
+      await new Promise((res, rej) => { task.on('state_changed', null, rej, () => res()); });
+      const url = await getDownloadURL(task.snapshot.ref);
+      await update(ref(db, 'users/' + State.user.uid), { photoURL: url, updatedAt: serverTimestamp() });
+      try { await updateProfile(State.user, { photoURL: url }); } catch {}
+      toast('Foto profil diperbarui', 'success');
+      openOwnProfile();
+    } catch (e) { console.error(e); toast('Gagal mengunggah foto', 'error'); }
+  });
+  inp.click();
+}
+
+/* Privacy */
+function openPrivacySettings() {
+  setSettingsSubpage('Privasi', (box) => {
+    const s = State.settings;
+    const block = el('div', { class:'settings-block' });
+    block.append(selectRow('Terakhir dilihat', 'lastSeenPrivacy', s.lastSeenPrivacy||'everyone', [
+      {value:'everyone',label:'Semua orang'},
+      {value:'contacts',label:'Kontak saya'},
+      {value:'nobody',label:'Tidak ada'},
+    ]));
+    block.append(selectRow('Status online', 'onlinePrivacy', s.onlinePrivacy||'everyone', [
+      {value:'everyone',label:'Semua orang'},
+      {value:'nobody',label:'Sama seperti terakhir dilihat'},
+    ]));
+    block.append(selectRow('Foto profil', 'photoPrivacy', s.photoPrivacy||'everyone', [
+      {value:'everyone',label:'Semua orang'},
+      {value:'contacts',label:'Kontak saya'},
+      {value:'nobody',label:'Tidak ada'},
+    ]));
+    block.append(switchRow('Tanda terima baca', 'readReceipts', s.readReceipts !== false));
+    block.append(switchRow('Indikator mengetik', 'typingIndicator', s.typingIndicator !== false));
+    box.append(block);
+  });
+}
+
+function selectRow(label, key, current, options) {
+  const row = el('div', { class:'settings-row' });
+  const lbl = el('div', { class:'lbl' }, label);
+  const sel = el('select', { style:'padding:8px 10px;border-radius:8px;background:var(--bg-3);border:0' });
+  options.forEach(o => {
+    const opt = el('option', { value: o.value }, o.label);
+    if (o.value === current) opt.selected = true;
+    sel.append(opt);
+  });
+  sel.addEventListener('change', () => saveSetting(key, sel.value));
+  row.append(lbl, sel);
+  return row;
+}
+
+function switchRow(label, key, current) {
+  const row = el('div', { class:'settings-row' });
+  row.append(el('div', { class:'lbl' }, label));
+  const sw = el('div', { class:`switch ${current?'on':''}`, role:'switch', 'aria-checked': String(!!current), tabindex:'0' });
+  sw.addEventListener('click', () => {
+    const next = !sw.classList.contains('on');
+    sw.classList.toggle('on', next);
+    sw.setAttribute('aria-checked', String(next));
+    saveSetting(key, next);
+  });
+  row.append(sw);
+  return row;
+}
+
+/* Security */
+function openSecuritySettings() {
+  setSettingsSubpage('Keamanan', (box) => {
+    const block = el('div', { class:'settings-block' });
+    block.append(settingRow('Ubah password', '', () => changePasswordModal()));
+    block.append(settingRow('Kirim verifikasi email', State.user.emailVerified?'Terverifikasi':'Belum terverifikasi', async () => {
+      try { await sendEmailVerification(State.user); toast('Email verifikasi terkirim', 'success'); }
+      catch (e) { toast('Gagal: '+e.message, 'error'); }
+    }));
+    box.append(block);
+
+    const block2 = el('div', { class:'settings-block' });
+    const del = el('div', { class:'settings-row', role:'button', style:'cursor:pointer;color:var(--danger)' });
+    del.innerHTML = '<div class="lbl" style="color:var(--danger)">Hapus akun</div>';
+    del.addEventListener('click', deleteAccountFlow);
+    block2.append(del);
+    box.append(block2);
+  });
+}
+
+function changePasswordModal() {
+  const wrap = el('div');
+  wrap.append(el('h3', {}, 'Ubah password'));
+  const inp1 = el('input', { type:'password', placeholder:'Password saat ini', style:'width:100%;padding:10px;border-radius:10px;border:1px solid var(--line);background:var(--bg-3);margin-bottom:8px' });
+  const inp2 = el('input', { type:'password', placeholder:'Password baru (min 6)', style:'width:100%;padding:10px;border-radius:10px;border:1px solid var(--line);background:var(--bg-3)' });
+  wrap.append(inp1, inp2);
+  const actions = el('div', { class:'modal-actions' });
+  actions.append(el('button', { class:'btn ghost', onclick: closeModal }, 'Batal'));
+  actions.append(el('button', { class:'btn', onclick: async (e) => {
+    const cur = inp1.value, nw = inp2.value;
+    if (nw.length < 6) return toast('Password baru minimal 6 karakter', 'error');
+    try {
+      const cred = EmailAuthProvider.credential(State.user.email, cur);
+      await reauthenticateWithCredential(State.user, cred);
+      await updatePassword(State.user, nw);
+      toast('Password diperbarui', 'success');
+      closeModal();
+    } catch (err) { toast('Gagal: '+(err.code||err.message), 'error'); }
+  }}, 'Simpan'));
+  wrap.append(actions);
+  openModal(wrap);
+}
+
+async function deleteAccountFlow() {
+  const w = el('div');
+  w.append(el('h3', { style:'color:var(--danger)' }, 'Hapus akun permanen'));
+  w.append(el('p', {}, 'Tindakan ini tidak dapat dibatalkan. Semua data profil, chat, dan pesan yang terkait dengan akun Anda akan dihapus sesuai kebijakan.'));
+  const inp = el('input', { type:'password', placeholder:'Masukkan password Anda untuk konfirmasi', style:'width:100%;padding:10px;border-radius:10px;border:1px solid var(--line);background:var(--bg-3)' });
+  w.append(inp);
+  const actions = el('div', { class:'modal-actions' });
+  actions.append(el('button', { class:'btn ghost', onclick: closeModal }, 'Batal'));
+  actions.append(el('button', { class:'btn danger', onclick: async () => {
+    const pass = inp.value;
+    if (!pass) return toast('Masukkan password', 'error');
+    try {
+      const cred = EmailAuthProvider.credential(State.user.email, pass);
+      await reauthenticateWithCredential(State.user, cred);
+      // Cleanup own user data
+      await update(ref(db), {
+        ['users/' + State.user.uid]: null,
+        ['usernames/' + (State.profile?.usernameLower||'')]: null,
+        ['userSettings/' + State.user.uid]: null,
+        ['presence/' + State.user.uid]: null,
+        ['drafts/' + State.user.uid]: null,
+        ['userChats/' + State.user.uid]: null,
+      });
+      await State.user.delete();
+      toast('Akun dihapus', 'success');
+    } catch (err) { toast('Gagal: '+(err.code||err.message), 'error'); }
+  }}, 'Hapus permanen'));
+  w.append(actions);
+  openModal(w);
+}
+
+/* Notifications */
+function openNotificationSettings() {
+  setSettingsSubpage('Notifikasi', (box) => {
+    const s = State.settings;
+    const b1 = el('div', { class:'settings-block' });
+    b1.append(switchRow('Pesan baru', 'notifyMessages', s.notifyMessages !== false));
+    b1.append(switchRow('Pesan grup', 'notifyGroups', s.notifyGroups !== false));
+    b1.append(switchRow('Sebutan', 'notifyMentions', s.notifyMentions !== false));
+    box.append(el('div', { class:'list-section' }, 'Pesan')); box.append(b1);
+    const b2 = el('div', { class:'settings-block' });
+    b2.append(switchRow('Suara', 'notifySound', s.notifySound !== false));
+    b2.append(switchRow('Getar (jika didukung)', 'notifyVibrate', s.notifyVibrate !== false));
+    box.append(el('div', { class:'list-section' }, 'Suara & getar')); box.append(b2);
+  });
+}
+
+/* Chat settings */
+function openChatSettings() {
+  setSettingsSubpage('Chat', (box) => {
+    const s = State.settings;
+    const b1 = el('div', { class:'settings-block' });
+    b1.append(switchRow('Enter untuk kirim (desktop)', 'enterToSend', s.enterToSend !== false));
+    box.append(b1);
+  });
+}
+
+/* Appearance */
+function openAppearanceSettings() {
+  setSettingsSubpage('Tampilan', (box) => {
+    const s = State.settings;
+    const b1 = el('div', { class:'settings-block' });
+    b1.append(selectRow('Tema', 'theme', s.theme || 'system', [
+      {value:'light',label:'Terang'},
+      {value:'dark',label:'Gelap'},
+      {value:'system',label:'Sistem'},
+    ]));
+    box.append(b1);
+    const b2 = el('div', { class:'settings-block' });
+    b2.append(colorRow('Warna aksen', 'accent', s.accent || '#4f46e5'));
+    b2.append(rangeRow('Ukuran font', 'fontSize', s.fontSize || 15, 13, 19));
+    box.append(b2);
+  });
+}
+
+function colorRow(label, key, current) {
+  const row = el('div', { class:'settings-row' });
+  row.append(el('div', { class:'lbl' }, label));
+  const inp = el('input', { type:'color', value: current, style:'width:44px;height:32px;border:0;border-radius:8px;background:transparent;cursor:pointer' });
+  inp.addEventListener('input', () => { saveSetting(key, inp.value); applyUserSettings(); });
+  row.append(inp);
+  return row;
+}
+function rangeRow(label, key, val, min, max) {
+  const row = el('div', { class:'settings-row' });
+  row.append(el('div', { class:'lbl' }, label));
+  const inp = el('input', { type:'range', min, max, value:val, style:'width:120px' });
+  inp.addEventListener('input', () => { saveSetting(key, Number(inp.value)); applyUserSettings(); });
+  row.append(inp);
+  return row;
+}
+
+/* Language */
+function openLanguageSettings() {
+  setSettingsSubpage('Bahasa', (box) => {
+    const block = el('div', { class:'settings-block' });
+    ['id','en'].forEach(lang => {
+      const row = el('div', { class:'settings-row', role:'button', style:'cursor:pointer' });
+      row.append(el('div', { class:'lbl' }, lang === 'id' ? 'Bahasa Indonesia' : 'English'));
+      if ((State.settings.language || 'id') === lang) row.append(el('span', { class:'tag-pill' }, 'Aktif'));
+      row.addEventListener('click', async () => {
+        await saveSetting('language', lang);
+        toast('Bahasa diperbarui', 'success');
+        openLanguageSettings();
+      });
+      block.append(row);
+    });
+    box.append(block);
+  });
+}
+
+/* Storage */
+function openStoragePage() {
+  setSettingsSubpage('Penyimpanan', (box) => {
+    const info = el('div', { class:'settings-block' });
+    info.append(settingRow('Perkiraan penyimpanan', '', () => {}));
+    info.append(settingRow('Hapus cache & draft lokal', '', async () => {
+      Object.keys(localStorage).forEach(k => { if (k.startsWith('sapa_')) localStorage.removeItem(k); });
+      await remove(ref(db, 'drafts/' + State.user.uid));
+      toast('Cache dibersihkan', 'success');
+    }));
+    box.append(info);
+    const note = el('div', { class:'list-section' }, 'Ukuran penggunaan bergantung pada penyimpanan Firebase; tidak dapat dihitung akurat dari klien.');
+    box.append(note);
+  });
+}
+
+/* Blocked users */
+function openBlockedUsers() {
+  setSettingsSubpage('Pengguna diblokir', (box) => {
+    const r = ref(db, 'blocks/' + State.user.uid);
+    onValue(r, async (snap) => {
+      box.querySelectorAll('.settings-block').forEach(b => b.remove());
+      const blockedIds = Object.keys(snap.val() || {});
+      if (blockedIds.length === 0) {
+        box.append(el('div', { class:'empty' }, el('p', {}, 'Belum ada pengguna yang diblokir.')));
+        return;
+      }
+      const block = el('div', { class:'settings-block' });
+      for (const uid of blockedIds) {
+        const u = await getUser(uid);
+        if (!u) continue;
+        const row = el('div', { class:'settings-row' });
+        row.innerHTML = avatarHTML(u, 'sm');
+        const lbl = el('div', { class:'lbl' }, u.displayName || u.username);
+        lbl.append(el('small', {}, '@' + u.username));
+        row.append(lbl);
+        const btn = el('button', { class:'btn sm ghost' }, 'Buka blokir');
+        btn.addEventListener('click', async () => {
+          await remove(ref(db, `blocks/${State.user.uid}/${uid}`));
+          toast('Blokir dibuka', 'success');
+        });
+        row.append(btn);
+        block.append(row);
+      }
+      box.append(block);
+    });
+  });
+}
+
+/* Help */
+function openHelpPage() {
+  setSettingsSubpage('Bantuan', (box) => {
+    const faq = el('div', { class:'settings-block' });
+    [
+      ['Bagaimana cara mengirim pesan?', 'Buka chat, ketik di kolom bawah, lalu tekan tombol kirim.'],
+      ['Bagaimana cara mengubah foto profil?', 'Buka Pengaturan › Profil › ketuk foto.'],
+      ['Apakah pesan tersimpan aman?', 'Pesan disimpan di Firebase Realtime Database dengan aturan keamanan.'],
+      ['Bagaimana melaporkan pengguna?', 'Buka profil pengguna › Laporkan.'],
+    ].forEach(([q,a]) => {
+      const row = el('div', { class:'settings-row', style:'display:block' });
+      row.append(el('div', { style:'font-weight:700;margin-bottom:4px' }, q));
+      row.append(el('div', { style:'color:var(--fg-2);font-size:13px' }, a));
+      faq.append(row);
+    });
+    box.append(faq);
+  });
+}
+
+function openAboutPage() {
+  setSettingsSubpage('Tentang SapaAja', (box) => {
+    const block = el('div', { class:'settings-block' });
+    block.append(settingRow('Aplikasi', 'SapaAja'));
+    block.append(settingRow('Tagline', 'Ngobrol lebih dekat, kapan saja.'));
+    block.append(settingRow('Versi', '1.0.0'));
+    block.append(settingRow('Build', new Date().toISOString().slice(0,10)));
+    block.append(settingRow('Status Firebase', $('#conn-banner').classList.contains('show') ? 'Menghubungkan' : 'Online'));
+    box.append(block);
+    const block2 = el('div', { class:'settings-block' });
+    block2.append(settingRow('Ketentuan layanan', '', () => toast('Dokumen tersedia dari operator SapaAja.', 'info')));
+    block2.append(settingRow('Kebijakan privasi', '', () => toast('Dokumen tersedia dari operator SapaAja.', 'info')));
+    box.append(block2);
+  });
+}
+
+/* =========================================================
+   BACK BUTTONS
+   ========================================================= */
+$('#chat-back').addEventListener('click', () => history.back());
+$('#profile-back').addEventListener('click', () => history.back());
+
+/* =========================================================
+   HOME TOPBAR ACTIONS
+   ========================================================= */
+$('#home-search').addEventListener('click', () => goto('search'));
+$('#home-new').addEventListener('click', async () => {
+  const users = await searchUsers('');
+  const items = users.filter(u => u.uid !== State.user.uid).map(u => ({
+    label: u.displayName || u.username,
+    icon: avatarHTML(u, 'sm'),
+    onClick: async () => {
+      const chatId = privateChatId(State.user.uid, u.uid);
+      const s = await get(ref(db, 'chats/' + chatId));
+      if (!s.exists()) await createPrivateChat(State.user.uid, u.uid, chatId);
+      openChat(chatId);
+    }
+  }));
+  if (items.length === 0) { toast('Belum ada pengguna lain', 'info'); return; }
+  openSheet(items, 'Mulai chat baru');
+});
+$('#home-menu').addEventListener('click', () => {
+  openSheet([
+    { label:'Profil saya', icon: svgIcon('message'), onClick: openOwnProfile },
+    { label:'Arsip chat', icon: svgIcon('archive'), onClick: () => showArchivedChats() },
+    { label:'Pengaturan', icon: svgIcon('pin'), onClick: () => goto('settings') },
+    { label:'Keluar', icon: svgIcon('report'), danger: true, onClick: async () => {
+      const ok = await confirmDialog({ title:'Keluar?', message:'Anda akan keluar.', confirmText:'Keluar', danger:true });
+      if (ok) await signOut(auth);
+    }},
+  ]);
+});
+
+function showArchivedChats() {
+  const archived = Object.entries(State.userChats).filter(([cid, m]) => m.archived && State.chats[cid]);
+  if (archived.length === 0) { toast('Tidak ada chat diarsipkan', 'info'); return; }
+  const box = el('div');
+  box.append(el('h3', {}, 'Chat diarsipkan'));
+  const list = el('div');
+  archived.forEach(([cid, meta]) => {
+    const chat = State.chats[cid];
+    const d = chatDisplay(chat, cid);
+    const row = el('div', { class:'list-item' });
+    row.innerHTML = avatarHTML(d, 'sm');
+    const main = el('div', { class:'li-main' });
+    main.append(el('div', { class:'t' }, d.name));
+    row.append(main);
+    const un = el('button', { class:'btn sm ghost' }, 'Buka arsip');
+    un.addEventListener('click', async (e) => { e.stopPropagation(); await toggleArchive(cid, false); closeModal(); });
+    row.append(un);
+    row.addEventListener('click', () => { closeModal(); openChat(cid); });
+    list.append(row);
+  });
+  box.append(list);
+  const actions = el('div', { class:'modal-actions' });
+  actions.append(el('button', { class:'btn ghost', onclick: closeModal }, 'Tutup'));
+  box.append(actions);
+  openModal(box);
+}
+
+/* =========================================================
+   LEAVE CHAT (called when navigating away from chat)
+   ========================================================= */
+function leaveChat(fromPop = false) {
+  if (State.currentChatId && State.user) {
+    remove(ref(db, `typing/${State.currentChatId}/${State.user.uid}`)).catch(()=>{});
+  }
+  cancelReply();
+  cancelEdit();
+  State.currentChatId = null;
+  State.currentChat = null;
+  State.other = null;
+  State.otherReadTs = null;
+  State.otherDeliveredTs = null;
+}
+
+/* =========================================================
+   KEYBOARD SHORTCUT
+   ========================================================= */
+document.addEventListener('keydown', (e) => {
+  if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'k') {
+    e.preventDefault();
+    goto('search');
+  }
+});
+
+/* =========================================================
+   KEEP viewport stable on mobile keyboard
+   ========================================================= */
+if (window.visualViewport) {
+  window.visualViewport.addEventListener('resize', () => {
+    if (State.route === 'chat') {
+      const vv = window.visualViewport;
+      document.documentElement.style.setProperty('--vh', vv.height + 'px');
+    }
+  });
+}
+
+/* =========================================================
+   READ RECEIPT LISTENERS (per active chat)
+   ========================================================= */
+const origOpenChat = openChat;
+openChat = async function(chatId) {
+  await origOpenChat(chatId);
+  // Listen other user's lastRead/lastDelivered for read receipts
+  const chat = State.currentChat;
+  if (chat && chat.type === 'private') {
+    const other = chatOtherMember(chat);
+    if (other) {
+      onValue(ref(db, `userChats/${other}/${chatId}/lastRead`), s => {
+        State.otherReadTs = s.val() || 0;
+        if (State.route === 'chat') renderMessages();
+      });
+      onValue(ref(db, `userChats/${other}/${chatId}/lastDelivered`), s => {
+        State.otherDeliveredTs = s.val() || 0;
+        if (State.route === 'chat') renderMessages();
+      });
+    }
+  }
+};
+
+/* Prevent closing tab when typing */
+window.addEventListener('beforeunload', () => {
+  if (State.currentChatId && State.user) {
+    try { remove(ref(db, `typing/${State.currentChatId}/${State.user.uid}`)); } catch {}
+  }
+});
+
+/* =========================================================
+   USER DIRECT LINKS (#u/username)
+   ========================================================= */
+setTimeout(async () => {
+  const h = location.hash;
+  if (h && h.startsWith('#u/')) {
+    const un = h.slice(3).toLowerCase();
+    const s = await get(ref(db, 'usernames/' + un));
+    if (s.exists()) openProfile(s.val());
+  }
+}, 2000);
+
+console.log('[SapaAja] siap');
+</script>
+</body>
+</html>
